@@ -65,6 +65,97 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<void> _feedback() async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: Container(
+              decoration: BoxDecoration(
+                  // color: const Color.fromARGB(255, 58, 58, 58),
+                  color: AppColor.elevated_bg_color,
+                  borderRadius: BorderRadius.circular(20)),
+              width: double.infinity,
+              // height: 500,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 25),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Enjoying the App?",
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 40),
+                      child: Text(
+                        "We'd love to hear from you! We're constantly working to improve the app, and add new features.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 177, 177, 177),
+                            fontSize: 16),
+                      ),
+                    ),
+                    Text(
+                      "Do you like using App so far?",
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: Color.fromARGB(255, 177, 177, 177)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 40),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                              decoration: BoxDecoration(
+                                  color: Color.fromARGB(255, 69, 69, 69),
+                                  shape: BoxShape.circle),
+                              child: Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: ImageIcon(
+                                  AssetImage(
+                                    AppImages.like,
+                                  ),
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                              )),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Container(
+                              decoration: BoxDecoration(
+                                  color: Color.fromARGB(255, 69, 69, 69),
+                                  shape: BoxShape.circle),
+                              child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: ImageIcon(
+                                  AssetImage(
+                                    AppImages.dislike,
+                                  ),
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                              ))
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -285,17 +376,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 height: 10,
               ),
               ProfileContainer(
-                  icon: Icon(
-                    Icons.message,
-                    color: AppColor.white_color,
-                  ),
-                  text: "Send Your Feedback"),
+                icon: Icon(
+                  Icons.message,
+                  color: AppColor.white_color,
+                ),
+                text: "Send Your Feedback",
+                ontap: () {
+                  _feedback();
+                },
+              ),
               ProfileContainer(
-                  icon: Icon(
-                    Icons.share,
-                    color: AppColor.white_color,
-                  ),
-                  text: "Share App with a friend"),
+                icon: Icon(
+                  Icons.share,
+                  color: AppColor.white_color,
+                ),
+                text: "Share App with a friend",
+                ontap: () {},
+              ),
               // SizedBox(
               //   height: 5,
               // ),
@@ -310,17 +407,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
               //   height: 15,
               // ),
               ProfileContainer(
-                  icon: Icon(
-                    Icons.file_copy,
-                    color: AppColor.white_color,
-                  ),
-                  text: "Terms of Use"),
+                icon: Icon(
+                  Icons.file_copy,
+                  color: AppColor.white_color,
+                ),
+                text: "Terms of Use",
+                ontap: () {},
+              ),
               ProfileContainer(
-                  icon: Icon(
-                    Icons.lock,
-                    color: AppColor.white_color,
-                  ),
-                  text: "Privacy Policy"),
+                icon: Icon(
+                  Icons.lock,
+                  color: AppColor.white_color,
+                ),
+                text: "Privacy Policy",
+                ontap: () {},
+              ),
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Divider(

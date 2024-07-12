@@ -16,6 +16,8 @@ class AppImages {
 
   //profile images
   static const String user = "assets/user.png";
+  static const String like = "assets/like.png";
+  static const String dislike = "assets/dislike.png";
 
   //onboarding images
   static const String google_logo = "assets/ggogle_logo.png";

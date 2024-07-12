@@ -59,6 +59,7 @@ dependencies:
   share_plus: ^6.3.4
   flutter_svg: ^2.0.9
   shared_preferences: ^2.2.3
+  flutter_colorpicker: ^1.1.0
 
 dev_dependencies:
   flutter_test:

@@ -724,6 +724,18 @@ class DatabaseService {
     }
   }
 
+  Future<void> updatecolor(String id,String value) async{
+    print("Video Id === >>> $id");
+    try {
+      final db = await database;
+      await db.update(_captionTable, {_captionTextColor: value},
+      where: '$_captionId = ?', whereArgs: [id] );
+      print('Updated Color status for caption with ID: $id');
+    } catch (e) {
+      print('Error updating color status: $e');
+    }
+  }
+
   Future<void> updateItalic(String id, String value) async {
     print("Video Id === >>> $id");
     try {
