@@ -165,85 +165,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 15, horizontal: 15),
-                    // child: Column(
-                    //   children: [
-                    //     Row(
-                    //       children: [
-                    //         Text(
-                    //           "Already a App User?",
-                    //           style: TextStyle(
-                    //               color: AppColor.white_color,
-                    //               fontWeight: FontWeight.bold),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //     Text(
-                    //       "Log in or Create an account to access your web Projects across different devices",
-                    //       style: TextStyle(color: AppColor.white_color70),
-                    //     ),
-                    //     SizedBox(
-                    //       height: 10,
-                    //     ),
-                    //     // Padding(
-                    //     //   padding: const EdgeInsets.symmetric(
-                    //     //       horizontal: 3, vertical: 10),
-                    //     //   child: Row(
-                    //     //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    //     //     children: [
-                    //     //       Expanded(
-                    //     //         child: ElevatedButton(
-                    //     //             style: ElevatedButton.styleFrom(
-                    //     //                 backgroundColor: AppColor.signup_color),
-                    //     //             onPressed: () {
-                    //     //               Navigator.pushReplacement(
-                    //     //                   context,
-                    //     //                   MaterialPageRoute(
-                    //     //                     builder: (context) => SignUpScreen(),
-                    //     //                   ));
-                    //     //             },
-                    //     //             child: Padding(
-                    //     //               padding: const EdgeInsets.symmetric(
-                    //     //                   vertical: 12),
-                    //     //               child: Text(
-                    //     //                 "Sign Up",
-                    //     //                 style: TextStyle(
-                    //     //                     color: AppColor.white_color,
-                    //     //                     fontWeight: FontWeight.bold,
-                    //     //                     fontSize: 16),
-                    //     //               ),
-                    //     //             )),
-                    //     //       ),
-                    //     //       SizedBox(
-                    //     //         width: 15,
-                    //     //       ),
-                    //     //       Expanded(
-                    //     //         child: ElevatedButton(
-                    //     //             style: ElevatedButton.styleFrom(
-                    //     //                 backgroundColor: AppColor.login_color),
-                    //     //             onPressed: () {
-                    //     //               Navigator.pushReplacement(
-                    //     //                   context,
-                    //     //                   MaterialPageRoute(
-                    //     //                     builder: (context) => LoginScreen(),
-                    //     //                   ));
-                    //     //             },
-                    //     //             child: Padding(
-                    //     //               padding: const EdgeInsets.symmetric(
-                    //     //                   vertical: 12),
-                    //     //               child: Text(
-                    //     //                 "Log in",
-                    //     //                 style: TextStyle(
-                    //     //                     color: AppColor.white_color,
-                    //     //                     fontWeight: FontWeight.bold,
-                    //     //                     fontSize: 16),
-                    //     //               ),
-                    //     //             )),
-                    //     //       ),
-                    //     //     ],
-                    //     //   ),
-                    //     // )
-                    //   ],
-                    // ),
                     child: Row(
                       children: [
                         Container(
@@ -296,9 +217,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     color: AppColor.white_color,
                   ),
                   text: "Share App with a friend"),
-              // SizedBox(
-              //   height: 5,
-              // ),
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Divider(
@@ -306,9 +224,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 3,
                 ),
               ),
-              // SizedBox(
-              //   height: 15,
-              // ),
               ProfileContainer(
                   icon: Icon(
                     Icons.file_copy,
