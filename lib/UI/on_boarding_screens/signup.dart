@@ -143,7 +143,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       padding: EdgeInsets.symmetric(vertical: 15),
                       child: isloading
                           ? Center(
-                              child: CircularProgressIndicator(),
+                              child: CircularProgressIndicator(color: AppColor.home_plus_color),
                             )
                           : Text(
                               "Create Account",

@@ -52,11 +52,13 @@ class _MyProjectsScreenState extends State<ProjectVideos> {
       future: _data,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return Center(
+              child:
+                  CircularProgressIndicator(color: AppColor.home_plus_color));
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('No files found.'));
+          return Center(child: Text('No Videos found.'));
         } else {
           return GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -80,8 +82,8 @@ class _MyProjectsScreenState extends State<ProjectVideos> {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: InkWell(
-                             splashFactory: NoSplash.splashFactory,
-        highlightColor: Colors.transparent,
+                            splashFactory: NoSplash.splashFactory,
+                            highlightColor: Colors.transparent,
                             onLongPress: () {
                               _showDeleteMenu(context, file);
                               setState(() {});
@@ -163,16 +165,4 @@ class _MyProjectsScreenState extends State<ProjectVideos> {
     });
     Navigator.pop(context); // Close the bottom sheet
   }
-
-  // void _playVideo(String videoPath, int id,int status) {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //         builder: (context) => VideoSavePage(
-  //               filePath: videoPath,
-  //               ratio: CameraAspectRatios.ratio_16_9,
-  //               script: '', vid_id: id, status: status,
-  //             )),
-  //   );
-  // }
 }

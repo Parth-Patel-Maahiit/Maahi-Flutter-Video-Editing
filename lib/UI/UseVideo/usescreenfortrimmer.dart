@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:video_editing_app/UI/Video_Preview/script_preview.dart';
 
+import '../../util/app_color.dart';
+
 class UseScreen2 extends StatefulWidget {
   final String filePath;
   final String? videoID;
@@ -38,7 +40,9 @@ class _UseScreenState extends State<UseScreen2> {
     return Scaffold(
       body: Center(
         child: Container(
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(
+            color: AppColor.home_plus_color,
+          ),
         ),
       ),
     );

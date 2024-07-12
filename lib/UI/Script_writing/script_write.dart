@@ -120,7 +120,7 @@ class _ScriptWriteState extends State<ScriptWrite> {
                 style: TextStyle(color: AppColor.white_color),
                 controller: _titleController,
                 decoration: InputDecoration(
-                    hintText: "Your Project title",
+                    hintText: "Your script title",
                     hintStyle:
                         TextStyle(fontSize: 24, color: AppColor.grey_color)),
               ),
@@ -132,6 +132,7 @@ class _ScriptWriteState extends State<ScriptWrite> {
                   child: TextField(
                     style: TextStyle(color: AppColor.white_color),
                     controller: _scriptController,
+                    scrollPhysics: AlwaysScrollableScrollPhysics(),
                     maxLines: null,
                     expands: true,
                     decoration: InputDecoration(

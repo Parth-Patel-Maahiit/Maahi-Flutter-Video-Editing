@@ -531,61 +531,61 @@ class _VideoSavePageState extends State<VideoSavePage>
                                       .textColor
                                       .toString())),
                               onTap: () {
-                                // showDialog(
-                                //   context: context,
-                                //   builder: (context) {
-                                //     return AlertDialog(
-                                // content: SingleChildScrollView(
-                                //   child: ColorPicker(
-                                //     pickerColor: Color(int.parse(
-                                //         _getCations[activeCaptionIndex]
-                                //             .textColor)),
-                                //     onColorChanged: (Color color) {
-                                //       if (activeCaptionIndex != -1) {
-                                //         _getCations[activeCaptionIndex]
-                                //             .textColor = color.value;
-
-                                //         _databaseService.updatecolor(
-                                //             _getCations[
-                                //                     activeCaptionIndex]
-                                //                 .id
-                                //                 .toString(),
-                                //             color.value.toString());
-                                //         setState(() {});
-                                //       }
-                                //     },
-                                //   ),
-                                // ),
-                                //     );
-                                //   },
-                                // );
-
-                                // setState(() {});
-                                showModalBottomSheet(
+                                showDialog(
                                   context: context,
                                   builder: (context) {
-                                    return SingleChildScrollView(
-                                      child: ColorPicker(
-                                        pickerColor: Color(int.parse(
-                                            _getCations[activeCaptionIndex]
-                                                .textColor)),
-                                        onColorChanged: (Color color) {
-                                          if (activeCaptionIndex != -1) {
-                                            _getCations[activeCaptionIndex]
-                                                .textColor = color.value;
-
-                                            _databaseService.updatecolor(
-                                                _getCations[activeCaptionIndex]
-                                                    .id
-                                                    .toString(),
-                                                color.value.toString());
-                                            setState(() {});
-                                          }
-                                        },
+                                    return AlertDialog(
+                                      content: SingleChildScrollView(
+                                        child: ColorPicker(
+                                          pickerColor: Color(int.parse(
+                                              _getCations[activeCaptionIndex]
+                                                  .textColor
+                                                  .toString())),
+                                          onColorChanged: (Color color) {
+                                            if (activeCaptionIndex != -1) {
+                                              String colorString =
+                                                  '0x${color.value.toRadixString(16)}';
+                                              _getCations[activeCaptionIndex]
+                                                  .textColor = colorString;
+                                              _databaseService.updatecolor(
+                                                  _getCations[
+                                                          activeCaptionIndex]
+                                                      .id
+                                                      .toString(),
+                                                  colorString.toString());
+                                              setState(() {});
+                                            }
+                                          },
+                                        ),
                                       ),
                                     );
                                   },
                                 );
+                                // showModalBottomSheet(
+                                //   context: context,
+                                //   builder: (context) {
+                                //     return SingleChildScrollView(
+                                //       child: ColorPicker(
+                                //         pickerColor: Color(int.parse(
+                                //             _getCations[activeCaptionIndex]
+                                //                 .textColor)),
+                                //         onColorChanged: (Color color) {
+                                //           if (activeCaptionIndex != -1) {
+                                //             _getCations[activeCaptionIndex]
+                                //                 .textColor = color.value;
+
+                                //             _databaseService.updatecolor(
+                                //                 _getCations[activeCaptionIndex]
+                                //                     .id
+                                //                     .toString(),
+                                //                 color.value.toString());
+                                //             setState(() {});
+                                //           }
+                                //         },
+                                //       ),
+                                //     );
+                                //   },
+                                // );
                               }),
                           getHighlighgtButtons(
                               isSelected:
@@ -1233,7 +1233,7 @@ class _VideoSavePageState extends State<VideoSavePage>
                     padding:
                         const EdgeInsets.only(left: 10, bottom: 20, right: 10),
                     child: Text(
-                      "Select Frome",
+                      "Select From",
                       style: TextStyle(
                           color: AppColor.white_color,
                           fontSize: 20,
@@ -1247,7 +1247,7 @@ class _VideoSavePageState extends State<VideoSavePage>
                           Navigator.pop(context);
                           _pickVideo();
                         },
-                        text: "Gallary",
+                        text: "Gallery",
                         bgcolor: AppColor.elevated_bg_color,
                         image: AppImages.gallary,
                       ),
@@ -1292,7 +1292,7 @@ class _VideoSavePageState extends State<VideoSavePage>
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 20),
                     child: Text(
-                      "Select frome projects",
+                      "Select from projects",
                       style: TextStyle(color: Colors.white, fontSize: 22),
                     ),
                   ),

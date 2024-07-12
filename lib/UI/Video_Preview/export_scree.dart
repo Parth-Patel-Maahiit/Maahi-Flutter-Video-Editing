@@ -1,6 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:ffmpeg_kit_flutter_video/ffmpeg_kit.dart';
+import 'package:ffmpeg_kit_flutter_video/return_code.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_editing_app/Model/get_caption_data_model.dart';
 import 'package:video_editing_app/UI/Video_Preview/script_preview.dart';
@@ -346,38 +350,37 @@ class _ExportScreenState extends State<ExportScreen> {
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  child: Expanded(
-                    child: Row(
-                      children: [
-                        CommonButton(
-                          bgcolor: AppColor.elevated_bg_color,
-                          text: "Edit",
-                          image: AppImages.edit,
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => VideoSavePage(
-                                    isBackExport: true,
-                                    filePath: _outputPath,
-                                    videoID: widget.videoID,
-                                  ),
-                                ));
-                          },
-                        ),
-                        SizedBox(
-                          width: 30,
-                        ),
-                        CommonButton(
-                          bgcolor: AppColor.home_plus_color,
-                          text: "Export",
-                          image: AppImages.export,
-                          onPressed: () {
-                            _shareVideo();
-                          },
-                        ),
-                      ],
-                    ),
+                  child: Row(
+                    children: [
+                      CommonButton(
+                        bgcolor: AppColor.elevated_bg_color,
+                        text: "Edit",
+                        image: AppImages.edit,
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => VideoSavePage(
+                                  isBackExport: true,
+                                  filePath: _outputPath,
+                                  videoID: widget.videoID,
+                                ),
+                              ));
+                        },
+                      ),
+                      SizedBox(
+                        width: 30,
+                      ),
+                      CommonButton(
+                        bgcolor: AppColor.home_plus_color,
+                        text: "Export",
+                        image: AppImages.export,
+                        onPressed: () {
+                          // _shareVideo();
+                          srtconverter(convertCaptionsToJson(_getCations));
+                        },
+                      ),
+                    ],
                   ),
                 )
               ],
@@ -386,6 +389,170 @@ class _ExportScreenState extends State<ExportScreen> {
         ),
       ),
     );
+  }
+
+  String convertCaptionsToJson(List<GetCaptionDataModel> captions) {
+    List<Map<String, dynamic>> jsonData =
+        captions.map((caption) => caption.toJson()).toList();
+    return jsonEncode(jsonData);
+  }
+
+  void srtconverter(String jsonData) async {
+    List<dynamic> captionData = jsonDecode(jsonData);
+
+    String formatTime(String time) {
+      return time.replaceAll('.', ',');
+    }
+
+    String formatText(Map<String, dynamic> caption) {
+      String text = caption['text'];
+
+      String formattedText =
+          '<font color="#${caption['text_color'].toString().substring(2)}">$text</font>';
+
+      if (caption['is_bold'] == "1") {
+        formattedText = '<b>$formattedText</b>';
+      }
+      if (caption['is_italic'] == "1") {
+        formattedText = '<i>$formattedText</i>';
+      }
+      if (caption['is_underline'] == "1") {
+        formattedText = '<u>$formattedText</u>';
+      }
+
+      return formattedText;
+    }
+
+    String formatTextForCombine(Map<String, dynamic> caption) {
+      String text = caption['text'];
+
+      String formattedText = "$text";
+      // '<font color="#${caption['text_color'].toString().substring(2)}">$text</font>';
+
+      if (caption['is_bold'] == "1") {
+        formattedText = '<b>$formattedText</b>';
+      }
+      if (caption['is_italic'] == "1") {
+        formattedText = '<i>$formattedText</i>';
+      }
+      if (caption['is_underline'] == "1") {
+        formattedText = '<u>$formattedText</u>';
+      }
+
+      return formattedText;
+    }
+
+    String createSrtContent(List<dynamic> captions) {
+      StringBuffer srtContent = StringBuffer();
+      int counter = 1;
+
+      Map<String, Map<String, dynamic>> combinedCaptions = {};
+
+      for (var caption in captions) {
+        List<int> idsIntList = caption['combine_ids']
+            .toString()
+            .split(",")
+            .map((id) => int.parse(id.trim()))
+            .toList();
+
+        if (idsIntList.length == 1) {
+          combinedCaptions[caption['id'].toString()] = caption;
+        } else {
+          String combinedId = idsIntList.join("-");
+          if (!combinedCaptions.containsKey(combinedId)) {
+            combinedCaptions[combinedId] = {
+              'start_from': caption['start_from'],
+              'end_to': caption['end_to'],
+              'text': formatTextForCombine(caption),
+              'is_bold': caption['is_bold'],
+              'is_italic': caption['is_italic'],
+              'is_underline': caption['is_underline'],
+              'text_color': caption['text_color'],
+              'background_color': caption['background_color'],
+            };
+          } else {
+            combinedCaptions[combinedId]?['end_to'] = caption['end_to'];
+            combinedCaptions[combinedId]?['text'] += ' ' + caption['text'];
+          }
+        }
+      }
+
+      combinedCaptions.forEach((id, caption) {
+        String formattedText = formatText({
+          'text': caption['text'],
+          'is_bold': caption['is_bold'],
+          'is_italic': caption['is_italic'],
+          'is_underline': caption['is_underline'],
+          'text_color': caption['text_color']
+        });
+        srtContent.writeln('${counter++}');
+        srtContent.writeln(
+            '${formatTime(caption["start_from"])} --> ${formatTime(caption["end_to"])}');
+        srtContent.writeln(formattedText);
+        srtContent.writeln();
+      });
+
+      return srtContent.toString();
+    }
+
+    String srtContent = createSrtContent(captionData);
+
+    print('srtContent ==> $srtContent');
+
+    Future<void> saveFile(String content, String extension) async {
+      String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
+      final directory = await getApplicationCacheDirectory();
+      final filePath = '${directory.path}/captions_$timestamp.$extension';
+      final file = File(filePath);
+      await file.writeAsString(content);
+      srtFilePath = filePath;
+      print('$extension file saved at: $filePath');
+      setState(() {});
+    }
+
+    await saveFile(srtContent, 'srt');
+    ffmpegButton();
+  }
+
+  String srtFilePath = "";
+  void ffmpegButton() {
+    print("ffmpge start");
+    String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
+    int height = _videoPlayerController.value.size.height.round();
+    int width = _videoPlayerController.value.size.width.round();
+    print("width === > ${_videoPlayerController.value.size.width.toString()}");
+    print(
+        "height === > ${_videoPlayerController.value.size.height.toString()}");
+    String command =
+        '''-y -i "$_outputPath" -vf "subtitles='$srtFilePath:force_style=Fontname=Trueno'" -s ${width}x$height "/storage/emulated/0/Download/output_$timestamp.mp4"''';
+    print("command === > $command");
+    FFmpegKit.execute(command).then((session) async {
+      final returnCode = await session.getReturnCode();
+
+      final allLogs = await session.getAllLogs();
+      allLogs.forEach((log) {
+        print("session logs ==== > ${log.getMessage()}");
+      });
+      final satastic = await session.getAllStatistics();
+      print("session satastic ==== > ${satastic.toString()}");
+      satastic.forEach((satastic) {
+        print("session Time ==== > ${satastic.getTime()}");
+        print("session VideoQuality ==== > ${satastic.getVideoQuality()}");
+      });
+      print("session commonds === > ${session.getCommand()}");
+      print("session Arguments === > ${session.getArguments()}");
+
+      if (ReturnCode.isSuccess(returnCode)) {
+        print("Log 1--------------------------------------> SUCCESS");
+        setState(() {});
+      } else if (ReturnCode.isCancel(returnCode)) {
+        print("Log 2--------------------------------------> CANCEL");
+      } else {
+        print("Log 3--------------------------------------> ERROR");
+        print('Error adding subtitles: ${await session.getFailStackTrace()}');
+        print("${returnCode}");
+      }
+    });
   }
 
   Widget types(String text, Color color, Function() ontap) {

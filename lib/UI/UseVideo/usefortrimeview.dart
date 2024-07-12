@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:video_editing_app/UI/Video_trimmer/trimmer_view.dart';
 
+import '../../util/app_color.dart';
 
 class UseScreentrime extends StatefulWidget {
   final String filePath;
@@ -10,7 +11,8 @@ class UseScreentrime extends StatefulWidget {
 
   const UseScreentrime({
     Key? key,
-    required this.filePath, this.videoID,
+    required this.filePath,
+    this.videoID,
   }) : super(key: key);
 
   @override
@@ -27,7 +29,10 @@ class _UseScreenState extends State<UseScreentrime> {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => TrimmerView(file: File(widget.filePath),videoID: widget.videoID,)));
+              builder: (context) => TrimmerView(
+                    file: File(widget.filePath),
+                    videoID: widget.videoID!,
+                  )));
     });
 
     //_initializePlayer();
@@ -57,7 +62,9 @@ class _UseScreenState extends State<UseScreentrime> {
       //appBar: AppBar(),
       body: Center(
         child: Container(
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(
+            color: AppColor.home_plus_color,
+          ),
         ),
       ),
     );

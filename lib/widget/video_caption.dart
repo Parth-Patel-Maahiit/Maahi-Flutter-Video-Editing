@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:video_editing_app/util/app_color.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../Model/get_caption_data_model.dart' as getcaptiondatamodel;
@@ -82,7 +83,10 @@ class VideoCaption extends StatelessWidget {
                         ),
                       ),
                     )
-                  : Center(child: CircularProgressIndicator()),
+                  : Center(
+                      child: CircularProgressIndicator(
+                      color: AppColor.home_plus_color,
+                    )),
             ),
           ),
         ),

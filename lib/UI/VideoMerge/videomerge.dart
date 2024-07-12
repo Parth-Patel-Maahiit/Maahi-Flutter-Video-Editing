@@ -273,7 +273,9 @@ class _VideoMergeState extends State<VideoMerge> {
       future: _data,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return Center(
+              child:
+                  CircularProgressIndicator(color: AppColor.home_plus_color));
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {

@@ -116,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: SizedBox(
                                       height: 25,
                                       width: 25,
-                                      child: CircularProgressIndicator()),
+                                      child: CircularProgressIndicator(color: AppColor.home_plus_color)),
                                 )
                               : Container(
                                   padding: EdgeInsets.symmetric(vertical: 3),

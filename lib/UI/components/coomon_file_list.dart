@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:video_editing_app/UI/components/common.dart';
 
 import '../../Model/filepath.dart';
+import '../../util/app_color.dart';
 
 class CoomonFileList extends StatelessWidget {
   const CoomonFileList(
@@ -21,11 +22,15 @@ class CoomonFileList extends StatelessWidget {
       future: data,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator(color: AppColor.home_plus_color));
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('No files found.'));
+          return Container(
+            margin: EdgeInsets.only(top: 50),
+            child: Center(
+                child: Text('No Videos found. Tap to plus and explore !')),
+          );
         } else {
           return GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -67,16 +72,24 @@ class CoomonFileList extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(4.0),
-                      child: Text(
-                        // file.path.split('/').last,
-                        file.title,
-                        style: TextStyle(color: Colors.white),
-                        textAlign: TextAlign.center,
-                        overflow:
-                            TextOverflow.ellipsis, // Handle long file names
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            // file.path.split('/').last,
+                            file.title,
+                            style: TextStyle(color: Colors.white),
+                            textAlign: TextAlign.center,
+                            overflow:
+                                TextOverflow.ellipsis, // Handle long file names
+                          ),
+                          Text(
+                            formatDateString(file.date),
+                            style: TextStyle(fontSize: 12),
+                          )
+                        ],
                       ),
                     ),
-                    Text(formatDateString(file.date))
                   ],
                 ),
               );

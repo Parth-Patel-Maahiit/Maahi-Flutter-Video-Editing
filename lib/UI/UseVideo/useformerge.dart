@@ -2,16 +2,18 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:video_editing_app/UI/VideoMerge/videomerge.dart';
 
+import '../../util/app_color.dart';
+
 class UseScreenmerge extends StatefulWidget {
   final String filePath;
   final String pickedfilePath;
-   final String? videoID;
+  final String? videoID;
 
   const UseScreenmerge({
     Key? key,
     required this.filePath,
-    required this.pickedfilePath, this.videoID,
-
+    required this.pickedfilePath,
+    this.videoID,
   }) : super(key: key);
 
   @override
@@ -29,9 +31,10 @@ class _UseScreenState extends State<UseScreenmerge> {
           context,
           MaterialPageRoute(
               builder: (context) => VideoMerge(
-                  filepath: widget.filePath,
-                  pickedfilepath: widget.pickedfilePath,
-                  videoID: widget.videoID, )));
+                    filepath: widget.filePath,
+                    pickedfilepath: widget.pickedfilePath,
+                    videoID: widget.videoID,
+                  )));
     });
 
     //_initializePlayer();
@@ -61,7 +64,9 @@ class _UseScreenState extends State<UseScreenmerge> {
       //appBar: AppBar(),
       body: Center(
         child: Container(
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(
+            color: AppColor.home_plus_color,
+          ),
         ),
       ),
     );

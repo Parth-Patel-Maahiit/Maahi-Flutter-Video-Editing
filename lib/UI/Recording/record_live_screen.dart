@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:camerawesome/camerawesome_plugin.dart';
 import 'package:camerawesome/pigeon.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_editing_app/UI/UseVideo/usescreen.dart';
 import 'package:video_editing_app/UI/components/common.dart';
