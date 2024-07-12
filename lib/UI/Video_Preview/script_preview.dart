@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_editing_app/Model/filepath.dart';
@@ -76,7 +77,6 @@ class _VideoSavePageState extends State<VideoSavePage>
   String action = "";
 
   List<GetCaptionDataModel> _getCations = [];
-  // late GetCaptionDataModel data;
 
   @override
   void initState() {
@@ -525,6 +525,69 @@ class _VideoSavePageState extends State<VideoSavePage>
                             },
                           ),
                           getHighlighgtButtons(
+                              text: "",
+                              color: Color(int.parse(
+                                  _getCations[activeCaptionIndex]
+                                      .textColor
+                                      .toString())),
+                              onTap: () {
+                                // showDialog(
+                                //   context: context,
+                                //   builder: (context) {
+                                //     return AlertDialog(
+                                // content: SingleChildScrollView(
+                                //   child: ColorPicker(
+                                //     pickerColor: Color(int.parse(
+                                //         _getCations[activeCaptionIndex]
+                                //             .textColor)),
+                                //     onColorChanged: (Color color) {
+                                //       if (activeCaptionIndex != -1) {
+                                //         _getCations[activeCaptionIndex]
+                                //             .textColor = color.value;
+
+                                //         _databaseService.updatecolor(
+                                //             _getCations[
+                                //                     activeCaptionIndex]
+                                //                 .id
+                                //                 .toString(),
+                                //             color.value.toString());
+                                //         setState(() {});
+                                //       }
+                                //     },
+                                //   ),
+                                // ),
+                                //     );
+                                //   },
+                                // );
+
+                                // setState(() {});
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (context) {
+                                    return SingleChildScrollView(
+                                      child: ColorPicker(
+                                        pickerColor: Color(int.parse(
+                                            _getCations[activeCaptionIndex]
+                                                .textColor)),
+                                        onColorChanged: (Color color) {
+                                          if (activeCaptionIndex != -1) {
+                                            _getCations[activeCaptionIndex]
+                                                .textColor = color.value;
+
+                                            _databaseService.updatecolor(
+                                                _getCations[activeCaptionIndex]
+                                                    .id
+                                                    .toString(),
+                                                color.value.toString());
+                                            setState(() {});
+                                          }
+                                        },
+                                      ),
+                                    );
+                                  },
+                                );
+                              }),
+                          getHighlighgtButtons(
                               isSelected:
                                   _getCations[activeCaptionIndex].isBold == "1",
                               isBold: true,
@@ -821,6 +884,7 @@ class _VideoSavePageState extends State<VideoSavePage>
       bool isUnderLine = false,
       bool isBold = false,
       required String text,
+      Color? color,
       bool isSelected = false}) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 5),
@@ -834,9 +898,11 @@ class _VideoSavePageState extends State<VideoSavePage>
           padding: EdgeInsets.all(5),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(50),
-              color: isSelected
-                  ? Colors.white
-                  : Color.fromARGB(101, 158, 158, 158)),
+              color: color != null
+                  ? color
+                  : isSelected
+                      ? Colors.white
+                      : Color.fromARGB(101, 158, 158, 158)),
           child: isItalic
               ? Image.asset(
                   "assets/I.png",

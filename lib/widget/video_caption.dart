@@ -119,7 +119,7 @@ class VideoCaption extends StatelessWidget {
                   ? TextDecoration.underline
                   : TextDecoration.none,
               fontSize: 70,
-              color: Color(int.parse(caption.textColor)),
+              color: Color(int.parse(caption.textColor.toString())),
             ),
           ),
         );

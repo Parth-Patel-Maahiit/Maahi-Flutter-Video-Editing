@@ -5,7 +5,8 @@ import 'package:video_editing_app/util/app_color.dart';
 class ProfileContainer extends StatelessWidget {
   late Icon icon;
   late String text;
-  ProfileContainer({super.key, required this.icon, required this.text});
+  final Function() ontap;
+  ProfileContainer({super.key, required this.icon, required this.text, required this.ontap});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +15,7 @@ class ProfileContainer extends StatelessWidget {
       child: InkWell(
         splashFactory: NoSplash.splashFactory,
         highlightColor: Colors.transparent,
-        onTap: () {},
+        onTap: ontap,
         child: Container(
           decoration: BoxDecoration(
             color: AppColor.bg_color_1,
