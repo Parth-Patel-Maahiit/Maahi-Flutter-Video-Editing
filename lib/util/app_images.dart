@@ -33,6 +33,10 @@ class AppImages {
   //export screen Images
   static const String edit = "assets/edit.png";
   static const String export = "assets/export.png";
+  static const String done = "assets/done.png";
+  static const String insta = "assets/instagram.png";
+  static const String tiktok = "assets/tiktok.png";
+  static const String youtube = "assets/youtube.png";
 
   //script preview screen images
    static const String style = "assets/style.png";

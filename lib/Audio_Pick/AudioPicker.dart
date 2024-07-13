@@ -166,13 +166,12 @@ class _AudioPickerState extends State<AudioPicker> {
       if (ReturnCode.isSuccess(returnCode)) {
         // SUCCESS
         print("Log 1--------------------------------------> SUCCESS");
-        String thumbnailPath =
-            await generateThumbnail(outputpath);
+        String thumbnailPath = await generateThumbnail(outputpath);
         _databaseService.editFile(vidId, outputpath, thumbnailPath);
         setState(() {
           isloading = false;
         });
-    
+
         Navigator.of(context)
           ..pop()
           ..pushReplacement(MaterialPageRoute(
@@ -276,42 +275,17 @@ class _AudioPickerState extends State<AudioPicker> {
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          // Expanded(
-                          //   child: ElevatedButton(
-                          //     onPressed: _pickAudio,
-                          //     child: const Text(
-                          //       "Pick Audio",
-                          //       style: TextStyle(color: AppColor.white_color),
-                          //     ),
-                          //   ),
-                          // ),
                           CommonButton(
                             bgcolor: AppColor.elevated_bg_color,
                             text: "Pick Audio",
                             image: AppImages.folder,
                             onPressed: () {
-                              Navigator.pop(context);
                               _pickAudio();
                             },
                           ),
                           SizedBox(
                             width: 20,
                           ),
-                          // Expanded(
-                          //   child: ElevatedButton(
-                          //     onPressed: () {
-                          // setState(() {
-                          //   isloading = true;
-                          //   _audioPlayer.pause();
-                          // });
-                          // _merge();
-                          //     },
-                          //     child: const Text(
-                          //       "Merge",
-                          //       style: TextStyle(color: AppColor.white_color),
-                          //     ),
-                          //   ),
-                          // ),
                           CommonButton(
                             bgcolor: AppColor.elevated_bg_color,
                             text: "Merge",

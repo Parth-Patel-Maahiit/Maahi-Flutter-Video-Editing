@@ -594,16 +594,16 @@ class _VideoMergeState extends State<VideoMerge> {
   }
 
   Future<String> _getOutputDirectoryPath() async {
-    final directory = await getDownloadsDirectory();
+    final directory = await getApplicationCacheDirectory();
     print("directory ========>  $directory");
     String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
     return '${directory?.path}/output_$timestamp.mp4';
   }
 
   Future<void> _mergeafter(String vid1, String vid2, bool isafter) async {
-    // outputpath = await _getOutputDirectoryPath();
-    String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
-    outputpath = "/storage/emulated/0/Download/output_$timestamp.mp4";
+    outputpath = await _getOutputDirectoryPath();
+    // String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
+    // outputpath = "/storage/emulated/0/Download/output_$timestamp.mp4";
     print("Output path ==>  $outputpath");
 
     // String command =
