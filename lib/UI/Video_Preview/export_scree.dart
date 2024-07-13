@@ -667,6 +667,9 @@ class _ExportScreenState extends State<ExportScreen> {
         print("Log 3--------------------------------------> ERROR");
         print('Error adding subtitles: ${await session.getFailStackTrace()}');
         print("${returnCode}");
+        setState(() {
+          action = "";
+        });
       }
     });
   }

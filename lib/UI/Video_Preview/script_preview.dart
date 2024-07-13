@@ -1312,6 +1312,7 @@ class _VideoSavePageState extends State<VideoSavePage>
                           builder: (context) => UseScreenmerge(
                             filePath: _outputPath,
                             pickedfilePath: pickedfile,
+                            videoID: widget.videoID,
                           ),
                         ));
                   },

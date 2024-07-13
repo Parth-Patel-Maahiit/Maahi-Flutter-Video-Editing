@@ -36,11 +36,8 @@ class _MyProjectsScreenState extends State<MyProjectsScreen> {
   }
 
   Future<void> _refreshData() async {
-    // Your logic to refresh data goes here
-    // For example, you can re-fetch the data from an API or database
     await _databaseService.getFilesWithHighestVersion();
 
-    // Make sure to call setState to update the UI after data is refreshed
     setState(() {
       _data = _databaseService.getFilesWithHighestVersion();
     });

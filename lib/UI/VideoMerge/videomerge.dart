@@ -528,7 +528,8 @@ class VideoMerge extends StatefulWidget {
   const VideoMerge({
     super.key,
     required this.filepath,
-    required this.pickedfilepath, this.VidId,
+    required this.pickedfilepath,
+    this.VidId,
   });
 
   @override
@@ -602,7 +603,7 @@ class _VideoMergeState extends State<VideoMerge> {
 
   Future<void> _mergeafter(String vid1, String vid2, bool isafter) async {
     outputpath = await _getOutputDirectoryPath();
-    // String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
+    String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
     // outputpath = "/storage/emulated/0/Download/output_$timestamp.mp4";
     print("Output path ==>  $outputpath");
 
@@ -667,9 +668,11 @@ class _VideoMergeState extends State<VideoMerge> {
 
       if (ReturnCode.isSuccess(returnCode)) {
         print("Log 1--------------------------------------> SUCCESS");
+        print("Vid Id ==>> ${widget.VidId}");
         String thumbnailPath = await generateThumbnail(outputpath);
         //_databaseService.addfile(outputpath, thumbnailPath,);
-        _databaseService.editFile(int.parse(widget.VidId!),outputpath, thumbnailPath);
+        _databaseService.editFile(
+            int.parse(widget.VidId!), outputpath, thumbnailPath);
         Navigator.of(context)
           ..pop()
           ..pushReplacement(MaterialPageRoute(
@@ -683,6 +686,7 @@ class _VideoMergeState extends State<VideoMerge> {
       } else {
         print("Log 3--------------------------------------> ERROR");
         print("${returnCode}");
+        
       }
     });
   }
@@ -935,7 +939,6 @@ class _VideoMergeState extends State<VideoMerge> {
                                     widget.pickedfilepath, false);
                               },
                             ),
-
                             SizedBox(
                               width: 20,
                             ),
