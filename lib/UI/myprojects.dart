@@ -59,6 +59,9 @@ class _MyProjectsScreenState extends State<MyProjectsScreen> {
               onTap: (file) {
                 _playVideo(file.path, file.vid_id.toString());
               },
+              onLongPress: (file) {
+                _showDeleteMenu(context, file);
+              },
             ),
           ],
         ),

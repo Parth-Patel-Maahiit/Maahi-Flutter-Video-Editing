@@ -11,10 +11,12 @@ class CoomonFileList extends StatelessWidget {
       {super.key,
       required this.data,
       required this.onTap,
-      required this.isScroll});
+      required this.isScroll,
+      this.onLongPress});
   final Future<List<FilePath>> data;
   final Function(FilePath) onTap;
   final bool isScroll;
+  final Function(FilePath)? onLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,9 @@ class CoomonFileList extends StatelessWidget {
       future: data,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator(color: AppColor.home_plus_color));
+          return Center(
+              child:
+                  CircularProgressIndicator(color: AppColor.home_plus_color));
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -60,6 +64,11 @@ class CoomonFileList extends StatelessWidget {
                           child: InkWell(
                             onTap: () {
                               onTap(file);
+                            },
+                            onLongPress: () {
+                              if (onLongPress != null) {
+                                onLongPress!(file);
+                              }
                             },
                             child: Image.file(
                               File(file.thumbnail),

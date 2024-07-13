@@ -5,6 +5,7 @@ import 'package:ffmpeg_kit_flutter_video/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_video/return_code.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_editing_app/Model/get_caption_data_model.dart';
 import 'package:video_editing_app/UI/Video_Preview/script_preview.dart';
@@ -36,6 +37,7 @@ class _ExportScreenState extends State<ExportScreen> {
   double? aspectRatio;
   bool isPlaying = false;
   String isactive = "Standard";
+  String action = "";
 
   List<GetCaptionDataModel> _getCations = [];
 
@@ -251,140 +253,167 @@ class _ExportScreenState extends State<ExportScreen> {
                 ),
               ),
             ),
-            Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  borderRadius: BorderRadius.circular(13),
-                                  border: Border.all(
-                                      width: 2, color: AppColor.grey_color)),
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  left: 4,
-                                  right: 4,
-                                  top: 4,
-                                  bottom: 4,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    types(
-                                        "Standard",
-                                        isactive == "Standard"
-                                            ? AppColor.elevated_bg_color
-                                            : Colors.transparent, () {
-                                      setState(() {
-                                        isactive = "Standard";
-                                      });
-                                    }),
-                                    types(
-                                        "HD",
-                                        isactive == "HD"
-                                            ? AppColor.elevated_bg_color
-                                            : Colors.transparent, () {
-                                      setState(() {
-                                        isactive = "HD";
-                                      });
-                                    }),
-                                    types(
-                                        "4K",
-                                        isactive == "4K"
-                                            ? AppColor.elevated_bg_color
-                                            : Colors.transparent, () {
-                                      setState(() {
-                                        isactive = "4K";
-                                      });
-                                    }),
-                                  ],
-                                ),
-                              )))
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: AppColor.elevated_bg_color,
-                              borderRadius: BorderRadius.circular(15)),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 17),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(left: 10),
-                                  child: Text(
-                                    "Remove watermark",
-                                    style: TextStyle(
-                                        color: AppColor.white_color,
-                                        fontSize: 18),
+            if (action == "")
+              Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.transparent,
+                                    borderRadius: BorderRadius.circular(13),
+                                    border: Border.all(
+                                        width: 2, color: AppColor.grey_color)),
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    left: 4,
+                                    right: 4,
+                                    top: 4,
+                                    bottom: 4,
                                   ),
-                                ),
-                              ],
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      types(
+                                          "Standard",
+                                          isactive == "Standard"
+                                              ? AppColor.elevated_bg_color
+                                              : Colors.transparent, () {
+                                        setState(() {
+                                          isactive = "Standard";
+                                        });
+                                      }),
+                                      types(
+                                          "HD",
+                                          isactive == "HD"
+                                              ? AppColor.elevated_bg_color
+                                              : Colors.transparent, () {
+                                        setState(() {
+                                          isactive = "HD";
+                                        });
+                                      }),
+                                      types(
+                                          "4K",
+                                          isactive == "4K"
+                                              ? AppColor.elevated_bg_color
+                                              : Colors.transparent, () {
+                                        setState(() {
+                                          isactive = "4K";
+                                        });
+                                      }),
+                                    ],
+                                  ),
+                                )))
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: AppColor.elevated_bg_color,
+                                borderRadius: BorderRadius.circular(15)),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 17),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 10),
+                                    child: Text(
+                                      "Remove watermark",
+                                      style: TextStyle(
+                                          color: AppColor.white_color,
+                                          fontSize: 18),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  child: Row(
-                    children: [
-                      CommonButton(
-                        bgcolor: AppColor.elevated_bg_color,
-                        text: "Edit",
-                        image: AppImages.edit,
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => VideoSavePage(
-                                  isBackExport: true,
-                                  filePath: _outputPath,
-                                  videoID: widget.videoID,
-                                ),
-                              ));
-                        },
-                      ),
-                      SizedBox(
-                        width: 30,
-                      ),
-                      CommonButton(
-                        bgcolor: AppColor.home_plus_color,
-                        text: "Export",
-                        image: AppImages.export,
-                        onPressed: () {
-                          // _shareVideo();
-                          srtconverter(convertCaptionsToJson(_getCations));
-                        },
-                      ),
-                    ],
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    child: Row(
+                      children: [
+                        CommonButton(
+                          bgcolor: AppColor.elevated_bg_color,
+                          text: "Edit",
+                          image: AppImages.edit,
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => VideoSavePage(
+                                    isBackExport: true,
+                                    filePath: _outputPath,
+                                    videoID: widget.videoID,
+                                  ),
+                                ));
+                          },
+                        ),
+                        SizedBox(
+                          width: 30,
+                        ),
+                        CommonButton(
+                          bgcolor: AppColor.home_plus_color,
+                          text: "Export",
+                          image: AppImages.export,
+                          onPressed: () {
+                            // _shareVideo();
+                            action = "export";
+                            srtconverter(convertCaptionsToJson(_getCations));
+                          },
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            if (action == "export")
+              Column(
+                children: [
+                  Text(
+                    "Preparing Your video",
+                    style: TextStyle(color: AppColor.white_color, fontSize: 20),
                   ),
-                )
-              ],
-            ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 20),
+                    child: Text(
+                      "Please don't close the app or lock your screen while this is in progress",
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  new LinearPercentIndicator(
+                    width: 140.0,
+                    lineHeight: 14.0,
+                    percent: 0.5,
+                    backgroundColor: Colors.grey,
+                    progressColor: Colors.blue,
+                  ),
+                ],
+              )
           ],
         ),
       ),

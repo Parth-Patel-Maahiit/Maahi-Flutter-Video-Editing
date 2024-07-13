@@ -33,7 +33,7 @@ class _UseScreenState extends State<UseScreenmerge> {
               builder: (context) => VideoMerge(
                     filepath: widget.filePath,
                     pickedfilepath: widget.pickedfilePath,
-                    videoID: widget.videoID,
+                    VidId: widget.videoID,
                   )));
     });
 

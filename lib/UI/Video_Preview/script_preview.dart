@@ -390,8 +390,6 @@ class _VideoSavePageState extends State<VideoSavePage>
   bool _keyboardVisible = false;
   String videoAction = "";
 
-  void common() {}
-
   @override
   Widget build(BuildContext context) {
     _keyboardVisible = MediaQuery.of(context).viewInsets.bottom != 0;
