@@ -512,7 +512,6 @@ import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_editing_app/Model/filepath.dart';
 import 'package:video_editing_app/UI/UseVideo/usescreen.dart';
-import 'package:video_editing_app/UI/VideoMerge/projectvideos.dart';
 import 'package:video_editing_app/UI/components/common.dart';
 import 'package:video_editing_app/services/databaseservices.dart';
 import 'package:video_editing_app/util/app_color.dart';
@@ -598,12 +597,12 @@ class _VideoMergeState extends State<VideoMerge> {
     final directory = await getApplicationCacheDirectory();
     print("directory ========>  $directory");
     String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
-    return '${directory?.path}/output_$timestamp.mp4';
+    return '${directory.path}/output_$timestamp.mp4';
   }
 
   Future<void> _mergeafter(String vid1, String vid2, bool isafter) async {
     outputpath = await _getOutputDirectoryPath();
-    String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
+    // String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
     // outputpath = "/storage/emulated/0/Download/output_$timestamp.mp4";
     print("Output path ==>  $outputpath");
 
@@ -686,7 +685,6 @@ class _VideoMergeState extends State<VideoMerge> {
       } else {
         print("Log 3--------------------------------------> ERROR");
         print("${returnCode}");
-        
       }
     });
   }
@@ -958,43 +956,43 @@ class _VideoMergeState extends State<VideoMerge> {
                           ],
                         ),
                       )),
-                  Positioned(
-                    top: 50,
-                    left: 1,
-                    right: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Row(
-                        children: [
-                          CommonButton(
-                            bgcolor: AppColor.elevated_bg_color,
-                            text: "Gallary",
-                            image: AppImages.gallary,
-                            onPressed: () {
-                              _pickVideo();
-                            },
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          CommonButton(
-                            bgcolor: AppColor.elevated_bg_color,
-                            text: "Videos",
-                            image: AppImages.folder,
-                            onPressed: () {
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ProjectVideos(
-                                      filepath: widget.filepath,
-                                    ),
-                                  ));
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
+                  // Positioned(
+                  //   top: 50,
+                  //   left: 1,
+                  //   right: 1,
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.symmetric(horizontal: 15),
+                  //     child: Row(
+                  //       children: [
+                  //         CommonButton(
+                  //           bgcolor: AppColor.elevated_bg_color,
+                  //           text: "Gallary",
+                  //           image: AppImages.gallary,
+                  //           onPressed: () {
+                  //             _pickVideo();
+                  //           },
+                  //         ),
+                  //         SizedBox(
+                  //           width: 10,
+                  //         ),
+                  //         CommonButton(
+                  //           bgcolor: AppColor.elevated_bg_color,
+                  //           text: "Videos",
+                  //           image: AppImages.folder,
+                  //           onPressed: () {
+                  //             Navigator.pushReplacement(
+                  //                 context,
+                  //                 MaterialPageRoute(
+                  //                   builder: (context) => ProjectVideos(
+                  //                     filepath: widget.filepath,
+                  //                   ),
+                  //                 ));
+                  //           },
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // )
                 ],
               ),
       ),

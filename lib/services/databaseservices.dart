@@ -664,7 +664,7 @@ class DatabaseService {
         _captionKeyword: keywords,
         _captionText: text,
         _captionTextColor: "0xFFFFFFFF",
-        _captionBackgroundColor: "0xFF000000",
+        _captionBackgroundColor: "0xFFFF0000",
         _captionIsBold: "0",
         _captionIsUnderline: "0",
         _captionIsItalic: "0",
@@ -724,12 +724,12 @@ class DatabaseService {
     }
   }
 
-  Future<void> updatecolor(String id,String value) async{
+  Future<void> updatecolor(String id, String value) async {
     print("Video Id === >>> $id");
     try {
       final db = await database;
       await db.update(_captionTable, {_captionTextColor: value},
-      where: '$_captionId = ?', whereArgs: [id] );
+          where: '$_captionId = ?', whereArgs: [id]);
       print('Updated Color status for caption with ID: $id');
     } catch (e) {
       print('Error updating color status: $e');

@@ -184,7 +184,7 @@ class _VideoSavePageState extends State<VideoSavePage>
   }
 
   bool maxver = true;
-  bool minver = false;
+  bool minver = true;
 
   Future<void> forward() async {
     print("Function called");
@@ -475,7 +475,7 @@ class _VideoSavePageState extends State<VideoSavePage>
                             EditingButton(
                               onTap: backward,
                               imagePath: "assets/backward.png",
-                              imageColor: minver
+                              imageColor: minver && minver == maxver
                                   ? const Color.fromARGB(255, 65, 65, 65)
                                   : Colors.white,
                             ),

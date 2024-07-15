@@ -518,20 +518,48 @@ class _ExportScreenState extends State<ExportScreen> {
       return time.replaceAll('.', ',');
     }
 
+//     String formatText(Map<String, dynamic> caption) {
+//       String text = caption['text'];
+
+//       // String formattedText =
+//       //     '<font color="#${caption['text_color'].toString().substring(2)}">$text</font>';
+
+// //       String formattedText = '<font style="background-color:#${caption['background_color'].toString().substring(2)}; color:#${caption['text_color'].toString().substring(2)}">$text</font>';
+// // ;
+
+//       // String formattedText =
+//       //     '<font style="background-color:#${caption['background_color'].toString().substring(2)}; color:#${caption['text_color'].toString().substring(2)}">$text</font>';
+
+//       String formattedText = '<div style="background-color: #${caption['background_color'].toString().substring(2)};"><font color="#${caption['text_color'].toString().substring(2)}">$text</font></div>';
+//       if (caption['is_bold'] == "1") {
+//         formattedText = '<b>$formattedText</b>';
+//       }
+//       if (caption['is_italic'] == "1") {
+//         formattedText = '<i>$formattedText</i>';
+//       }
+//       if (caption['is_underline'] == "1") {
+//         formattedText = '<u>$formattedText</u>';
+//       }
+
+//       return formattedText;
+//     }
+
     String formatText(Map<String, dynamic> caption) {
       String text = caption['text'];
+      // String formattedText =
+      //     '<font color="#${caption['text_color'].toString().substring(2)}" bgcolor="#${caption['background_color'].toString().substring(2)}">$text</font>';
 
       String formattedText =
-          '<font color="#${caption['text_color'].toString().substring(2)}">$text</font>';
+          '<font color="#${caption['text_color'].toString().substring(2)}" style="background-color:#${caption['background_color'].toString().substring(2)}">$text</font>';
 
       if (caption['is_bold'] == "1") {
-        formattedText = '<b>$formattedText</b>';
+        formattedText = '<b>${formattedText}</b>';
       }
       if (caption['is_italic'] == "1") {
-        formattedText = '<i>$formattedText</i>';
+        formattedText = '<i>${formattedText}</i>';
       }
       if (caption['is_underline'] == "1") {
-        formattedText = '<u>$formattedText</u>';
+        formattedText = '<u>${formattedText}</u>';
       }
 
       return formattedText;
@@ -597,7 +625,8 @@ class _ExportScreenState extends State<ExportScreen> {
           'is_bold': caption['is_bold'],
           'is_italic': caption['is_italic'],
           'is_underline': caption['is_underline'],
-          'text_color': caption['text_color']
+          'text_color': caption['text_color'],
+          'background_color': caption['background_color']
         });
         srtContent.writeln('${counter++}');
         srtContent.writeln(
