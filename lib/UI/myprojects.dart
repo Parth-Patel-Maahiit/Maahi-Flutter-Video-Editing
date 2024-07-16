@@ -35,35 +35,47 @@ class _MyProjectsScreenState extends State<MyProjectsScreen> {
     });
   }
 
+  Future<void> _refreshData() async {
+    await _databaseService.getFilesWithHighestVersion();
+
+    setState(() {
+      _data = _databaseService.getFilesWithHighestVersion();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(4),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "On my device",
-                style: TextStyle(
-                    color: AppColor.white_color,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
+      child: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "On my device",
+                  style: TextStyle(
+                      color: AppColor.white_color,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-            CoomonFileList(
-              data: _data,
-              isScroll: false,
-              onTap: (file) {
-                _playVideo(file.path, file.vid_id.toString());
-              },
-              onLongPress: (file) {
-                _showDeleteMenu(context, file);
-              },
-            ),
-          ],
+              CoomonFileList(
+                data: _data,
+                isScroll: false,
+                onTap: (file) {
+                  _playVideo(file.path, file.vid_id.toString());
+                },
+                onLongPress: (file) {
+                  _showDeleteMenu(context, file);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

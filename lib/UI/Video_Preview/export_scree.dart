@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:ffmpeg_kit_flutter_video/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_video/return_code.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:share_plus/share_plus.dart';
@@ -75,7 +76,6 @@ class _ExportScreenState extends State<ExportScreen> {
       if (captionData.isNotEmpty) {
         setState(() {
           _getCations = captionAllDate;
-          print("Caption data === > $_getCations");
         });
       }
     }
@@ -151,9 +151,7 @@ class _ExportScreenState extends State<ExportScreen> {
 
   Future<void> getratio() async {
     w = await _databaseService.getwidth(_outputPath);
-    print("width === > $w");
     h = await _databaseService.getheight(_outputPath);
-    print("height === > $h");
     aspectRatio = w / h;
   }
 
@@ -164,84 +162,90 @@ class _ExportScreenState extends State<ExportScreen> {
     }
 
     double height = MediaQuery.of(context).size.height;
-
+    double width = MediaQuery.of(context).size.width;
+    print("width main====== > $width");
+    print("height main====== > $height");
     return SafeArea(
       child: Scaffold(
         body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
-                    splashFactory: NoSplash.splashFactory,
-                    highlightColor: Colors.transparent,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color.fromARGB(78, 0, 0, 0),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: Container(
-                          margin: EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(
-                              Icons.arrow_back_ios_new,
-                              size: 20,
-                              color: AppColor.white_color,
+            if (action == "")
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    InkWell(
+                      splashFactory: NoSplash.splashFactory,
+                      highlightColor: Colors.transparent,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color.fromARGB(78, 0, 0, 0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: Container(
+                            margin: EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(
+                                Icons.arrow_back_ios_new,
+                                size: 20,
+                                color: AppColor.white_color,
+                              ),
                             ),
                           ),
                         ),
                       ),
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
                     ),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  InkWell(
-                    splashFactory: NoSplash.splashFactory,
-                    highlightColor: Colors.transparent,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color.fromARGB(78, 0, 0, 0),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: Container(
-                          margin: EdgeInsets.all(2),
-                          // color: Colors.amber,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(
-                              Icons.more_horiz,
-                              size: 20,
-                              color: AppColor.white_color,
+                    InkWell(
+                      splashFactory: NoSplash.splashFactory,
+                      highlightColor: Colors.transparent,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color.fromARGB(78, 0, 0, 0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: Container(
+                            margin: EdgeInsets.all(2),
+                            // color: Colors.amber,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(
+                                Icons.more_horiz,
+                                size: 20,
+                                color: AppColor.white_color,
+                              ),
                             ),
                           ),
                         ),
                       ),
+                      onTap: () {},
                     ),
-                    onTap: () {},
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
             Expanded(
+              flex: 2,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 40, left: 10, right: 10),
                 child: Stack(
                   children: [
                     VideoCaption(
+                      width: width,
+                      isLogoShow: true,
                       onTapToggle: _togglePlayPause,
                       aspectRatio: aspectRatio,
                       getCations: _getCations,
@@ -353,7 +357,7 @@ class _ExportScreenState extends State<ExportScreen> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     child: Row(
                       children: [
                         CommonButton(
@@ -391,28 +395,111 @@ class _ExportScreenState extends State<ExportScreen> {
                 ],
               ),
             if (action == "export")
-              Column(
-                children: [
-                  Text(
-                    "Preparing Your video",
-                    style: TextStyle(color: AppColor.white_color, fontSize: 20),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 20),
-                    child: Text(
-                      "Please don't close the app or lock your screen while this is in progress",
-                      textAlign: TextAlign.center,
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: [
+                    Text(
+                      "Preparing Your video",
+                      style: TextStyle(
+                          color: AppColor.white_color,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold),
                     ),
-                  ),
-                  new LinearPercentIndicator(
-                    width: 140.0,
-                    lineHeight: 14.0,
-                    percent: 0.5,
-                    backgroundColor: Colors.grey,
-                    progressColor: Colors.blue,
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 30),
+                      child: Text(
+                        "Please don't close the app or lock your screen while this is in progress",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          new LinearPercentIndicator(
+                            width: 140.0,
+                            lineHeight: 14.0,
+                            percent: 0.5,
+                            backgroundColor: Colors.grey,
+                            progressColor: Colors.blue,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ImageIcon(
+                          AssetImage(AppImages.insta),
+                          size: 40,
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        ImageIcon(AssetImage(AppImages.tiktok), size: 40),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        ImageIcon(AssetImage(AppImages.youtube), size: 40),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            if (action == "Done")
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: [
+                    ImageIcon(
+                      AssetImage(AppImages.done),
+                      color: AppColor.white_color,
+                      size: 30,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Saved to Camera Roll",
+                      style: TextStyle(
+                          color: AppColor.white_color,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 100, vertical: 20),
+                      child: Row(
+                        children: [
+                          CommonButton(
+                              image: AppImages.export,
+                              onPressed: () {
+                                _shareVideo();
+                              },
+                              text: "Share",
+                              bgcolor: AppColor.home_plus_color),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 100),
+                      child: Row(
+                        children: [
+                          CommonButton(
+                              image: AppImages.export,
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              text: "Done",
+                              bgcolor: AppColor.elevated_bg_color),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               )
           ],
         ),
@@ -433,20 +520,48 @@ class _ExportScreenState extends State<ExportScreen> {
       return time.replaceAll('.', ',');
     }
 
+//     String formatText(Map<String, dynamic> caption) {
+//       String text = caption['text'];
+
+//       // String formattedText =
+//       //     '<font color="#${caption['text_color'].toString().substring(2)}">$text</font>';
+
+// //       String formattedText = '<font style="background-color:#${caption['background_color'].toString().substring(2)}; color:#${caption['text_color'].toString().substring(2)}">$text</font>';
+// // ;
+
+//       // String formattedText =
+//       //     '<font style="background-color:#${caption['background_color'].toString().substring(2)}; color:#${caption['text_color'].toString().substring(2)}">$text</font>';
+
+//       String formattedText = '<div style="background-color: #${caption['background_color'].toString().substring(2)};"><font color="#${caption['text_color'].toString().substring(2)}">$text</font></div>';
+//       if (caption['is_bold'] == "1") {
+//         formattedText = '<b>$formattedText</b>';
+//       }
+//       if (caption['is_italic'] == "1") {
+//         formattedText = '<i>$formattedText</i>';
+//       }
+//       if (caption['is_underline'] == "1") {
+//         formattedText = '<u>$formattedText</u>';
+//       }
+
+//       return formattedText;
+//     }
+
     String formatText(Map<String, dynamic> caption) {
       String text = caption['text'];
+      // String formattedText =
+      //     '<font color="#${caption['text_color'].toString().substring(2)}" bgcolor="#${caption['background_color'].toString().substring(2)}">$text</font>';
 
       String formattedText =
-          '<font color="#${caption['text_color'].toString().substring(2)}">$text</font>';
+          '<font color="#${caption['text_color'].toString().substring(2)}" style="background-color:#${caption['background_color'].toString().substring(2)}">$text</font>';
 
       if (caption['is_bold'] == "1") {
-        formattedText = '<b>$formattedText</b>';
+        formattedText = '<b>${formattedText}</b>';
       }
       if (caption['is_italic'] == "1") {
-        formattedText = '<i>$formattedText</i>';
+        formattedText = '<i>${formattedText}</i>';
       }
       if (caption['is_underline'] == "1") {
-        formattedText = '<u>$formattedText</u>';
+        formattedText = '<u>${formattedText}</u>';
       }
 
       return formattedText;
@@ -512,7 +627,8 @@ class _ExportScreenState extends State<ExportScreen> {
           'is_bold': caption['is_bold'],
           'is_italic': caption['is_italic'],
           'is_underline': caption['is_underline'],
-          'text_color': caption['text_color']
+          'text_color': caption['text_color'],
+          'background_color': caption['background_color']
         });
         srtContent.writeln('${counter++}');
         srtContent.writeln(
@@ -573,13 +689,18 @@ class _ExportScreenState extends State<ExportScreen> {
 
       if (ReturnCode.isSuccess(returnCode)) {
         print("Log 1--------------------------------------> SUCCESS");
-        setState(() {});
+        setState(() {
+          //action = "Done";
+        });
       } else if (ReturnCode.isCancel(returnCode)) {
         print("Log 2--------------------------------------> CANCEL");
       } else {
         print("Log 3--------------------------------------> ERROR");
         print('Error adding subtitles: ${await session.getFailStackTrace()}');
         print("${returnCode}");
+        setState(() {
+          //action = "";
+        });
       }
     });
   }

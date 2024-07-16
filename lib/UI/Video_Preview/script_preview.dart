@@ -184,7 +184,7 @@ class _VideoSavePageState extends State<VideoSavePage>
   }
 
   bool maxver = true;
-  bool minver = false;
+  bool minver = true;
 
   Future<void> forward() async {
     print("Function called");
@@ -475,7 +475,7 @@ class _VideoSavePageState extends State<VideoSavePage>
                             EditingButton(
                               onTap: backward,
                               imagePath: "assets/backward.png",
-                              imageColor: minver
+                              imageColor: minver && minver == maxver
                                   ? const Color.fromARGB(255, 65, 65, 65)
                                   : Colors.white,
                             ),
@@ -1101,19 +1101,22 @@ class _VideoSavePageState extends State<VideoSavePage>
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(25), topRight: Radius.circular(25)),
             ),
-            padding: EdgeInsets.symmetric(vertical: 30),
+            padding: EdgeInsets.symmetric(vertical: 20),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 20, bottom: 20),
+                    padding: const EdgeInsets.only(left: 15, bottom: 30),
                     child: Row(
                       children: [
                         Text(
                           "Aspect Ratio",
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -1312,6 +1315,7 @@ class _VideoSavePageState extends State<VideoSavePage>
                           builder: (context) => UseScreenmerge(
                             filePath: _outputPath,
                             pickedfilePath: pickedfile,
+                            videoID: widget.videoID,
                           ),
                         ));
                   },

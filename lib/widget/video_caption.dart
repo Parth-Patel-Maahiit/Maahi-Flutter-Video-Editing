@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:video_editing_app/util/app_color.dart';
+import 'package:video_editing_app/util/app_images.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../Model/get_caption_data_model.dart' as getcaptiondatamodel;
@@ -13,16 +14,21 @@ class VideoCaption extends StatelessWidget {
       required this.isPlaying,
       required this.aspectRatio,
       required this.height,
-      required this.getCations});
+      required this.getCations,
+      this.width = 180,
+      this.isLogoShow = false});
   final Function() onTapToggle;
   final VideoPlayerController videoPlayerController;
   final bool isPlaying;
   final double? aspectRatio;
   final double height;
+  final double width;
+  final bool isLogoShow;
   final List<getcaptiondatamodel.GetCaptionDataModel> getCations;
 
   @override
   Widget build(BuildContext context) {
+    print("width ====== > $width");
     return GestureDetector(
       onTap: onTapToggle,
       child: Align(
@@ -77,7 +83,22 @@ class VideoCaption extends StatelessWidget {
                                       padding:
                                           EdgeInsets.symmetric(horizontal: 30),
                                       child: captionData()),
-                                )
+                                ),
+                              if (isLogoShow)
+                                Positioned(
+                                  right: aspectRatio == 9 / 16
+                                      ? width * 0.45
+                                      : width * 0.1,
+                                  top: aspectRatio == 9 / 16
+                                      ? height * 0.04
+                                      : aspectRatio == 1 / 1
+                                          ? height * 0.24
+                                          : height * 0.4,
+                                  child: Image(
+                                    height: 90,
+                                    image: AssetImage(AppImages.logo),
+                                  ),
+                                ),
                             ],
                           ),
                         ),
@@ -124,6 +145,8 @@ class VideoCaption extends StatelessWidget {
                   : TextDecoration.none,
               fontSize: 70,
               color: Color(int.parse(caption.textColor.toString())),
+              // background: Paint()
+              //   ..color = Color(int.parse(caption.backgroundColor.toString())),
             ),
           ),
         );
