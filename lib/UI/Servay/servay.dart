@@ -79,10 +79,12 @@ class _ServayScreenState extends State<ServayScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 20,
         flexibleSpace: TabBar(
           controller: _tabController,
           indicatorColor: AppColor.blue_color,
           indicatorWeight: 1.0,
+          dividerHeight: 1,
           tabs: [
             Tab(icon: Container()),
             Tab(icon: Container()),
@@ -94,6 +96,7 @@ class _ServayScreenState extends State<ServayScreen>
         controller: _tabController,
         children: [
           buildSurveyPage(
+            images: "assets/Home/image6.jpeg",
             top: "Question 1 of 3",
             question: 'What are your videos about?',
             options: [
@@ -111,6 +114,7 @@ class _ServayScreenState extends State<ServayScreen>
             onNext: moveToNextTab,
           ),
           buildSurveyPage(
+            images: "assets/Home/image5.jpeg",
             top: "Question 2 of 3",
             question: 'Where do you share your videos?',
             options: [
@@ -128,6 +132,7 @@ class _ServayScreenState extends State<ServayScreen>
             onNext: moveToNextTab,
           ),
           buildSurveyPage(
+            images: "assets/Home/image2.jpeg",
             top: "Question 3 of 3",
             question: 'How did you hear about VEED?',
             options: [
@@ -160,40 +165,45 @@ class _ServayScreenState extends State<ServayScreen>
     required List<String> selectedOptions,
     required Function(String) onSelectionChange,
     required VoidCallback onNext,
+    required String images,
   }) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                top,
-                style: TextStyle(color: AppColor.white_color),
+          SizedBox(height: 10),
+          Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: SizedBox(
+                height: 260,
+                width: 300,
+                child: Image.asset(
+                  images,
+                  height: 260,
+                  width: 300,
+                  fit: BoxFit.fill,
+                ),
               ),
-            ],
+            ),
           ),
           SizedBox(height: 20),
           Text(
             question,
             style: TextStyle(
-                fontSize: 20, fontWeight: FontWeight.bold, color: AppColor.white_color),
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColor.white_color),
           ),
           SizedBox(height: 10),
-          Text(
-            'Please select all that apply',
-            style: TextStyle(fontSize: 16, color: AppColor.white_color),
-          ),
-          SizedBox(height: 20),
           Expanded(
             child: ListView(
               children: options.map((option) {
                 bool isSelected = selectedOptions.contains(option["label"]);
                 return Padding(
                   padding: const EdgeInsets.symmetric(
-                    vertical: 4,
+                    vertical: 3,
                   ),
                   child: Container(
                     //borderOnForeground: true,
@@ -204,7 +214,7 @@ class _ServayScreenState extends State<ServayScreen>
                         color: AppColor.survay_container,
                         borderRadius: BorderRadius.circular(10)),
                     child: ListTile(
-                      minVerticalPadding: 1,
+                      minVerticalPadding: 0,
                       contentPadding:
                           EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                       leading: Icon(
@@ -212,6 +222,7 @@ class _ServayScreenState extends State<ServayScreen>
                         size: 20.0,
                         color: AppColor.white_color,
                       ),
+                      minTileHeight: 45,
                       title: Text(
                         option['label'],
                         style: TextStyle(color: AppColor.white_color),
@@ -226,7 +237,7 @@ class _ServayScreenState extends State<ServayScreen>
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(30, 0, 30, 20),
+            padding: const EdgeInsets.fromLTRB(30, 0, 30, 10),
             child: ElevatedButton(
               onPressed: onNext,
               child: Center(
@@ -239,7 +250,7 @@ class _ServayScreenState extends State<ServayScreen>
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 50),
+                  minimumSize: const Size(40, 40),
                   backgroundColor: AppColor.white_color,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10))),

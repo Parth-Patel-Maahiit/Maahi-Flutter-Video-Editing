@@ -467,7 +467,7 @@ class _ExportScreenState extends State<ExportScreen> {
                           onPressed: () {
                             // _shareVideo();
                             // action = "export";
-                            vttConverter(convertCaptionsToJson(_getCations));
+                            srtconverter(convertCaptionsToJson(_getCations));
                           },
                         ),
                       ],

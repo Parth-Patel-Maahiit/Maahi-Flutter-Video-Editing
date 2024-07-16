@@ -61,7 +61,10 @@ class _ProjectsScreenState extends State<ProjectsScreen>
         shadowColor: Colors.white70,
         title: Text(
           'APP',
-          style: TextStyle(color: AppColor.white_color),
+          style: TextStyle(
+              color: AppColor.white_color,
+              fontWeight: FontWeight.bold,
+              fontFamily: "Nunito"),
         ),
       ),
       body: [
