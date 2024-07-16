@@ -116,7 +116,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: SizedBox(
                                       height: 25,
                                       width: 25,
-                                      child: CircularProgressIndicator(color: AppColor.home_plus_color)),
+                                      child: CircularProgressIndicator(
+                                          color: AppColor.home_plus_color)),
                                 )
                               : Container(
                                   padding: EdgeInsets.symmetric(vertical: 3),
@@ -141,16 +142,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   height: 40,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(onPressed: () {}, icon: Icon(Icons.face)),
-                    IconButton(onPressed: () {}, icon: Icon(Icons.ac_unit)),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     IconButton(onPressed: () {}, icon: Icon(Icons.face)),
+                //     IconButton(onPressed: () {}, icon: Icon(Icons.ac_unit)),
+                //   ],
+                // ),
+                // SizedBox(
+                //   height: 20,
+                // ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -160,8 +161,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           TextStyle(color: AppColor.white_color, fontSize: 20),
                     ),
                     InkWell(
-                       splashFactory: NoSplash.splashFactory,
-        highlightColor: Colors.transparent,
+                      splashFactory: NoSplash.splashFactory,
+                      highlightColor: Colors.transparent,
                       child: Text(
                         "Create an account",
                         style: TextStyle(color: Colors.blue, fontSize: 20),

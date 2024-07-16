@@ -915,8 +915,6 @@ class _ExportScreenState extends State<ExportScreen> {
       return;
     }
 
-    String videoFilter = '''''';
-
     // Construct the FFmpeg command
     String command =
         // '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}'$srtFilePath:force_style=Fontname=Trueno'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';

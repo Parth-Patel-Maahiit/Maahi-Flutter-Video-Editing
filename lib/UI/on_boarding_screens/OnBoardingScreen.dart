@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:video_editing_app/UI/on_boarding_screens/login.dart';
 import 'package:video_editing_app/UI/on_boarding_screens/signup.dart';
 import 'package:video_editing_app/util/app_color.dart';
@@ -25,11 +26,12 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 SizedBox(
                   height: 40,
                 ),
-                Icon(
-                  Icons.ac_unit_outlined,
-                  size: 100,
-                  color: Colors.amber,
-                ),
+                SizedBox(
+                    height: 150,
+                    width: 150,
+                    child: Lottie.asset(
+                      AppImages.splace,
+                    )),
                 SizedBox(
                   height: 20,
                 ),
@@ -37,23 +39,23 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                   "Welcome to the App!",
                   style: TextStyle(fontSize: 26, color: AppColor.white_color),
                 ),
-                SizedBox(height: 35),
+                SizedBox(height: 30),
                 Padding(
                   padding: const EdgeInsets.only(left: 60, right: 50),
                   child: Text(
                     "Professional basic video editing features, record your precious moments of your daily life. ",
                     style: TextStyle(
-                        color: AppColor.onboarding_text_color, fontSize: 22),
+                        color: AppColor.onboarding_text_color, fontSize: 20),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(34, 100, 34, 5),
+                  padding: const EdgeInsets.fromLTRB(34, 50, 34, 5),
                   child: Row(
                     children: [
                       Expanded(
                         child: InkWell(
-                           splashFactory: NoSplash.splashFactory,
-        highlightColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
+                          highlightColor: Colors.transparent,
                           child: Container(
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
@@ -69,7 +71,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                                     height: 25,
                                     width: 25,
                                   ),
-                                  Text("Continue with gogle",
+                                  Text("Continue with google",
                                       style: TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
@@ -89,8 +91,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                     children: [
                       Expanded(
                         child: InkWell(
-                           splashFactory: NoSplash.splashFactory,
-        highlightColor: Colors.transparent,
+                            splashFactory: NoSplash.splashFactory,
+                            highlightColor: Colors.transparent,
                             child: Container(
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
@@ -128,8 +130,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                   height: 100,
                 ),
                 InkWell(
-                   splashFactory: NoSplash.splashFactory,
-        highlightColor: Colors.transparent,
+                  splashFactory: NoSplash.splashFactory,
+                  highlightColor: Colors.transparent,
                   onTap: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => LoginScreen()));
