@@ -615,6 +615,25 @@ class DatabaseService {
     }
   }
 
+  Future<String> getFileNameByVIdID(int videoId) async {
+    try {
+      final db = await database;
+      final result = await db.rawQuery(
+          'SELECT * FROM $_videotable WHERE $_videovidIdColumnName = ?',
+          [videoId]);
+
+      if (result.isNotEmpty) {
+        return result.toString();
+      } else {
+        // Handle case where no result is found, return a default value or throw an exception
+        throw Exception('Video with ID $videoId not found');
+      }
+    } catch (e) {
+      print("Failed to rename file: $e");
+      return "";
+    }
+  }
+
   final String _captionTable = "captions_table";
   final String _captionId = "id";
   final String _captionVideoId = "vid_id";

@@ -53,6 +53,7 @@ class CommonRatioWidget extends StatelessWidget {
                 Text(
                   title,
                   style: TextStyle(color: Colors.white70),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),

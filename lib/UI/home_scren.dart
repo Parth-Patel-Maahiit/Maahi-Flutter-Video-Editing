@@ -8,6 +8,9 @@ import 'package:video_editing_app/UI/Video_Preview/script_preview.dart';
 import 'package:video_editing_app/util/app_color.dart';
 import 'package:video_editing_app/util/app_images.dart';
 
+import '../services/databaseservices.dart';
+import 'components/common.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
     Key? key,
@@ -20,6 +23,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final DatabaseService _databaseService = DatabaseService.instance;
   int _messageIndex = 0;
   late Timer _timer;
   List<String> messages = [
@@ -57,6 +61,9 @@ class _HomeScreenState extends State<HomeScreen> {
         String pickedFilePath = result.files.single.path!;
 
         if (type == "caption") {
+          String thumbnailPath = await generateThumbnail(pickedFilePath);
+          String name = pickedFilePath.split('/').last;
+          _databaseService.addfile(pickedFilePath, thumbnailPath, name, 9, 16);
           widget.onTap();
           Navigator.push(
             context,
@@ -68,6 +75,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     )),
           );
         } else if (type == "reel") {
+          String thumbnailPath = await generateThumbnail(pickedFilePath);
+          String name = pickedFilePath.split('/').last;
+          _databaseService.addfile(pickedFilePath, thumbnailPath, name, 9, 16);
           widget.onTap();
           Navigator.push(
             context,
