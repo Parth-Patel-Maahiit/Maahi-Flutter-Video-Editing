@@ -15,6 +15,7 @@ import 'package:video_editing_app/util/app_color.dart';
 import 'package:video_editing_app/util/app_images.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../Model/filepath.dart';
 import '../../widget/button.dart';
 import '../../widget/video_caption.dart';
 
@@ -32,6 +33,7 @@ class _ExportScreenState extends State<ExportScreen> {
   final DatabaseService _databaseService = DatabaseService.instance;
 
   late VideoPlayerController _videoPlayerController;
+  MenuController? controller;
 
   late String _outputPath;
 
@@ -39,6 +41,9 @@ class _ExportScreenState extends State<ExportScreen> {
   bool isPlaying = false;
   String isactive = "Standard";
   String action = "";
+  String option = "";
+
+  late String name;
 
   List<GetCaptionDataModel> _getCations = [];
 
@@ -46,6 +51,9 @@ class _ExportScreenState extends State<ExportScreen> {
   void initState() {
     super.initState();
     _outputPath = widget.filePath;
+    name = _databaseService
+        .getFileNameByVIdID(int.parse(widget.videoID))
+        .toString();
     getCaptionData();
     getratio();
     _initializeVideoPlayer().then((_) {
@@ -205,40 +213,127 @@ class _ExportScreenState extends State<ExportScreen> {
                         Navigator.pop(context);
                       },
                     ),
-                    InkWell(
-                      splashFactory: NoSplash.splashFactory,
-                      highlightColor: Colors.transparent,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color.fromARGB(78, 0, 0, 0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(6),
-                          child: Container(
-                            margin: EdgeInsets.all(2),
-                            // color: Colors.amber,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Icon(
-                                Icons.more_horiz,
-                                size: 20,
-                                color: AppColor.white_color,
-                              ),
-                            ),
-                          ),
-                        ),
+                    MenuAnchor(
+                      style: const MenuStyle(
+                        //elevation: MaterialStateProperty.all(10),
+                        //side: MaterialStateProperty.all(BorderSide(width: 2, color: Colors.grey)),
+                        alignment: AlignmentDirectional(-9, 0.7),
+                        shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10)))),
+                        surfaceTintColor: MaterialStatePropertyAll(
+                            AppColor.elevated_bg_color),
+                        backgroundColor: MaterialStatePropertyAll(AppColor
+                            .elevated_bg_color), // Set background color to transparent
+                        // padding: MaterialStateProperty.all(EdgeInsets.all(10)),
                       ),
-                      onTap: () {},
+                      builder: (BuildContext context,
+                          MenuController _controller, Widget? child) {
+                        controller = _controller;
+                        return IconButton(
+                          onPressed: () {
+                            if (_controller.isOpen) {
+                              _controller.close();
+                            } else {
+                              _controller.open();
+                            }
+                          },
+                          icon: const Icon(Icons.more_vert),
+                          color: Colors.white,
+                          tooltip: 'Show menu',
+                        );
+                      },
+                      menuChildren: [
+                        Container(
+                          width: width * 0.6,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 5),
+                                child: Expanded(
+                                  child: InkWell(
+                                    onTap: () => _showRenameDialog(context),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Text(
+                                                "Rename Project",
+                                                style: TextStyle(fontSize: 18),
+                                              ),
+                                            ],
+                                          ),
+                                          // SizedBox(
+                                          //   width: 50,
+                                          // ),
+                                          Text(
+                                            "T",
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Divider(
+                                height: 2,
+                                color: Colors.grey,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Expanded(
+                                  child: InkWell(
+                                    onTap: () =>
+                                        _deleteFile(int.parse(widget.videoID)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Text(
+                                                "Delete Project",
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: AppColor.red_color),
+                                              ),
+                                            ],
+                                          ),
+                                          // SizedBox(
+                                          //   width: 50,
+                                          // ),
+                                          Icon(
+                                            Icons.delete,
+                                            color: AppColor.red_color,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
                     ),
                   ],
                 ),
               ),
             Expanded(
-              flex: 2,
+              flex: 1,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 40, left: 10, right: 10),
                 child: Stack(
@@ -690,7 +785,7 @@ class _ExportScreenState extends State<ExportScreen> {
       if (ReturnCode.isSuccess(returnCode)) {
         print("Log 1--------------------------------------> SUCCESS");
         setState(() {
-          //action = "Done";
+          action = "Done";
         });
       } else if (ReturnCode.isCancel(returnCode)) {
         print("Log 2--------------------------------------> CANCEL");
@@ -699,7 +794,7 @@ class _ExportScreenState extends State<ExportScreen> {
         print('Error adding subtitles: ${await session.getFailStackTrace()}');
         print("${returnCode}");
         setState(() {
-          //action = "";
+          action = "";
         });
       }
     });
@@ -731,5 +826,57 @@ class _ExportScreenState extends State<ExportScreen> {
         ),
       ),
     );
+  }
+
+  // Widget _buildMenu() {
+  //   return MenuBar(style: MenuStyle(), children: [
+  //     Text("Rename"),
+  //   ]);
+  // }
+
+  void _showRenameDialog(BuildContext context) {
+    TextEditingController _controller = TextEditingController(text: "Null");
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Rename File'),
+          content: TextField(
+            controller: _controller,
+            decoration: InputDecoration(hintText: "Enter new name"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                _renameFile(int.parse(widget.videoID), _controller.text);
+                Navigator.pop(context);
+              },
+              child: Text('Rename'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _renameFile(int videoId, String newName) async {
+    if (newName.isNotEmpty) {
+      await _databaseService.renameFile(videoId, newName);
+      // setState(() {
+      //   _data = _databaseService.getFilesWithHighestVersion();
+      // });
+    }
+  }
+
+  Future<void> _deleteFile(int videoId) async {
+    await _databaseService
+        .deleteFile(videoId); // Assuming a deleteFile method exists
+    await _databaseService.deleteCaptionData(videoId);
+    Navigator.pop(context); // Close the bottom sheet
   }
 }
