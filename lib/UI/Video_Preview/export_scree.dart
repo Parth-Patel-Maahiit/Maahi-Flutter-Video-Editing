@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:ffmpeg_kit_flutter_video/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_video/return_code.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:share_plus/share_plus.dart';
@@ -163,8 +162,6 @@ class _ExportScreenState extends State<ExportScreen> {
 
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    print("width main====== > $width");
-    print("height main====== > $height");
     return SafeArea(
       child: Scaffold(
         body: Column(
@@ -385,8 +382,8 @@ class _ExportScreenState extends State<ExportScreen> {
                           image: AppImages.export,
                           onPressed: () {
                             // _shareVideo();
-                            action = "export";
-                            srtconverter(convertCaptionsToJson(_getCations));
+                            // action = "export";
+                            vttConverter(convertCaptionsToJson(_getCations));
                           },
                         ),
                       ],
@@ -419,7 +416,7 @@ class _ExportScreenState extends State<ExportScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          new LinearPercentIndicator(
+                          LinearPercentIndicator(
                             width: 140.0,
                             lineHeight: 14.0,
                             percent: 0.5,
@@ -507,71 +504,19 @@ class _ExportScreenState extends State<ExportScreen> {
     );
   }
 
-  String convertCaptionsToJson(List<GetCaptionDataModel> captions) {
-    List<Map<String, dynamic>> jsonData =
-        captions.map((caption) => caption.toJson()).toList();
-    return jsonEncode(jsonData);
-  }
-
-  void srtconverter(String jsonData) async {
+  void vttConverter(String jsonData) async {
     List<dynamic> captionData = jsonDecode(jsonData);
 
     String formatTime(String time) {
       return time.replaceAll('.', ',');
     }
 
-//     String formatText(Map<String, dynamic> caption) {
-//       String text = caption['text'];
-
-//       // String formattedText =
-//       //     '<font color="#${caption['text_color'].toString().substring(2)}">$text</font>';
-
-// //       String formattedText = '<font style="background-color:#${caption['background_color'].toString().substring(2)}; color:#${caption['text_color'].toString().substring(2)}">$text</font>';
-// // ;
-
-//       // String formattedText =
-//       //     '<font style="background-color:#${caption['background_color'].toString().substring(2)}; color:#${caption['text_color'].toString().substring(2)}">$text</font>';
-
-//       String formattedText = '<div style="background-color: #${caption['background_color'].toString().substring(2)};"><font color="#${caption['text_color'].toString().substring(2)}">$text</font></div>';
-//       if (caption['is_bold'] == "1") {
-//         formattedText = '<b>$formattedText</b>';
-//       }
-//       if (caption['is_italic'] == "1") {
-//         formattedText = '<i>$formattedText</i>';
-//       }
-//       if (caption['is_underline'] == "1") {
-//         formattedText = '<u>$formattedText</u>';
-//       }
-
-//       return formattedText;
-//     }
-
     String formatText(Map<String, dynamic> caption) {
       String text = caption['text'];
-      // String formattedText =
-      //     '<font color="#${caption['text_color'].toString().substring(2)}" bgcolor="#${caption['background_color'].toString().substring(2)}">$text</font>';
-
+      String textColor = caption['text_color'].toString().substring(2);
+      String bgColor = caption['background_color'].toString().substring(2);
       String formattedText =
-          '<font color="#${caption['text_color'].toString().substring(2)}" style="background-color:#${caption['background_color'].toString().substring(2)}">$text</font>';
-
-      if (caption['is_bold'] == "1") {
-        formattedText = '<b>${formattedText}</b>';
-      }
-      if (caption['is_italic'] == "1") {
-        formattedText = '<i>${formattedText}</i>';
-      }
-      if (caption['is_underline'] == "1") {
-        formattedText = '<u>${formattedText}</u>';
-      }
-
-      return formattedText;
-    }
-
-    String formatTextForCombine(Map<String, dynamic> caption) {
-      String text = caption['text'];
-
-      String formattedText = "$text";
-      // '<font color="#${caption['text_color'].toString().substring(2)}">$text</font>';
+          '<font c."#$textColor" bg."#$bgColor">$text</font>';
 
       if (caption['is_bold'] == "1") {
         formattedText = '<b>$formattedText</b>';
@@ -586,6 +531,222 @@ class _ExportScreenState extends State<ExportScreen> {
       return formattedText;
     }
 
+    String formatTextForCombine(
+        Map<String, dynamic> caption, List<dynamic> captions) {
+      List<int> idsIntList = caption['combine_ids']
+          .toString()
+          .split(",")
+          .map((id) => int.parse(id.trim()))
+          .toList();
+      String finlText = "";
+      for (var id in idsIntList) {
+        var currentCaption = captions[id];
+        String text = currentCaption['keyword'];
+        String textColor = currentCaption['text_color'].toString().substring(2);
+        String bgColor =
+            currentCaption['background_color'].toString().substring(2);
+        String formattedText =
+            '<font c."#$textColor" background="#$bgColor">$text</font>';
+
+        if (currentCaption['is_bold'] == "1") {
+          formattedText = '<b>$formattedText</b>';
+        }
+        if (currentCaption['is_italic'] == "1") {
+          formattedText = '<i>$formattedText</i>';
+        }
+        if (currentCaption['is_underline'] == "1") {
+          formattedText = '<u>$formattedText</u>';
+        }
+        print("Combine Ids datas === > $id ==== > ${formattedText}");
+        finlText += '$formattedText '; // Add a space between words
+      }
+
+      return finlText.trim();
+    }
+
+    String createVttContent(
+      List<dynamic> captions,
+    ) {
+      StringBuffer vttContent = StringBuffer();
+      vttContent.writeln('WEBVTT');
+
+      Map<String, Map<String, dynamic>> combinedCaptions = {};
+
+      for (var caption in captions) {
+        List<int> idsIntList = caption['combine_ids']
+            .toString()
+            .split(",")
+            .map((id) => int.parse(id.trim()))
+            .toList();
+        if (idsIntList.length == 1) {
+          combinedCaptions[caption['id'].toString()] = {
+            'start_from': caption['start_from'],
+            'end_to': caption['end_to'],
+            'text': formatText(caption),
+          };
+        } else {
+          String combinedId = idsIntList.join("-");
+          if (!combinedCaptions.containsKey(combinedId)) {
+            combinedCaptions[combinedId] = {
+              'start_from': caption['start_from'],
+              'end_to': caption['end_to'],
+              'text': formatTextForCombine(caption, captions),
+            };
+          } else {
+            combinedCaptions[combinedId]?['end_to'] = caption['end_to'];
+          }
+        }
+      }
+
+      combinedCaptions.forEach((id, caption) {
+        vttContent.writeln();
+        vttContent.writeln('${caption["start_from"]} --> ${caption["end_to"]}');
+        vttContent.writeln(caption["text"]);
+      });
+
+      return vttContent.toString();
+    }
+
+    // String createAssContent(List<dynamic> captions) {
+    //   StringBuffer assContent = StringBuffer();
+    //   assContent.writeln('[Script Info]');
+    //   assContent.writeln('; Script generated by srtconverter');
+    //   assContent.writeln('Title: Example');
+    //   assContent.writeln('ScriptType: v4.00+');
+    //   assContent.writeln('PlayDepth: 0');
+    //   assContent.writeln('[V4+ Styles]');
+    //   assContent.writeln(
+    //       'Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding');
+    //   assContent.writeln(
+    //       'Style: Default,Arial,20,&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,1,0,2,10,10,10,1');
+    //   assContent.writeln('[Events]');
+    //   assContent.writeln(
+    //       'Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text');
+
+    //   Map<String, Map<String, dynamic>> combinedCaptions = {};
+
+    //   for (var caption in captions) {
+    //     List<int> idsIntList = caption['combine_ids']
+    //         .toString()
+    //         .split(",")
+    //         .map((id) => int.parse(id.trim()))
+    //         .toList();
+    //     if (idsIntList.length == 1) {
+    //       combinedCaptions[caption['id'].toString()] = {
+    //         'start_from': caption['start_from'],
+    //         'end_to': caption['end_to'],
+    //         'text': formatText(caption),
+    //       };
+    //     } else {
+    //       String combinedId = idsIntList.join("-");
+    //       if (!combinedCaptions.containsKey(combinedId)) {
+    //         combinedCaptions[combinedId] = {
+    //           'start_from': caption['start_from'],
+    //           'end_to': caption['end_to'],
+    //           'text': formatTextForCombine(caption, captions),
+    //         };
+    //       } else {
+    //         combinedCaptions[combinedId]?['end_to'] = caption['end_to'];
+    //       }
+    //     }
+    //   }
+
+    //   combinedCaptions.forEach((id, caption) {
+    //     assContent.writeln(
+    //         'Dialogue: 0,${formatTime(caption["start_from"])},${formatTime(caption["end_to"])},Default,,0,0,0,,${caption["text"]}');
+    //   });
+
+    //   return assContent.toString();
+    // }
+
+    String vttContent = createVttContent(captionData);
+    // String assContent = createAssContent(captionData);
+
+    Future<void> saveFile(String content, String extension) async {
+      String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
+      final directory = await getExternalStorageDirectory();
+      final filePath = '${directory!.path}/captions_$timestamp.$extension';
+      final file = File(filePath);
+      await file.writeAsString(content);
+      srtFilePath = filePath;
+      if (extension == "ass") {
+        ffmpegButton(true, extension);
+      } else {
+        ffmpegButton(false, extension);
+      }
+      print('$extension file saved at: $filePath');
+    }
+
+    await saveFile(vttContent, 'vtt');
+    // await saveFile(assContent, 'ass');
+  }
+
+  String convertCaptionsToJson(List<GetCaptionDataModel> captions) {
+    List<Map<String, dynamic>> jsonData =
+        captions.map((caption) => caption.toJson()).toList();
+    return jsonEncode(jsonData);
+  }
+
+  void srtconverter(String jsonData) async {
+    List<dynamic> captionData = jsonDecode(jsonData);
+
+    String formatTime(String time) {
+      return time.replaceAll('.', ',');
+    }
+
+    String formatText(Map<String, dynamic> caption) {
+      String text = caption['text'];
+      String textColor = caption['text_color'].toString().substring(2);
+      String bgColor = caption['background_color'].toString().substring(2);
+      String formattedText =
+          '<font color="#$textColor" background="#$bgColor">$text</font>';
+
+      if (caption['is_bold'] == "1") {
+        formattedText = '<b>$formattedText</b>';
+      }
+      if (caption['is_italic'] == "1") {
+        formattedText = '<i>$formattedText</i>';
+      }
+      if (caption['is_underline'] == "1") {
+        formattedText = '<u>$formattedText</u>';
+      }
+
+      return formattedText;
+    }
+
+    String formatTextForCombine(
+        Map<String, dynamic> caption, List<dynamic> captions) {
+      List<int> idsIntList = caption['combine_ids']
+          .toString()
+          .split(",")
+          .map((id) => int.parse(id.trim()))
+          .toList();
+      String finlText = "";
+      for (var id in idsIntList) {
+        var currentCaption = captions[id];
+        String text = currentCaption['keyword'];
+        String textColor = currentCaption['text_color'].toString().substring(2);
+        String bgColor =
+            currentCaption['background_color'].toString().substring(2);
+        String formattedText =
+            '<font color="#$textColor" background="#$bgColor">$text</font>';
+
+        if (currentCaption['is_bold'] == "1") {
+          formattedText = '<b>$formattedText</b>';
+        }
+        if (currentCaption['is_italic'] == "1") {
+          formattedText = '<i>$formattedText</i>';
+        }
+        if (currentCaption['is_underline'] == "1") {
+          formattedText = '<u>$formattedText</u>';
+        }
+        print("Combine Ids datas === > $id ==== > ${formattedText}");
+        finlText += '$formattedText '; // Add a space between words
+      }
+
+      return finlText.trim();
+    }
+
     String createSrtContent(List<dynamic> captions) {
       StringBuffer srtContent = StringBuffer();
       int counter = 1;
@@ -598,42 +759,32 @@ class _ExportScreenState extends State<ExportScreen> {
             .split(",")
             .map((id) => int.parse(id.trim()))
             .toList();
-
         if (idsIntList.length == 1) {
-          combinedCaptions[caption['id'].toString()] = caption;
+          combinedCaptions[caption['id'].toString()] = {
+            'start_from': caption['start_from'],
+            'end_to': caption['end_to'],
+            'text': formatText(caption),
+          };
         } else {
           String combinedId = idsIntList.join("-");
           if (!combinedCaptions.containsKey(combinedId)) {
+            print("combinedIdIF ===> $combinedId ====> $combinedCaptions");
             combinedCaptions[combinedId] = {
               'start_from': caption['start_from'],
               'end_to': caption['end_to'],
-              'text': formatTextForCombine(caption),
-              'is_bold': caption['is_bold'],
-              'is_italic': caption['is_italic'],
-              'is_underline': caption['is_underline'],
-              'text_color': caption['text_color'],
-              'background_color': caption['background_color'],
+              'text': formatTextForCombine(caption, captions),
             };
           } else {
             combinedCaptions[combinedId]?['end_to'] = caption['end_to'];
-            combinedCaptions[combinedId]?['text'] += ' ' + caption['text'];
           }
         }
       }
 
       combinedCaptions.forEach((id, caption) {
-        String formattedText = formatText({
-          'text': caption['text'],
-          'is_bold': caption['is_bold'],
-          'is_italic': caption['is_italic'],
-          'is_underline': caption['is_underline'],
-          'text_color': caption['text_color'],
-          'background_color': caption['background_color']
-        });
         srtContent.writeln('${counter++}');
         srtContent.writeln(
             '${formatTime(caption["start_from"])} --> ${formatTime(caption["end_to"])}');
-        srtContent.writeln(formattedText);
+        srtContent.writeln(caption["text"]);
         srtContent.writeln();
       });
 
@@ -646,8 +797,8 @@ class _ExportScreenState extends State<ExportScreen> {
 
     Future<void> saveFile(String content, String extension) async {
       String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
-      final directory = await getApplicationCacheDirectory();
-      final filePath = '${directory.path}/captions_$timestamp.$extension';
+      final directory = await getExternalStorageDirectory();
+      final filePath = '${directory!.path}/captions_$timestamp.$extension';
       final file = File(filePath);
       await file.writeAsString(content);
       srtFilePath = filePath;
@@ -656,11 +807,11 @@ class _ExportScreenState extends State<ExportScreen> {
     }
 
     await saveFile(srtContent, 'srt');
-    ffmpegButton();
+    ffmpegButton(false, 'srt');
   }
 
   String srtFilePath = "";
-  void ffmpegButton() {
+  void ffmpegButton(bool isAssFile, String extension) {
     print("ffmpge start");
     String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
     int height = _videoPlayerController.value.size.height.round();
@@ -669,7 +820,7 @@ class _ExportScreenState extends State<ExportScreen> {
     print(
         "height === > ${_videoPlayerController.value.size.height.toString()}");
     String command =
-        '''-y -i "$_outputPath" -vf "subtitles='$srtFilePath:force_style=Fontname=Trueno'" -s ${width}x$height "/storage/emulated/0/Download/output_$timestamp.mp4"''';
+        '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}'$srtFilePath:force_style=Fontname=Trueno'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
     print("command === > $command");
     FFmpegKit.execute(command).then((session) async {
       final returnCode = await session.getReturnCode();
