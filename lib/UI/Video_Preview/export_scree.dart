@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:ffmpeg_kit_flutter_video/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_video/return_code.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:share_plus/share_plus.dart';
@@ -75,7 +76,6 @@ class _ExportScreenState extends State<ExportScreen> {
       if (captionData.isNotEmpty) {
         setState(() {
           _getCations = captionAllDate;
-          print("Caption data === > $_getCations");
         });
       }
     }
@@ -151,9 +151,7 @@ class _ExportScreenState extends State<ExportScreen> {
 
   Future<void> getratio() async {
     w = await _databaseService.getwidth(_outputPath);
-    print("width === > $w");
     h = await _databaseService.getheight(_outputPath);
-    print("height === > $h");
     aspectRatio = w / h;
   }
 
@@ -164,7 +162,9 @@ class _ExportScreenState extends State<ExportScreen> {
     }
 
     double height = MediaQuery.of(context).size.height;
-
+    double width = MediaQuery.of(context).size.width;
+    print("width main====== > $width");
+    print("height main====== > $height");
     return SafeArea(
       child: Scaffold(
         body: Column(
@@ -244,6 +244,8 @@ class _ExportScreenState extends State<ExportScreen> {
                 child: Stack(
                   children: [
                     VideoCaption(
+                      width: width,
+                      isLogoShow: true,
                       onTapToggle: _togglePlayPause,
                       aspectRatio: aspectRatio,
                       getCations: _getCations,
@@ -432,16 +434,16 @@ class _ExportScreenState extends State<ExportScreen> {
                       children: [
                         ImageIcon(
                           AssetImage(AppImages.insta),
-                          size: 50,
+                          size: 40,
                         ),
                         SizedBox(
                           width: 20,
                         ),
-                        ImageIcon(AssetImage(AppImages.tiktok), size: 50),
+                        ImageIcon(AssetImage(AppImages.tiktok), size: 40),
                         SizedBox(
                           width: 20,
                         ),
-                        ImageIcon(AssetImage(AppImages.youtube), size: 50),
+                        ImageIcon(AssetImage(AppImages.youtube), size: 40),
                       ],
                     )
                   ],
@@ -688,7 +690,7 @@ class _ExportScreenState extends State<ExportScreen> {
       if (ReturnCode.isSuccess(returnCode)) {
         print("Log 1--------------------------------------> SUCCESS");
         setState(() {
-          action = "Done";
+          //action = "Done";
         });
       } else if (ReturnCode.isCancel(returnCode)) {
         print("Log 2--------------------------------------> CANCEL");
@@ -697,7 +699,7 @@ class _ExportScreenState extends State<ExportScreen> {
         print('Error adding subtitles: ${await session.getFailStackTrace()}');
         print("${returnCode}");
         setState(() {
-          action = "";
+          //action = "";
         });
       }
     });

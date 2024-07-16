@@ -37,6 +37,7 @@ class AppImages {
   static const String insta = "assets/instagram.png";
   static const String tiktok = "assets/tiktok.png";
   static const String youtube = "assets/youtube.png";
+  static const String logo = "assets/logo.png";
 
   //script preview screen images
    static const String style = "assets/style.png";
