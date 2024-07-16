@@ -28,7 +28,6 @@ class VideoCaption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("width ====== > $width");
     return GestureDetector(
       onTap: onTapToggle,
       child: Align(
@@ -136,6 +135,8 @@ class VideoCaption extends StatelessWidget {
           TextSpan(
             text: caption.keyword + " ",
             style: TextStyle(
+              // backgroundColor:
+              // Color(int.parse(caption.backgroundColor.toString())),
               fontWeight:
                   caption.isBold == "1" ? FontWeight.bold : FontWeight.normal,
               fontStyle:

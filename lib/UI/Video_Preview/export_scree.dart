@@ -14,7 +14,6 @@ import 'package:video_editing_app/util/app_color.dart';
 import 'package:video_editing_app/util/app_images.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../Model/filepath.dart';
 import '../../widget/button.dart';
 import '../../widget/video_caption.dart';
 
@@ -241,82 +240,72 @@ class _ExportScreenState extends State<ExportScreen> {
                         );
                       },
                       menuChildren: [
-                        Container(
+                        SizedBox(
                           width: width * 0.6,
                           child: Column(
                             children: [
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 5),
-                                child: Expanded(
-                                  child: InkWell(
-                                    onTap: () => _showRenameDialog(context),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Column(
-                                            children: [
-                                              Text(
-                                                "Rename Project",
-                                                style: TextStyle(fontSize: 18),
-                                              ),
-                                            ],
-                                          ),
-                                          // SizedBox(
-                                          //   width: 50,
-                                          // ),
-                                          Text(
-                                            "T",
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold),
-                                          )
-                                        ],
-                                      ),
+                                child: InkWell(
+                                  onTap: () => _showRenameDialog(context),
+                                  child: const Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 8),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            Text(
+                                              "Rename Project",
+                                              style: TextStyle(fontSize: 18),
+                                            ),
+                                          ],
+                                        ),
+                                        Text(
+                                          "T",
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        )
+                                      ],
                                     ),
                                   ),
                                 ),
                               ),
-                              Divider(
+                              const Divider(
                                 height: 2,
                                 color: Colors.grey,
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Expanded(
-                                  child: InkWell(
-                                    onTap: () =>
-                                        _deleteFile(int.parse(widget.videoID)),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Column(
-                                            children: [
-                                              Text(
-                                                "Delete Project",
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: AppColor.red_color),
-                                              ),
-                                            ],
-                                          ),
-                                          // SizedBox(
-                                          //   width: 50,
-                                          // ),
-                                          Icon(
-                                            Icons.delete,
-                                            color: AppColor.red_color,
-                                          )
-                                        ],
-                                      ),
+                                child: InkWell(
+                                  onTap: () =>
+                                      _deleteFile(int.parse(widget.videoID)),
+                                  child: const Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 8),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            Text(
+                                              "Delete Project",
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  color: AppColor.red_color),
+                                            ),
+                                          ],
+                                        ),
+                                        Icon(
+                                          Icons.delete,
+                                          color: AppColor.red_color,
+                                        )
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -610,8 +599,7 @@ class _ExportScreenState extends State<ExportScreen> {
       String text = caption['text'];
       String textColor = caption['text_color'].toString().substring(2);
       String bgColor = caption['background_color'].toString().substring(2);
-      String formattedText =
-          '<font c."#$textColor" bg."#$bgColor">$text</font>';
+      String formattedText = '<c.yellow.bg_blue>$text</c>';
 
       if (caption['is_bold'] == "1") {
         formattedText = '<b>$formattedText</b>';
@@ -640,8 +628,7 @@ class _ExportScreenState extends State<ExportScreen> {
         String textColor = currentCaption['text_color'].toString().substring(2);
         String bgColor =
             currentCaption['background_color'].toString().substring(2);
-        String formattedText =
-            '<font c."#$textColor" background="#$bgColor">$text</font>';
+        String formattedText = '<c.yellow.bg_blue>$text</c>';
 
         if (currentCaption['is_bold'] == "1") {
           formattedText = '<b>$formattedText</b>';
@@ -756,7 +743,7 @@ class _ExportScreenState extends State<ExportScreen> {
 
     String vttContent = createVttContent(captionData);
     // String assContent = createAssContent(captionData);
-
+    print('vttContent ==> $vttContent');
     Future<void> saveFile(String content, String extension) async {
       String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
       final directory = await getExternalStorageDirectory();
@@ -793,18 +780,19 @@ class _ExportScreenState extends State<ExportScreen> {
       String text = caption['text'];
       String textColor = caption['text_color'].toString().substring(2);
       String bgColor = caption['background_color'].toString().substring(2);
-      String formattedText =
-          '<font color="#$textColor" background="#$bgColor">$text</font>';
 
       if (caption['is_bold'] == "1") {
-        formattedText = '<b>$formattedText</b>';
+        text = '<b>$text</b>';
       }
       if (caption['is_italic'] == "1") {
-        formattedText = '<i>$formattedText</i>';
+        text = '<i>$text</i>';
       }
       if (caption['is_underline'] == "1") {
-        formattedText = '<u>$formattedText</u>';
+        text = '<u>$text</u>';
       }
+
+      String formattedText =
+          '<font color="#$textColor" background="#$bgColor">$text</font>';
 
       return formattedText;
     }
@@ -836,10 +824,10 @@ class _ExportScreenState extends State<ExportScreen> {
           formattedText = '<u>$formattedText</u>';
         }
         print("Combine Ids datas === > $id ==== > ${formattedText}");
-        finlText += '$formattedText '; // Add a space between words
+        finlText += '$formattedText ';
       }
 
-      return finlText.trim();
+      return finlText;
     }
 
     String createSrtContent(List<dynamic> captions) {
@@ -914,8 +902,31 @@ class _ExportScreenState extends State<ExportScreen> {
     print("width === > ${_videoPlayerController.value.size.width.toString()}");
     print(
         "height === > ${_videoPlayerController.value.size.height.toString()}");
+
+    String cropFilter;
+    if (aspectRatio == 1 / 1) {
+      cropFilter = "crop=in_h:in_h";
+    } else if (aspectRatio == 9 / 16) {
+      cropFilter = "crop=in_h*9/16:in_h";
+    } else if (aspectRatio == 4 / 3) {
+      cropFilter = "crop=in_h*4/3:in_h";
+    } else {
+      print("Unsupported aspect ratio");
+      return;
+    }
+
+    String videoFilter = '''''';
+
+    // Construct the FFmpeg command
     String command =
-        '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}'$srtFilePath:force_style=Fontname=Trueno'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
+        // '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}'$srtFilePath:force_style=Fontname=Trueno'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
+
+// working
+        '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}$srtFilePath:force_style='Fontname==Roboto-Condensed-Bold,Fontsize=24,Outline=1,Shadow=1'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
+
+    // '''-y -i "$_outputPath" -vf "$cropFilter,${isAssFile ? "ass=" : "subtitles="}$srtFilePath:force_style='Fontname=Trueno,Fontsize=24,Outline=1,Shadow=1,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BackColour=&H80000000'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
+    // '''-y -i "$_outputPath" -vf "$cropFilter,scale=$width:$height" -c:a copy "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
+
     print("command === > $command");
     FFmpegKit.execute(command).then((session) async {
       final returnCode = await session.getReturnCode();
