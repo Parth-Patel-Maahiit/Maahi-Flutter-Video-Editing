@@ -263,7 +263,7 @@ class DatabaseService {
         FROM $_videotable AS inner_table
         WHERE inner_table.$_videovidIdColumnName = $_videotable.$_videovidIdColumnName
       )
-      ORDER BY $_videoDateColumnName ASC
+      ORDER BY $_videoIdColumnName DESC
     ''');
 
     print("Data ========> $data");

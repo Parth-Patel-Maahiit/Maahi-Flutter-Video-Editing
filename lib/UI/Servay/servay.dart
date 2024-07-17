@@ -82,7 +82,7 @@ class _ServayScreenState extends State<ServayScreen>
         controller: _tabController,
         children: [
           buildSurveyPage(
-            images: "assets/Home/image8.png",
+            images: "assets/Home/image6.jpeg",
             top: "Question 1 of 3",
             question: 'What are your videos about?',
             options: [
@@ -100,7 +100,7 @@ class _ServayScreenState extends State<ServayScreen>
             onNext: moveToNextTab,
           ),
           buildSurveyPage(
-            images: "assets/Home/image7.png",
+            images: "assets/Home/image5.jpeg",
             top: "Question 2 of 3",
             question: 'Where do you share your videos?',
             options: [
@@ -118,7 +118,7 @@ class _ServayScreenState extends State<ServayScreen>
             onNext: moveToNextTab,
           ),
           buildSurveyPage(
-            images: "assets/Home/image9.png",
+            images: "assets/Home/image2.jpeg",
             top: "Question 3 of 3",
             question: 'How did you hear about VEED?',
             options: [
