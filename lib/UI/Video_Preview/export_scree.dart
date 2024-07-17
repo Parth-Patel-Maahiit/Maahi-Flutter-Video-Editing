@@ -29,12 +29,13 @@ class ExportScreen extends StatefulWidget {
   State<ExportScreen> createState() => _ExportScreenState();
 }
 
-class _ExportScreenState extends State<ExportScreen> {
+class _ExportScreenState extends State<ExportScreen>
+    with TickerProviderStateMixin {
   final DatabaseService _databaseService = DatabaseService.instance;
 
   late VideoPlayerController _videoPlayerController;
   MenuController? controller;
-
+  late AnimationController progressController;
   late String _outputPath;
 
   double? aspectRatio;
@@ -479,6 +480,15 @@ class _ExportScreenState extends State<ExportScreen> {
                             onPressed: () {
                               // _shareVideo();
                               action = "export";
+                              progressController = AnimationController(
+                                /// [AnimationController]s can be created with `vsync: this` because of
+                                /// [TickerProviderStateMixin].
+                                vsync: this,
+                                duration: const Duration(seconds: 8),
+                              )..addListener(() {
+                                  setState(() {});
+                                });
+                              progressController.repeat();
                               if (_getCations.isNotEmpty) {
                                 srtconverter(
                                     convertCaptionsToJson(_getCations));
@@ -493,8 +503,8 @@ class _ExportScreenState extends State<ExportScreen> {
                   ],
                 ),
               if (action == "export")
-                Expanded(
-                  flex: 1,
+                SizedBox(
+                  height: height * 0.35,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -511,6 +521,7 @@ class _ExportScreenState extends State<ExportScreen> {
                         child: Text(
                           "Please don't close the app or lock your screen while this is in progress",
                           textAlign: TextAlign.center,
+                          style: TextStyle(color: AppColor.grey_color),
                         ),
                       ),
                       Padding(
@@ -519,12 +530,15 @@ class _ExportScreenState extends State<ExportScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             LinearPercentIndicator(
-                              width: 140.0,
-                              lineHeight: 14.0,
-                              percent: 0.5,
-                              backgroundColor: Colors.grey,
-                              progressColor: Colors.blue,
+                              barRadius: Radius.circular(10),
+                              width: 200,
+                              lineHeight: 7.0,
+                              percent: progressController.value,
+                              backgroundColor: AppColor.elevated_bg_color,
+                              progressColor: AppColor.home_plus_color,
                             ),
+                            Text(
+                                "${(progressController.value * 100).round()}%"),
                           ],
                         ),
                       ),
@@ -533,16 +547,16 @@ class _ExportScreenState extends State<ExportScreen> {
                         children: [
                           ImageIcon(
                             AssetImage(AppImages.insta),
-                            size: 40,
+                            size: 30,
                           ),
                           SizedBox(
-                            width: 20,
+                            width: 25,
                           ),
-                          ImageIcon(AssetImage(AppImages.tiktok), size: 40),
+                          ImageIcon(AssetImage(AppImages.tiktok), size: 30),
                           SizedBox(
-                            width: 20,
+                            width: 25,
                           ),
-                          ImageIcon(AssetImage(AppImages.youtube), size: 40),
+                          ImageIcon(AssetImage(AppImages.youtube), size: 30),
                         ],
                       )
                     ],
@@ -608,7 +622,7 @@ class _ExportScreenState extends State<ExportScreen> {
     );
   }
 
-  void vttConverter(String jsonData) async {
+  /* void vttConverter(String jsonData) async {
     List<dynamic> captionData = jsonDecode(jsonData);
 
     String formatTime(String time) {
@@ -781,7 +795,7 @@ class _ExportScreenState extends State<ExportScreen> {
 
     await saveFile(vttContent, 'vtt');
     // await saveFile(assContent, 'ass');
-  }
+  } */
 
   String convertCaptionsToJson(List<GetCaptionDataModel> captions) {
     List<Map<String, dynamic>> jsonData =
@@ -1016,6 +1030,7 @@ String formatTextForCombine(
         print("Log 1--------------------------------------> SUCCESS");
         setState(() {
           action = "Done";
+          progressController.dispose();
         });
       } else if (ReturnCode.isCancel(returnCode)) {
         print("Log 2--------------------------------------> CANCEL");
@@ -1023,8 +1038,10 @@ String formatTextForCombine(
         print("Log 3--------------------------------------> ERROR");
         print('Error adding subtitles: ${await session.getFailStackTrace()}');
         print("${returnCode}");
+
         setState(() {
           action = "";
+          progressController.dispose();
         });
       }
     });
@@ -1107,6 +1124,12 @@ String formatTextForCombine(
     await _databaseService
         .deleteFile(videoId); // Assuming a deleteFile method exists
     await _databaseService.deleteCaptionData(videoId);
-    Navigator.pop(context); // Close the bottom sheet
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProjectsScreen(),
+      ),
+      (route) => false,
+    );
   }
 }

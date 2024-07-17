@@ -57,7 +57,7 @@ class _ProjectsScreenState extends State<ProjectsScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        scrolledUnderElevation: 1,
+        scrolledUnderElevation: 0,
         shadowColor: Colors.white70,
         title: Text(
           'APP',
