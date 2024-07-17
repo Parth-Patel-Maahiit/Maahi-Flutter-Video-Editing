@@ -1,10 +1,11 @@
 class FilePath {
   final int vid_id, id, version;
-  final String path,date;
+  final String path, date;
   final String thumbnail;
   final String title;
   final int width;
   final int height;
+  final String name;
   //final String script;
 
   FilePath({
@@ -17,5 +18,6 @@ class FilePath {
     required this.width,
     required this.height,
     required this.date,
+    required this.name,
   });
 }

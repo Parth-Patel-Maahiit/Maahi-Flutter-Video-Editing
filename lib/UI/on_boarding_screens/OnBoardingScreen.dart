@@ -60,7 +60,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                                 color: AppColor.white_color,
-                                borderRadius: BorderRadius.circular(10)),
+                                borderRadius: BorderRadius.circular(25)),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               child: Row(
@@ -97,7 +97,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                   color: AppColor.white_color,
-                                  borderRadius: BorderRadius.circular(10)),
+                                  borderRadius: BorderRadius.circular(25)),
                               child: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 12),

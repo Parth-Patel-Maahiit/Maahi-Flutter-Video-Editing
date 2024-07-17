@@ -134,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             backgroundColor: AppColor.white_color,
                             shape: RoundedRectangleBorder(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(10)))),
+                                    BorderRadius.all(Radius.circular(25)))),
                       ),
                     ),
                   ],

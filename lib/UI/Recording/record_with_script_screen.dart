@@ -190,7 +190,7 @@ class _RecordWithScriptScreenState extends State<RecordWithScriptScreen> {
           String thumbnailPath = await generateThumbnail(filePath);
 
           await _databaseService.addfile(
-              filePath, thumbnailPath, widget.title, 9, 16);
+              filePath, thumbnailPath, widget.title, widget.title, 9, 16);
 
           AddVideo(widget.title, script_id, filePath);
 

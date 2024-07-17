@@ -116,7 +116,7 @@ class _ProjectsScreenState extends State<ProjectsScreen>
                   ),
                 ],
                 RotationTransition(
-                  turns: Tween(begin: 0.0, end: 0.35).animate(_controller),
+                  turns: Tween(begin: 0.0, end: 0.38).animate(_controller),
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(50),

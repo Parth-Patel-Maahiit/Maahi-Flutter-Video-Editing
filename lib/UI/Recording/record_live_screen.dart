@@ -95,6 +95,7 @@ class _CameraPageState extends State<CameraPage> {
             filePath,
             thumbnailPath,
             name,
+            name,
             9,
             16,
           );

@@ -116,7 +116,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               lable: "mobile",
               type: TextInputType.number,
             ),
-
             SizedBox(
               height: 25,
             ),
@@ -143,7 +142,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       padding: EdgeInsets.symmetric(vertical: 15),
                       child: isloading
                           ? Center(
-                              child: CircularProgressIndicator(color: AppColor.home_plus_color),
+                              child: CircularProgressIndicator(
+                                  color: AppColor.home_plus_color),
                             )
                           : Text(
                               "Create Account",
@@ -157,7 +157,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         backgroundColor: AppColor.white_color,
                         shape: RoundedRectangleBorder(
                             borderRadius:
-                                BorderRadius.all(Radius.circular(10)))),
+                                BorderRadius.all(Radius.circular(25)))),
                   ),
                 ),
               ],

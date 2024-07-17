@@ -150,7 +150,7 @@ class _MyProjectsScreenState extends State<MyProjectsScreen> {
   }
 
   void _showRenameDialog(BuildContext context, FilePath file) {
-    TextEditingController _controller = TextEditingController(text: file.title);
+    TextEditingController _controller = TextEditingController(text: file.name);
 
     showDialog(
       context: context,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:video_editing_app/UI/on_boarding_screens/OnBoardingScreen.dart';
 import 'package:video_editing_app/util/app_color.dart';
+import 'package:video_editing_app/widget/button.dart';
 
 class ServayScreen extends StatefulWidget {
   @override
@@ -40,29 +41,7 @@ class _ServayScreenState extends State<ServayScreen>
 
   void moveToNextTab() {
     if (currentTabIndex < 2) {
-      if (currentTabIndex == 0 && selectedVideos.isEmpty ||
-          currentTabIndex == 1 && selectedPlatforms.isEmpty ||
-          currentTabIndex == 2 && heardAbout.isEmpty) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Error'),
-              content: Text('Please select at least one option.'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      } else {
-        _tabController.animateTo(currentTabIndex + 1);
-      }
+      _tabController.animateTo(currentTabIndex + 1);
     } else {
       Navigator.pushAndRemoveUntil(
         context,
@@ -201,6 +180,7 @@ class _ServayScreenState extends State<ServayScreen>
             child: ListView(
               children: options.map((option) {
                 bool isSelected = selectedOptions.contains(option["label"]);
+                print("Options $selectedOptions");
                 return Padding(
                   padding: const EdgeInsets.symmetric(
                     vertical: 3,
@@ -214,7 +194,6 @@ class _ServayScreenState extends State<ServayScreen>
                         color: AppColor.survay_container,
                         borderRadius: BorderRadius.circular(10)),
                     child: ListTile(
-                      minVerticalPadding: 0,
                       contentPadding:
                           EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                       leading: Icon(
@@ -225,7 +204,9 @@ class _ServayScreenState extends State<ServayScreen>
                       minTileHeight: 45,
                       title: Text(
                         option['label'],
-                        style: TextStyle(color: AppColor.white_color),
+                        style: TextStyle(
+                          color: AppColor.white_color,
+                        ),
                       ),
                       onTap: () {
                         onSelectionChange(option['label']);
@@ -241,21 +222,29 @@ class _ServayScreenState extends State<ServayScreen>
             child: ElevatedButton(
               onPressed: onNext,
               child: Center(
-                child: Text(
-                  currentTabIndex == 2 ? 'Done' : 'Next',
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: AppColor.black_color,
-                      fontWeight: FontWeight.bold),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Text(
+                    currentTabIndex == 2 ? 'Done' : 'Next',
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: AppColor.black_color,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
               style: ElevatedButton.styleFrom(
                   minimumSize: const Size(40, 40),
                   backgroundColor: AppColor.white_color,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10))),
+                      borderRadius: BorderRadius.circular(22))),
             ),
           ),
+          // CommonButton(
+          //     isimage: false,
+          //     onPressed: onNext,
+          //     text: currentTabIndex == 2 ? 'Done' : 'Next',
+          //     bgcolor: AppColor.elevated_bg_color)
         ],
       ),
     );

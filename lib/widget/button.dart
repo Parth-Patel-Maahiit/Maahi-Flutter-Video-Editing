@@ -9,11 +9,13 @@ class CommonButton extends StatefulWidget {
       this.image,
       required this.onPressed,
       required this.text,
-      required this.bgcolor});
+      required this.bgcolor,
+      this.isimage = true});
   final String? image;
   final Function() onPressed;
   final String text;
   final Color bgcolor;
+  final bool isimage;
 
   @override
   State<CommonButton> createState() => _CommonButtonState();
@@ -31,14 +33,14 @@ class _CommonButtonState extends State<CommonButton> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (widget.image!.isNotEmpty)
+                if (widget.isimage)
                   Image.asset(
                     widget.image!,
                     width: 20,
                     height: 20,
                     color: AppColor.white_color,
                   ),
-                if (widget.image!.isNotEmpty)
+                if (widget.isimage)
                   SizedBox(
                     width: 13,
                   ),

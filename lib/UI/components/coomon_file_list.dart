@@ -86,7 +86,7 @@ class CoomonFileList extends StatelessWidget {
                         children: [
                           Text(
                             // file.path.split('/').last,
-                            file.title,
+                            file.name,
                             style: TextStyle(color: Colors.white),
                             textAlign: TextAlign.center,
                             overflow:

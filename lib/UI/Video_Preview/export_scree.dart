@@ -49,9 +49,8 @@ class _ExportScreenState extends State<ExportScreen> {
   void initState() {
     super.initState();
     _outputPath = widget.filePath;
-    name = _databaseService
-        .getFileNameByVIdID(int.parse(widget.videoID))
-        .toString();
+    _initi();
+
     getCaptionData();
     getratio();
     _initializeVideoPlayer().then((_) {
@@ -61,6 +60,11 @@ class _ExportScreenState extends State<ExportScreen> {
     });
   }
 
+  Future<void> _initi() async {
+    name = await _databaseService.getFileNameByVIdID(int.parse(widget.videoID));
+    print("Name ===> $name");
+  }
+
   @override
   void dispose() {
     _videoPlayerController.dispose();
@@ -68,7 +72,7 @@ class _ExportScreenState extends State<ExportScreen> {
   }
 
   void _shareVideo() {
-    Share.shareFiles([_outputPath], text: 'Check out this video!');
+    Share.shareFiles([finalpath], text: 'Check out this video!');
   }
 
   void getCaptionData() async {
@@ -466,7 +470,7 @@ class _ExportScreenState extends State<ExportScreen> {
                           image: AppImages.export,
                           onPressed: () {
                             // _shareVideo();
-                            // action = "export";
+                            action = "export";
                             srtconverter(convertCaptionsToJson(_getCations));
                           },
                         ),
@@ -479,6 +483,7 @@ class _ExportScreenState extends State<ExportScreen> {
               Expanded(
                 flex: 1,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       "Preparing Your video",
@@ -534,6 +539,7 @@ class _ExportScreenState extends State<ExportScreen> {
               Expanded(
                 flex: 1,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ImageIcon(
                       AssetImage(AppImages.done),
@@ -893,6 +899,8 @@ class _ExportScreenState extends State<ExportScreen> {
     ffmpegButton(false, 'srt');
   }
 
+  late String finalpath;
+
   String srtFilePath = "";
   void ffmpegButton(bool isAssFile, String extension) {
     print("ffmpge start");
@@ -914,13 +922,15 @@ class _ExportScreenState extends State<ExportScreen> {
       print("Unsupported aspect ratio");
       return;
     }
+    finalpath =
+        "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4";
 
     // Construct the FFmpeg command
     String command =
         // '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}'$srtFilePath:force_style=Fontname=Trueno'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
 
 // working
-        '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}$srtFilePath:force_style='Fontname==Roboto-Condensed-Bold,Fontsize=24,Outline=1,Shadow=1'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
+        '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}$srtFilePath:force_style='Fontname==Roboto-Condensed-Bold,Fontsize=24,Outline=1,Shadow=1'" -s ${width}x$height $finalpath''';
 
     // '''-y -i "$_outputPath" -vf "$cropFilter,${isAssFile ? "ass=" : "subtitles="}$srtFilePath:force_style='Fontname=Trueno,Fontsize=24,Outline=1,Shadow=1,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BackColour=&H80000000'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
     // '''-y -i "$_outputPath" -vf "$cropFilter,scale=$width:$height" -c:a copy "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
@@ -995,7 +1005,7 @@ class _ExportScreenState extends State<ExportScreen> {
   // }
 
   void _showRenameDialog(BuildContext context) {
-    TextEditingController _controller = TextEditingController(text: "Null");
+    TextEditingController _controller = TextEditingController(text: name);
 
     showDialog(
       context: context,

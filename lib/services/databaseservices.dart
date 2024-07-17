@@ -20,6 +20,7 @@ class DatabaseService {
   final String _videoWidthColumnName = "width";
   final String _videoheightColumnName = "height";
   final String _videoDateColumnName = "date";
+  final String _videoNameColumnName = "name";
 
   Future<Database> get database async {
     if (_db != null) {
@@ -57,7 +58,8 @@ class DatabaseService {
           $_videoTitleColumnName TEXT,
           $_videoWidthColumnName INTEGER,
           $_videoheightColumnName INTEGER,
-          $_videoDateColumnName TEXT
+          $_videoDateColumnName TEXT,
+          $_videoNameColumnName TEXT
         )
         ''');
   }
@@ -139,7 +141,7 @@ class DatabaseService {
   //   return result.isNotEmpty ? result.first[_videovidIdColumnName] as int : 0;
   // }
 
-  Future<void> addfile(String file, String thumbnail, String filename,
+  Future<void> addfile(String file, String thumbnail,String title, String filename,
       double width, double height) async {
     try {
       final db = await database;
@@ -152,10 +154,11 @@ class DatabaseService {
         _videovidIdColumnName: vidId,
         _videothumbnailpathColumnName: thumbnail,
         _videoVersionColumnName: version,
-        _videoTitleColumnName: filename,
+        _videoTitleColumnName: title,
         _videoWidthColumnName: width,
         _videoheightColumnName: height,
         _videoDateColumnName: dateTime.toString(),
+        _videoNameColumnName: filename,
       });
 
       print("File added successfully: $file");
@@ -215,6 +218,7 @@ class DatabaseService {
           _videoWidthColumnName: result.last[_videoWidthColumnName],
           _videoheightColumnName: result.last[_videoheightColumnName],
           _videoDateColumnName: dateTime.toString(),
+          _videoNameColumnName: result.first[_videoNameColumnName],
         });
 
         print("File edited successfully: $newFilePath");
@@ -243,6 +247,7 @@ class DatabaseService {
               width: e[_videoWidthColumnName] as int,
               height: e[_videoheightColumnName] as int,
               date: e["date"] as String,
+              name: e["name"] as String,
             ))
         .toList();
     return files;
@@ -273,6 +278,7 @@ class DatabaseService {
               width: e[_videoWidthColumnName] as int,
               height: e[_videoheightColumnName] as int,
               date: e[_videoDateColumnName] as String,
+              name: e["name"] as String,
             ))
         .toList();
 
@@ -355,6 +361,7 @@ class DatabaseService {
           width: file[_videoWidthColumnName] as int,
           height: file[_videoheightColumnName] as int,
           date: file[_videoDateColumnName] as String,
+          name: file[_videoNameColumnName] as String,
         );
       }
     } catch (e) {
@@ -560,7 +567,7 @@ class DatabaseService {
 
       await db.update(
         _videotable,
-        {_videoTitleColumnName: newFilePath},
+        {_videoNameColumnName: newFilePath},
         where: '$_videovidIdColumnName = ?',
         whereArgs: [id],
       );
@@ -571,65 +578,66 @@ class DatabaseService {
     }
   }
 
-  Future<void> renameFilesByVidId(int vidId, String newFilePath) async {
-    try {
-      final db = await database;
+  // Future<void> renameFilesByVidId(int vidId, String newFilePath) async {
+  //   try {
+  //     final db = await database;
 
-      // Fetch all files with the same vid_id
-      final files = await db.query(
-        _videotable,
-        where: '$_videovidIdColumnName = ?',
-        whereArgs: [vidId],
-      );
+  //     // Fetch all files with the same vid_id
+  //     final files = await db.query(
+  //       _videotable,
+  //       where: '$_videovidIdColumnName = ?',
+  //       whereArgs: [vidId],
+  //     );
 
-      // Iterate over each file and rename
-      for (final file in files) {
-        final oldFilePath = file[_videofilepathColumnName] as String;
-        final oldThumbnailPath = file[_videothumbnailpathColumnName] as String;
+  //     // Iterate over each file and rename
+  //     for (final file in files) {
+  //       final oldFilePath = file[_videofilepathColumnName] as String;
+  //       final oldThumbnailPath = file[_videothumbnailpathColumnName] as String;
 
-        // Define new file paths
-        final newFileName = basename(newFilePath);
-        final newThumbnailName = 'thumbnail_${newFileName}';
-        final newThumbnailPath = join(dirname(newFilePath), newThumbnailName);
+  //       // Define new file paths
+  //       final newFileName = basename(newFilePath);
+  //       final newThumbnailName = 'thumbnail_${newFileName}';
+  //       final newThumbnailPath = join(dirname(newFilePath), newThumbnailName);
 
-        // Rename files on disk
-        final newFile = await File(oldFilePath).rename(newFilePath);
-        final newThumbnail =
-            await File(oldThumbnailPath).rename(newThumbnailPath);
+  //       // Rename files on disk
+  //       final newFile = await File(oldFilePath).rename(newFilePath);
+  //       final newThumbnail =
+  //           await File(oldThumbnailPath).rename(newThumbnailPath);
 
-        // Update database record
-        await db.update(
-          _videotable,
-          {
-            _videofilepathColumnName: newFile.path,
-            _videothumbnailpathColumnName: newThumbnail.path,
-          },
-          where: '$_videoIdColumnName = ?',
-          whereArgs: [file[_videoIdColumnName]],
-        );
-      }
+  //       // Update database record
+  //       await db.update(
+  //         _videotable,
+  //         {
+  //           _videofilepathColumnName: newFile.path,
+  //           _videothumbnailpathColumnName: newThumbnail.path,
+  //         },
+  //         where: '$_videoIdColumnName = ?',
+  //         whereArgs: [file[_videoIdColumnName]],
+  //       );
+  //     }
 
-      print("Files renamed successfully for vid_id: $vidId");
-    } catch (e) {
-      print("Failed to rename files: $e");
-    }
-  }
+  //     print("Files renamed successfully for vid_id: $vidId");
+  //   } catch (e) {
+  //     print("Failed to rename files: $e");
+  //   }
+  // }
 
   Future<String> getFileNameByVIdID(int videoId) async {
     try {
       final db = await database;
       final result = await db.rawQuery(
-          'SELECT * FROM $_videotable WHERE $_videovidIdColumnName = ?',
+          'SELECT $_videoNameColumnName FROM $_videotable WHERE $_videovidIdColumnName = ?',
           [videoId]);
 
       if (result.isNotEmpty) {
-        return result.toString();
+        return result.last[_videoNameColumnName] as String;
       } else {
-        // Handle case where no result is found, return a default value or throw an exception
-        throw Exception('Video with ID $videoId not found');
+        // Handle case where no result is found
+        return "default_filename"; // You can choose to return a default value
       }
     } catch (e) {
-      print("Failed to rename file: $e");
+      // Use logging instead of print if available
+      print("Failed to get filename by video ID: $e");
       return "";
     }
   }

@@ -63,7 +63,8 @@ class _HomeScreenState extends State<HomeScreen> {
         if (type == "caption") {
           String thumbnailPath = await generateThumbnail(pickedFilePath);
           String name = pickedFilePath.split('/').last;
-          _databaseService.addfile(pickedFilePath, thumbnailPath, name, 9, 16);
+          _databaseService.addfile(
+              pickedFilePath, thumbnailPath, name, name, 9, 16);
           widget.onTap();
           Navigator.push(
             context,
@@ -77,7 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
         } else if (type == "reel") {
           String thumbnailPath = await generateThumbnail(pickedFilePath);
           String name = pickedFilePath.split('/').last;
-          _databaseService.addfile(pickedFilePath, thumbnailPath, name, 9, 16);
+          _databaseService.addfile(
+              pickedFilePath, thumbnailPath, name, name, 9, 16);
           widget.onTap();
           Navigator.push(
             context,
