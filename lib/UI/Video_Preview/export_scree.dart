@@ -8,7 +8,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_editing_app/Model/get_caption_data_model.dart';
+import 'package:video_editing_app/UI/Projects.dart';
 import 'package:video_editing_app/UI/Video_Preview/script_preview.dart';
+import 'package:video_editing_app/UI/components/common_back_button.dart';
 import 'package:video_editing_app/services/databaseservices.dart';
 import 'package:video_editing_app/util/app_color.dart';
 import 'package:video_editing_app/util/app_images.dart';
@@ -173,422 +175,434 @@ class _ExportScreenState extends State<ExportScreen> {
 
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return SafeArea(
-      child: Scaffold(
-        body: Column(
-          children: [
-            if (action == "")
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      splashFactory: NoSplash.splashFactory,
-                      highlightColor: Colors.transparent,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color.fromARGB(78, 0, 0, 0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(6),
-                          child: Container(
-                            margin: EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Icon(
-                                Icons.arrow_back_ios_new,
-                                size: 20,
-                                color: AppColor.white_color,
-                              ),
-                            ),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) {
+          return;
+        }
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProjectsScreen(),
+          ),
+          (route) => false,
+        );
+      },
+      child: SafeArea(
+        child: Scaffold(
+          body: Column(
+            children: [
+              if (action == "")
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CommonBackButton(onTap: () {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProjectsScreen(),
                           ),
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    MenuAnchor(
-                      style: const MenuStyle(
-                        //elevation: MaterialStateProperty.all(10),
-                        //side: MaterialStateProperty.all(BorderSide(width: 2, color: Colors.grey)),
-                        alignment: AlignmentDirectional(-9, 0.7),
-                        shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10)))),
-                        surfaceTintColor: MaterialStatePropertyAll(
-                            AppColor.elevated_bg_color),
-                        backgroundColor: MaterialStatePropertyAll(AppColor
-                            .elevated_bg_color), // Set background color to transparent
-                        // padding: MaterialStateProperty.all(EdgeInsets.all(10)),
-                      ),
-                      builder: (BuildContext context,
-                          MenuController _controller, Widget? child) {
-                        controller = _controller;
-                        return IconButton(
-                          onPressed: () {
-                            if (_controller.isOpen) {
-                              _controller.close();
-                            } else {
-                              _controller.open();
-                            }
-                          },
-                          icon: const Icon(Icons.more_vert),
-                          color: Colors.white,
-                          tooltip: 'Show menu',
+                          (route) => false,
                         );
-                      },
-                      menuChildren: [
-                        SizedBox(
-                          width: width * 0.6,
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 5),
-                                child: InkWell(
-                                  onTap: () => _showRenameDialog(context),
-                                  child: const Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Text(
-                                              "Rename Project",
-                                              style: TextStyle(fontSize: 18),
-                                            ),
-                                          ],
-                                        ),
-                                        Text(
-                                          "T",
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const Divider(
-                                height: 2,
-                                color: Colors.grey,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: InkWell(
-                                  onTap: () =>
-                                      _deleteFile(int.parse(widget.videoID)),
-                                  child: const Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Text(
-                                              "Delete Project",
-                                              style: TextStyle(
-                                                  fontSize: 18,
-                                                  color: AppColor.red_color),
-                                            ),
-                                          ],
-                                        ),
-                                        Icon(
-                                          Icons.delete,
-                                          color: AppColor.red_color,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                      }),
+                      Container(
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color.fromARGB(169, 67, 67, 67),
+                        ),
+                        child: MenuAnchor(
+                          style: const MenuStyle(
+                            //elevation: MaterialStateProperty.all(10),
+                            //side: MaterialStateProperty.all(BorderSide(width: 2, color: Colors.grey)),
+                            alignment: AlignmentDirectional(-9, 0.7),
+                            shape: MaterialStatePropertyAll(
+                                RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10)))),
+                            surfaceTintColor: MaterialStatePropertyAll(
+                                AppColor.elevated_bg_color),
+                            backgroundColor: MaterialStatePropertyAll(AppColor
+                                .elevated_bg_color), // Set background color to transparent
+                            // padding: MaterialStateProperty.all(EdgeInsets.all(10)),
                           ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 40, left: 10, right: 10),
-                child: Stack(
-                  children: [
-                    VideoCaption(
-                      width: width,
-                      isLogoShow: true,
-                      onTapToggle: _togglePlayPause,
-                      aspectRatio: aspectRatio,
-                      getCations: _getCations,
-                      height: height,
-                      isPlaying: isPlaying,
-                      videoPlayerController: _videoPlayerController,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            if (action == "")
-              Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                            child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.transparent,
-                                    borderRadius: BorderRadius.circular(13),
-                                    border: Border.all(
-                                        width: 2, color: AppColor.grey_color)),
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                    left: 4,
-                                    right: 4,
-                                    top: 4,
-                                    bottom: 4,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      types(
-                                          "Standard",
-                                          isactive == "Standard"
-                                              ? AppColor.elevated_bg_color
-                                              : Colors.transparent, () {
-                                        setState(() {
-                                          isactive = "Standard";
-                                        });
-                                      }),
-                                      types(
-                                          "HD",
-                                          isactive == "HD"
-                                              ? AppColor.elevated_bg_color
-                                              : Colors.transparent, () {
-                                        setState(() {
-                                          isactive = "HD";
-                                        });
-                                      }),
-                                      types(
-                                          "4K",
-                                          isactive == "4K"
-                                              ? AppColor.elevated_bg_color
-                                              : Colors.transparent, () {
-                                        setState(() {
-                                          isactive = "4K";
-                                        });
-                                      }),
-                                    ],
-                                  ),
-                                )))
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: AppColor.elevated_bg_color,
-                                borderRadius: BorderRadius.circular(15)),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 17),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                          builder: (BuildContext context,
+                              MenuController _controller, Widget? child) {
+                            controller = _controller;
+                            return IconButton(
+                              onPressed: () {
+                                if (_controller.isOpen) {
+                                  _controller.close();
+                                } else {
+                                  _controller.open();
+                                }
+                              },
+                              icon: const Icon(Icons.more_horiz),
+                              color: Colors.white,
+                              tooltip: 'Show menu',
+                            );
+                          },
+                          menuChildren: [
+                            SizedBox(
+                              width: width * 0.6,
+                              child: Column(
                                 children: [
                                   Padding(
-                                    padding: EdgeInsets.only(left: 10),
-                                    child: Text(
-                                      "Remove watermark",
-                                      style: TextStyle(
-                                          color: AppColor.white_color,
-                                          fontSize: 18),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 5),
+                                    child: InkWell(
+                                      onTap: () => _showRenameDialog(context),
+                                      child: const Padding(
+                                        padding:
+                                            EdgeInsets.symmetric(horizontal: 8),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Column(
+                                              children: [
+                                                Text(
+                                                  "Rename Project",
+                                                  style:
+                                                      TextStyle(fontSize: 18),
+                                                ),
+                                              ],
+                                            ),
+                                            Text(
+                                              "T",
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const Divider(
+                                    height: 2,
+                                    color: Colors.grey,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: InkWell(
+                                      onTap: () => _deleteFile(
+                                          int.parse(widget.videoID)),
+                                      child: const Padding(
+                                        padding:
+                                            EdgeInsets.symmetric(horizontal: 8),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Column(
+                                              children: [
+                                                Text(
+                                                  "Delete Project",
+                                                  style: TextStyle(
+                                                      fontSize: 18,
+                                                      color:
+                                                          AppColor.red_color),
+                                                ),
+                                              ],
+                                            ),
+                                            Icon(
+                                              Icons.delete,
+                                              color: AppColor.red_color,
+                                            )
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                          ),
+                            )
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Row(
-                      children: [
-                        CommonButton(
-                          bgcolor: AppColor.elevated_bg_color,
-                          text: "Edit",
-                          image: AppImages.edit,
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => VideoSavePage(
-                                    isBackExport: true,
-                                    filePath: _outputPath,
-                                    videoID: widget.videoID,
-                                  ),
-                                ));
-                          },
-                        ),
-                        SizedBox(
-                          width: 30,
-                        ),
-                        CommonButton(
-                          bgcolor: AppColor.home_plus_color,
-                          text: "Export",
-                          image: AppImages.export,
-                          onPressed: () {
-                            // _shareVideo();
-                            action = "export";
-                            srtconverter(convertCaptionsToJson(_getCations));
-                          },
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            if (action == "export")
+                ),
               Expanded(
                 flex: 1,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Preparing Your video",
-                      style: TextStyle(
-                          color: AppColor.white_color,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 30),
-                      child: Text(
-                        "Please don't close the app or lock your screen while this is in progress",
-                        textAlign: TextAlign.center,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.only(bottom: 40, left: 10, right: 10),
+                  child: Stack(
+                    children: [
+                      VideoCaption(
+                        width: width,
+                        isLogoShow: true,
+                        onTapToggle: _togglePlayPause,
+                        aspectRatio: aspectRatio,
+                        getCations: _getCations,
+                        height: height,
+                        isPlaying: isPlaying,
+                        videoPlayerController: _videoPlayerController,
                       ),
-                    ),
+                    ],
+                  ),
+                ),
+              ),
+              if (action == "")
+                Column(
+                  children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20,
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          LinearPercentIndicator(
-                            width: 140.0,
-                            lineHeight: 14.0,
-                            percent: 0.5,
-                            backgroundColor: Colors.grey,
-                            progressColor: Colors.blue,
-                          ),
+                          Expanded(
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.transparent,
+                                      borderRadius: BorderRadius.circular(13),
+                                      border: Border.all(
+                                          width: 2,
+                                          color: AppColor.grey_color)),
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                      left: 4,
+                                      right: 4,
+                                      top: 4,
+                                      bottom: 4,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        types(
+                                            "Standard",
+                                            isactive == "Standard"
+                                                ? AppColor.elevated_bg_color
+                                                : Colors.transparent, () {
+                                          setState(() {
+                                            isactive = "Standard";
+                                          });
+                                        }),
+                                        types(
+                                            "HD",
+                                            isactive == "HD"
+                                                ? AppColor.elevated_bg_color
+                                                : Colors.transparent, () {
+                                          setState(() {
+                                            isactive = "HD";
+                                          });
+                                        }),
+                                        types(
+                                            "4K",
+                                            isactive == "4K"
+                                                ? AppColor.elevated_bg_color
+                                                : Colors.transparent, () {
+                                          setState(() {
+                                            isactive = "4K";
+                                          });
+                                        }),
+                                      ],
+                                    ),
+                                  )))
                         ],
                       ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ImageIcon(
-                          AssetImage(AppImages.insta),
-                          size: 40,
-                        ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        ImageIcon(AssetImage(AppImages.tiktok), size: 40),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        ImageIcon(AssetImage(AppImages.youtube), size: 40),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            if (action == "Done")
-              Expanded(
-                flex: 1,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ImageIcon(
-                      AssetImage(AppImages.done),
-                      color: AppColor.white_color,
-                      size: 30,
                     ),
                     SizedBox(
                       height: 20,
                     ),
-                    Text(
-                      "Saved to Camera Roll",
-                      style: TextStyle(
-                          color: AppColor.white_color,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 100, vertical: 20),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20,
+                      ),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          CommonButton(
-                              image: AppImages.export,
-                              onPressed: () {
-                                _shareVideo();
-                              },
-                              text: "Share",
-                              bgcolor: AppColor.home_plus_color),
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: AppColor.elevated_bg_color,
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 17),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 10),
+                                      child: Text(
+                                        "Remove watermark",
+                                        style: TextStyle(
+                                            color: AppColor.white_color,
+                                            fontSize: 18),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 100),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       child: Row(
                         children: [
                           CommonButton(
-                              image: AppImages.export,
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              text: "Done",
-                              bgcolor: AppColor.elevated_bg_color),
+                            bgcolor: AppColor.elevated_bg_color,
+                            text: "Edit",
+                            image: AppImages.edit,
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => VideoSavePage(
+                                      isBackExport: true,
+                                      filePath: _outputPath,
+                                      videoID: widget.videoID,
+                                    ),
+                                  ));
+                            },
+                          ),
+                          SizedBox(
+                            width: 30,
+                          ),
+                          CommonButton(
+                            bgcolor: AppColor.home_plus_color,
+                            text: "Export",
+                            image: AppImages.export,
+                            onPressed: () {
+                              // _shareVideo();
+                              action = "export";
+                              if (_getCations.isNotEmpty) {
+                                srtconverter(
+                                    convertCaptionsToJson(_getCations));
+                              } else {
+                                ffmpegButton(false);
+                              }
+                            },
+                          ),
                         ],
                       ),
-                    ),
+                    )
                   ],
                 ),
-              )
-          ],
+              if (action == "export")
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Preparing Your video",
+                        style: TextStyle(
+                            color: AppColor.white_color,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 30),
+                        child: Text(
+                          "Please don't close the app or lock your screen while this is in progress",
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            LinearPercentIndicator(
+                              width: 140.0,
+                              lineHeight: 14.0,
+                              percent: 0.5,
+                              backgroundColor: Colors.grey,
+                              progressColor: Colors.blue,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ImageIcon(
+                            AssetImage(AppImages.insta),
+                            size: 40,
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          ImageIcon(AssetImage(AppImages.tiktok), size: 40),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          ImageIcon(AssetImage(AppImages.youtube), size: 40),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              if (action == "Done")
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ImageIcon(
+                        AssetImage(AppImages.done),
+                        color: AppColor.white_color,
+                        size: 30,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        "Saved to Camera Roll",
+                        style: TextStyle(
+                            color: AppColor.white_color,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 100, vertical: 20),
+                        child: Row(
+                          children: [
+                            CommonButton(
+                                image: AppImages.export,
+                                onPressed: () {
+                                  _shareVideo();
+                                },
+                                text: "Share",
+                                bgcolor: AppColor.home_plus_color),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 100),
+                        child: Row(
+                          children: [
+                            CommonButton(
+                                image: AppImages.export,
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                text: "Done",
+                                bgcolor: AppColor.elevated_bg_color),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+            ],
+          ),
         ),
       ),
     );
@@ -758,9 +772,9 @@ class _ExportScreenState extends State<ExportScreen> {
       await file.writeAsString(content);
       srtFilePath = filePath;
       if (extension == "ass") {
-        ffmpegButton(true, extension);
+        ffmpegButton(true, isAssFile: true);
       } else {
-        ffmpegButton(false, extension);
+        ffmpegButton(true, isAssFile: false);
       }
       print('$extension file saved at: $filePath');
     }
@@ -787,6 +801,9 @@ class _ExportScreenState extends State<ExportScreen> {
       String textColor = caption['text_color'].toString().substring(2);
       String bgColor = caption['background_color'].toString().substring(2);
 
+      String formattedText =
+          '<font color="#$textColor" background="#$bgColor">$text</font>';
+
       if (caption['is_bold'] == "1") {
         text = '<b>$text</b>';
       }
@@ -796,9 +813,6 @@ class _ExportScreenState extends State<ExportScreen> {
       if (caption['is_underline'] == "1") {
         text = '<u>$text</u>';
       }
-
-      String formattedText =
-          '<font color="#$textColor" background="#$bgColor">$text</font>';
 
       return formattedText;
     }
@@ -846,7 +860,6 @@ String formatTextForCombine(
           .map((id) => int.parse(id.trim()))
           .toList();
       String finlText = "";
- 
       for (var id in idsIntList) {
         var currentCaption =
             captions.firstWhere((e) => e['id'] == id, orElse: () => null);
@@ -873,7 +886,6 @@ String formatTextForCombine(
         print("Combine Ids datas === > $id ==== > $formattedText");
         finlText += '$formattedText ';
       }
- 
       return finlText.trim(); // Trim any trailing spaces
     }
  
@@ -940,13 +952,13 @@ String formatTextForCombine(
     }
 
     await saveFile(srtContent, 'srt');
-    ffmpegButton(false, 'srt');
+    ffmpegButton(true, isAssFile: false);
   }
 
   late String finalpath;
 
   String srtFilePath = "";
-  void ffmpegButton(bool isAssFile, String extension) {
+  void ffmpegButton(bool isCaption, {bool isAssFile = false}) {
     print("ffmpge start");
     String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
     int height = _videoPlayerController.value.size.height.round();
@@ -955,29 +967,33 @@ String formatTextForCombine(
     print(
         "height === > ${_videoPlayerController.value.size.height.toString()}");
 
-    String cropFilter;
-    if (aspectRatio == 1 / 1) {
-      cropFilter = "crop=in_h:in_h";
-    } else if (aspectRatio == 9 / 16) {
-      cropFilter = "crop=in_h*9/16:in_h";
-    } else if (aspectRatio == 4 / 3) {
-      cropFilter = "crop=in_h*4/3:in_h";
-    } else {
-      print("Unsupported aspect ratio");
-      return;
-    }
-    finalpath =
-        "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4";
+    // String cropFilter;
+    // if (aspectRatio == 1 / 1) {
+    //   cropFilter = "crop=in_h:in_h";
+    // } else if (aspectRatio == 9 / 16) {
+    //   cropFilter = "crop=in_h*9/16:in_h";
+    // } else if (aspectRatio == 4 / 3) {
+    //   cropFilter = "crop=in_h*4/3:in_h";
+    // } else {
+    //   print("Unsupported aspect ratio");
+    //   return;
+    // }
+    finalpath = "/storage/emulated/0/Download/output_$timestamp.mp4";
+    String command = "";
+    if (isCaption) {
+      // Construct the FFmpeg command
 
-    // Construct the FFmpeg command
-    String command =
-        // '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}'$srtFilePath:force_style=Fontname=Trueno'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
+      // '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}'$srtFilePath:force_style=Fontname=Trueno'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
 
 // working
-        '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}$srtFilePath:force_style='Fontname==Roboto-Condensed-Bold,Fontsize=24,Outline=1,Shadow=1'" -s ${width}x$height $finalpath''';
+      command =
+          '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}$srtFilePath:force_style='Fontname==Roboto-Condensed-Bold,Fontsize=24,Outline=1,Shadow=1'" -s ${width}x$height $finalpath''';
 
-    // '''-y -i "$_outputPath" -vf "$cropFilter,${isAssFile ? "ass=" : "subtitles="}$srtFilePath:force_style='Fontname=Trueno,Fontsize=24,Outline=1,Shadow=1,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BackColour=&H80000000'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
-    // '''-y -i "$_outputPath" -vf "$cropFilter,scale=$width:$height" -c:a copy "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
+      // '''-y -i "$_outputPath" -vf "$cropFilter,${isAssFile ? "ass=" : "subtitles="}$srtFilePath:force_style='Fontname=Trueno,Fontsize=24,Outline=1,Shadow=1,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BackColour=&H80000000'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
+      // '''-y -i "$_outputPath" -vf "$cropFilter,scale=$width:$height" -c:a copy "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
+    } else {
+      command = '''-i $_outputPath -c:v copy -y $finalpath''';
+    }
 
     print("command === > $command");
     FFmpegKit.execute(command).then((session) async {

@@ -184,7 +184,7 @@ class _VideoSavePageState extends State<VideoSavePage>
   }
 
   bool maxver = true;
-  bool minver = true;
+  bool minver = false;
 
   Future<void> forward() async {
     print("Function called");
@@ -437,8 +437,18 @@ class _VideoSavePageState extends State<VideoSavePage>
                 videoPlayerController: _videoPlayerController,
               ),
               if (_getCations.isNotEmpty)
-                Positioned(
-                    bottom: 30, left: 0, right: 0, child: getCpationList()),
+                Visibility(
+                  visible: true,
+                  child: Positioned(
+                      bottom: 30,
+                      left: 0,
+                      right: 0,
+                      child: getCpationList(!isPlaying &&
+                          (action == "isStyle" ||
+                              action == "isHighilight" ||
+                              action == "isMerge" ||
+                              action == "isSplit"))),
+                ),
               if (!isPlaying)
                 Positioned(
                     top: 40,
@@ -475,7 +485,7 @@ class _VideoSavePageState extends State<VideoSavePage>
                             EditingButton(
                               onTap: backward,
                               imagePath: "assets/backward.png",
-                              imageColor: minver && minver == maxver
+                              imageColor: minver
                                   ? const Color.fromARGB(255, 65, 65, 65)
                                   : Colors.white,
                             ),
@@ -930,9 +940,9 @@ class _VideoSavePageState extends State<VideoSavePage>
     );
   }
 
-  Widget getCpationList() {
+  Widget getCpationList(bool isPlaying) {
     return SizedBox(
-      height: 45,
+      height: isPlaying ? 45 : 0,
       child: ScrollablePositionedList.builder(
         shrinkWrap: true,
         initialAlignment: BorderSide.strokeAlignCenter,
