@@ -764,7 +764,9 @@ class _VideoMergeState extends State<VideoMerge> {
       future: _data,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return Center(
+              child:
+                  CircularProgressIndicator(color: AppColor.home_plus_color));
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -886,31 +888,33 @@ class _VideoMergeState extends State<VideoMerge> {
                           borderRadius: BorderRadius.circular(20),
                           child: Container(
                             color: AppColor.black_color,
-                            child: _pickedvideoPlayerController
-                                    .value.isInitialized
-                                ? AspectRatio(
-                                    aspectRatio: 1 / 1,
-                                    child: FittedBox(
-                                      fit: BoxFit.cover,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(500),
+                            child:
+                                _pickedvideoPlayerController.value.isInitialized
+                                    ? AspectRatio(
+                                        aspectRatio: 1 / 1,
+                                        child: FittedBox(
+                                          fit: BoxFit.cover,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(500),
+                                            ),
+                                            width: _pickedvideoPlayerController
+                                                .value.size.width,
+                                            height: _pickedvideoPlayerController
+                                                .value.size.height,
+                                            child: Stack(
+                                              children: [
+                                                VideoPlayer(
+                                                    _pickedvideoPlayerController),
+                                              ],
+                                            ),
+                                          ),
                                         ),
-                                        width: _pickedvideoPlayerController
-                                            .value.size.width,
-                                        height: _pickedvideoPlayerController
-                                            .value.size.height,
-                                        child: Stack(
-                                          children: [
-                                            VideoPlayer(
-                                                _pickedvideoPlayerController),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                : Center(child: CircularProgressIndicator()),
+                                      )
+                                    : Center(
+                                        child: CircularProgressIndicator(
+                                            color: AppColor.home_plus_color)),
                           ),
                         ),
                       ),

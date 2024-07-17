@@ -6,36 +6,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:video_editing_app/UI/Projects.dart';
 import 'package:video_editing_app/util/app_color.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
-  void scaffoldMessengerMessage(
-      {required String message, required BuildContext context}) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(message,
-          style: const TextStyle(
-            color: AppColor.black_color,
-          )),
-      behavior: SnackBarBehavior.floating,
-      backgroundColor: AppColor.white_color,
-      duration: const Duration(seconds: 2),
-      margin: const EdgeInsets.all(10.0),
-    ));
-  }
+void scaffoldMessengerMessage(
+    {required String message, required BuildContext context}) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(message,
+        style: const TextStyle(
+          color: AppColor.black_color,
+        )),
+    behavior: SnackBarBehavior.floating,
+    backgroundColor: AppColor.white_color,
+    duration: const Duration(seconds: 2),
+    margin: const EdgeInsets.all(10.0),
+  ));
+}
 
-   Future<String> generateThumbnail(String videoPath) async {
-    final Directory extDir = await getApplicationCacheDirectory();
-    final String thumbnailPath = '${extDir.path}/${videoPath.hashCode}.jpg';
-    await VideoThumbnail.thumbnailFile(
-      video: videoPath,
-      thumbnailPath: thumbnailPath,
-      imageFormat: ImageFormat.JPEG,
-      maxHeight: 500,
-      quality: 100,
-    );
-    return thumbnailPath;
-  }
-  Duration parseDuration(String time) {
+Future<String> generateThumbnail(String videoPath) async {
+  final Directory extDir = await getApplicationCacheDirectory();
+  final String thumbnailPath = '${extDir.path}/${videoPath.hashCode}.jpg';
+  await VideoThumbnail.thumbnailFile(
+    video: videoPath,
+    thumbnailPath: thumbnailPath,
+    imageFormat: ImageFormat.JPEG,
+    maxHeight: 500,
+    quality: 100,
+  );
+  return thumbnailPath;
+}
+
+Duration parseDuration(String time) {
   final parts = time.split(':');
   final secondsParts = parts[2].split('.');
   return Duration(
@@ -86,27 +88,35 @@ Future<String> getAssetAbsolutePath(String assetPath) async {
 }
 
 String formatDateString(String dateString) {
-    DateTime dateTime = DateTime.parse(dateString);
-    DateTime now = DateTime.now();
-    Duration difference = now.difference(dateTime);
+  DateTime dateTime = DateTime.parse(dateString);
+  DateTime now = DateTime.now();
+  Duration difference = now.difference(dateTime);
 
-    if (difference.inHours < 12) {
-      if (difference.inMinutes < 60) {
-        return "${difference.inMinutes} minutes ago";
-      } else {
-        return "${difference.inHours} hours ago";
-      }
-    } else if (DateFormat('yyyy-MM-dd').format(now) ==
-        DateFormat('yyyy-MM-dd').format(dateTime)) {
-      return "Today";
-    } else if (DateFormat('yyyy-MM-dd')
-            .format(now.subtract(Duration(days: 1))) ==
-        DateFormat('yyyy-MM-dd').format(dateTime)) {
-      return "Yesterday";
+  if (difference.inHours < 12) {
+    if (difference.inMinutes < 60) {
+      return "${difference.inMinutes} minutes ago";
     } else {
-      return "${difference.inDays} days ago";
+      return "${difference.inHours} hours ago";
     }
+  } else if (DateFormat('yyyy-MM-dd').format(now) ==
+      DateFormat('yyyy-MM-dd').format(dateTime)) {
+    return "Today";
+  } else if (DateFormat('yyyy-MM-dd').format(now.subtract(Duration(days: 1))) ==
+      DateFormat('yyyy-MM-dd').format(dateTime)) {
+    return "Yesterday";
+  } else {
+    return "${difference.inDays} days ago";
   }
+}
 
-
-  
+void errorHandler(BuildContext context) {
+  scaffoldMessengerMessage(
+      message: "Something went wrong, please try again!", context: context);
+  Navigator.pushAndRemoveUntil(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ProjectsScreen(),
+    ),
+    (route) => false,
+  );
+}

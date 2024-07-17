@@ -249,12 +249,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 10),
                 child: InkWell(
+                  highlightColor: Colors.transparent,
+                  
                   onTap: () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => ProfileUpdateScreen(),
-                        ));
+                        )).whenComplete(
+                      () {
+                        _getusername();
+                      },
+                    );
                   },
                   child: Container(
                     decoration: BoxDecoration(

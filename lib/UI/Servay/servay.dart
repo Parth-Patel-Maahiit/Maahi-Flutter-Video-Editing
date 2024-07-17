@@ -3,7 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_editing_app/CommonMettods/common_sharedPreferences.dart';
 import 'package:video_editing_app/UI/on_boarding_screens/OnBoardingScreen.dart';
 import 'package:video_editing_app/util/app_color.dart';
-import 'package:video_editing_app/widget/button.dart';
 
 class ServayScreen extends StatefulWidget {
   @override
@@ -69,7 +68,7 @@ class _ServayScreenState extends State<ServayScreen>
         toolbarHeight: 20,
         flexibleSpace: TabBar(
           controller: _tabController,
-          indicatorColor: AppColor.blue_color,
+          indicatorColor: AppColor.home_plus_color,
           indicatorWeight: 1.0,
           dividerHeight: 1,
           tabs: [
@@ -83,7 +82,7 @@ class _ServayScreenState extends State<ServayScreen>
         controller: _tabController,
         children: [
           buildSurveyPage(
-            images: "assets/Home/image6.jpeg",
+            images: "assets/Home/image8.png",
             top: "Question 1 of 3",
             question: 'What are your videos about?',
             options: [
@@ -101,7 +100,7 @@ class _ServayScreenState extends State<ServayScreen>
             onNext: moveToNextTab,
           ),
           buildSurveyPage(
-            images: "assets/Home/image5.jpeg",
+            images: "assets/Home/image7.png",
             top: "Question 2 of 3",
             question: 'Where do you share your videos?',
             options: [
@@ -114,12 +113,12 @@ class _ServayScreenState extends State<ServayScreen>
               {'label': 'TikTok', 'icon': Icons.music_note},
             ],
             selectedOptions: selectedPlatforms,
-            onSelectionChange: (option) =>
-                toggleSelection(selectedPlatforms, option, "video_share_category"),
+            onSelectionChange: (option) => toggleSelection(
+                selectedPlatforms, option, "video_share_category"),
             onNext: moveToNextTab,
           ),
           buildSurveyPage(
-            images: "assets/Home/image2.jpeg",
+            images: "assets/Home/image9.png",
             top: "Question 3 of 3",
             question: 'How did you hear about VEED?',
             options: [
@@ -198,7 +197,8 @@ class _ServayScreenState extends State<ServayScreen>
                     //borderOnForeground: true,
                     decoration: BoxDecoration(
                         border: isSelected
-                            ? Border.all(width: 2, color: AppColor.blue_color)
+                            ? Border.all(
+                                width: 2, color: AppColor.home_plus_color)
                             : Border.all(),
                         color: AppColor.survay_container,
                         borderRadius: BorderRadius.circular(10)),
@@ -237,14 +237,14 @@ class _ServayScreenState extends State<ServayScreen>
                     currentTabIndex == 2 ? 'Done' : 'Next',
                     style: TextStyle(
                         fontSize: 18,
-                        color: AppColor.black_color,
+                        color: AppColor.white_color,
                         fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
               style: ElevatedButton.styleFrom(
                   minimumSize: const Size(40, 40),
-                  backgroundColor: AppColor.white_color,
+                  backgroundColor: AppColor.home_plus_color,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(22))),
             ),

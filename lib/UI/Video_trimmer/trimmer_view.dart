@@ -68,8 +68,13 @@ class _TrimmerViewState extends State<TrimmerView> {
   }
 
   void _loadVideo() {
-    _trimmer.loadVideo(videoFile: widget.file);
-    getratio();
+    try {
+      _trimmer.loadVideo(videoFile: widget.file);
+      getratio();
+    } catch (e) {
+      errorHandler(context);
+      print("Error initializing video player: ${e.toString()}");
+    }
   }
 
   _saveVideo() {
@@ -85,11 +90,7 @@ class _TrimmerViewState extends State<TrimmerView> {
           print("Error saving trimmed video to database: $e");
         }
         Navigator.of(context)
-<<<<<<< Updated upstream
-          ..pop
-=======
           ..pop()
->>>>>>> Stashed changes
           ..pushReplacement(MaterialPageRoute(
               builder: (context) => UseScreen2(
                     filePath: outputPath,

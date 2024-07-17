@@ -179,6 +179,7 @@ class _VideoSavePageState extends State<VideoSavePage>
 
       setState(() {});
     } catch (e) {
+      errorHandler(context);
       print("Error initializing video player: ${e.toString()}");
     }
   }
@@ -471,15 +472,16 @@ class _VideoSavePageState extends State<VideoSavePage>
                 Positioned(right: 20, top: 100, child: getEditingMenu()),
               if (!isPlaying && !_keyboardVisible)
                 Positioned(
-                    top: 45,
+                    top: 40,
                     left: 100,
                     child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(30),
                         color: Color.fromARGB(169, 67, 67, 67),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 13.0, vertical: 13.0),
                         child: Row(
                           children: [
                             EditingButton(
@@ -490,7 +492,7 @@ class _VideoSavePageState extends State<VideoSavePage>
                                   : Colors.white,
                             ),
                             SizedBox(
-                              width: 40,
+                              width: 30,
                             ),
                             EditingButton(
                               onTap: forward,
@@ -942,7 +944,8 @@ class _VideoSavePageState extends State<VideoSavePage>
 
   Widget getCpationList(bool isPlaying) {
     return SizedBox(
-      height: isPlaying ? 45 : 0,
+      height: 45,
+      //  isPlaying ? 45 : 0,
       child: ScrollablePositionedList.builder(
         shrinkWrap: true,
         initialAlignment: BorderSide.strokeAlignCenter,

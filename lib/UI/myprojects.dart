@@ -1,7 +1,4 @@
-import 'package:ffmpeg_kit_flutter_video/ffmpeg_kit_config.dart';
 import 'package:flutter/material.dart';
-import 'package:video_editing_app/FFmpeg/test_api.dart';
-import 'package:video_editing_app/FFmpeg/video_util.dart';
 import 'package:video_editing_app/Model/filepath.dart';
 import 'package:video_editing_app/UI/Video_Preview/script_preview.dart';
 import 'package:video_editing_app/services/databaseservices.dart';
@@ -26,13 +23,6 @@ class _MyProjectsScreenState extends State<MyProjectsScreen> {
     super.initState();
     _data = _databaseService.getFilesWithHighestVersion();
     _databaseService.getfile();
-    FFmpegKitConfig.init().then((_) {
-      VideoUtil.registerApplicationFonts();
-
-      Test.testCommonApiMethods();
-      Test.testParseArguments();
-      Test.setSessionHistorySizeTest();
-    });
   }
 
   Future<void> _refreshData() async {

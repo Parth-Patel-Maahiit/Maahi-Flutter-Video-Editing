@@ -1,6 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:video_editing_app/UI/components/common.dart';
+import 'package:video_editing_app/UI/components/common_back_button.dart';
 import 'package:video_editing_app/UI/components/common_save_button.dart';
 import 'package:video_editing_app/util/app_color.dart';
 import 'package:video_editing_app/widget/update_profile_form.dart';
@@ -18,7 +21,7 @@ class ProfileUpdateScreen extends StatefulWidget {
 }
 
 class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
-  // LoginModel.LoginModel? _login = LoginModel.LoginModel();
+  LoginModel.LoginModel? _login = LoginModel.LoginModel();
   String name = '';
   String email = '';
   String mobile = '';
@@ -41,60 +44,84 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
     nameController = TextEditingController();
     mobileController = TextEditingController();
     _getusername();
-    // _loadPreferences();
+    _loadPreferences();
   }
 
-  // Future<void> _loadPreferences() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   setState(() {
-  //     selectedVideos = prefs.getStringList('video_about_category') ?? [];
-  //     selectedPlatforms = prefs.getStringList('video_share_category') ?? [];
-  //     heardAbout = prefs.getStringList('video_hear_category') ?? [];
+  Future<void> _showLoadingDialog() async {
+    showDialog(
+      context: context,
+      barrierColor: const Color.fromARGB(75, 0, 0, 0),
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return PopScope(
+          canPop: false, // Disable back button press
+          child: Dialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            child: Center(
+              child: CircularProgressIndicator(color: AppColor.home_plus_color),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
-  //     print("selectedVideos == >> $selectedVideos");
-  //     print("selectedPlatforms == >> $selectedPlatforms");
-  //     print("heardAbout == >> $heardAbout");
+  Future<void> _hideLoadingDialog() async {
+    Navigator.of(context, rootNavigator: true).pop();
+  }
 
-  //     select_video = selectedVideos.join(",");
-  //     select_plat = selectedPlatforms.join(",");
-  //     about = heardAbout.join(",");
+  Future<void> _loadPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      selectedVideos = prefs.getStringList('video_about_category') ?? [];
+      selectedPlatforms = prefs.getStringList('video_share_category') ?? [];
+      heardAbout = prefs.getStringList('video_hear_category') ?? [];
 
-  //     print("selected ===> $select_video");
-  //   });
-  // }
+      print("selectedVideos == >> $selectedVideos");
+      print("selectedPlatforms == >> $selectedPlatforms");
+      print("heardAbout == >> $heardAbout");
 
-  // Future<void> getLoginData(email, password) async {
-  //   var response = await CommonApiCall.getApiData(
-  //       action:
-  //           "action=userlogin&email_id=$email&password=$password&video_about_category=$select_video&video_share_category=$select_plat&video_hear_category=$about");
-  //   if (response.statusCode == 200) {
-  //     final responseData = json.decode(response.body);
-  //     _login = LoginModel.LoginModel.fromJson(responseData);
+      select_video = selectedVideos.join(",");
+      select_plat = selectedPlatforms.join(",");
+      about = heardAbout.join(",");
 
-  //     if (_login != null && _login!.status == true) {
-  //       setStoreApidata("loginData", _login);
-  //       scaffoldMessengerMessage(
-  //           message: "${_login!.message}", context: context);
-  //     } else {
-  //       scaffoldMessengerMessage(
-  //           message: "${_login!.message}", context: context);
-  //     }
-  //   } else {
-  //     print('error ==>  ${response.message}');
-  //   }
-  // }
+      print("selected ===> $select_video");
+    });
+  }
+
+  Future<void> getLoginData(email, password) async {
+    var response = await CommonApiCall.getApiData(
+        action:
+            "action=userlogin&email_id=$email&password=$password&video_about_category=$select_video&video_share_category=$select_plat&video_hear_category=$about");
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      _login = LoginModel.LoginModel.fromJson(responseData);
+      _hideLoadingDialog();
+      if (_login != null && _login!.status == true) {
+        await setStoreApidata("loginData", _login);
+        Navigator.pop(context);
+      }
+    } else {
+      print('error ==>  ${response.message}');
+    }
+  }
 
   Future<void> updateData(
       String i, String n, String m, String e, String pass) async {
+    _showLoadingDialog();
     var response = await CommonApiCall.getApiData(
         action: "action=update_profile&login_user_id=$i&name=$n&mobile=$m");
 
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
       if (responseData != null) {
-        Navigator.pop(context);
+        getLoginData(e, pass);
+      } else {
+        scaffoldMessengerMessage(
+            message: "Something went wrong, please try again!",
+            context: context);
       }
-      // getLoginData(e, pass);
     } else {}
   }
 
@@ -110,7 +137,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
         email = loginData.data!.emailId!;
         mobile = loginData.data!.mobile!;
         id = loginData.data!.id!;
-        password = loginData.data!.password!;
+        password = loginData.data!.passwordTxt!;
         print("Name ====>   $name");
 
         nameController.text = name;
@@ -121,68 +148,78 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          CommonSaveButton(
-            onTap: () {
-              updateData(id, nameController.text, mobileController.text, email,
-                  password);
-            },
-          )
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle, color: AppColor.grey_color),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: ImageIcon(
-                      AssetImage(AppImages.user),
-                      color: const Color.fromARGB(255, 21, 21, 21),
+    return SafeArea(
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CommonBackButton(),
+                  Container(
+                    margin: EdgeInsets.only(right: 10),
+                    child: CommonSaveButton(
+                      onTap: () {
+                        updateData(id, nameController.text,
+                            mobileController.text, email, password);
+                      },
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 40,
+              ),
+              Row(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle, color: AppColor.grey_color),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: ImageIcon(
+                        AssetImage(AppImages.user),
+                        color: const Color.fromARGB(255, 21, 21, 21),
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style:
-                          TextStyle(color: AppColor.white_color, fontSize: 20),
-                    ),
-                    Text(
-                      email,
-                      style:
-                          TextStyle(color: AppColor.white_color, fontSize: 16),
-                    ),
-                  ],
-                )
-              ],
-            ),
-            SizedBox(
-              height: 50,
-            ),
-            ProfileField(
-              controller: nameController,
-              label: "name",
-              initialValue: name,
-            ),
-            ProfileField(
-              controller: mobileController,
-              label: "mobile",
-              initialValue: mobile,
-            ),
-          ],
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: TextStyle(
+                            color: AppColor.white_color, fontSize: 20),
+                      ),
+                      Text(
+                        email,
+                        style: TextStyle(
+                            color: AppColor.white_color, fontSize: 16),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              ProfileField(
+                controller: nameController,
+                label: "name",
+                initialValue: name,
+              ),
+              ProfileField(
+                controller: mobileController,
+                label: "mobile",
+                initialValue: mobile,
+              ),
+            ],
+          ),
         ),
       ),
     );

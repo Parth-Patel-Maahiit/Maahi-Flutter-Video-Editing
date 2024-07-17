@@ -141,8 +141,8 @@ class DatabaseService {
   //   return result.isNotEmpty ? result.first[_videovidIdColumnName] as int : 0;
   // }
 
-  Future<void> addfile(String file, String thumbnail,String title, String filename,
-      double width, double height) async {
+  Future<void> addfile(String file, String thumbnail, String title,
+      String filename, double width, double height) async {
     try {
       final db = await database;
       int vidId = await _getHighestVidId() + 1;
@@ -263,6 +263,7 @@ class DatabaseService {
         FROM $_videotable AS inner_table
         WHERE inner_table.$_videovidIdColumnName = $_videotable.$_videovidIdColumnName
       )
+      ORDER BY $_videoDateColumnName ASC
     ''');
 
     print("Data ========> $data");

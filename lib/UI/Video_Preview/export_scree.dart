@@ -10,6 +10,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:video_editing_app/Model/get_caption_data_model.dart';
 import 'package:video_editing_app/UI/Projects.dart';
 import 'package:video_editing_app/UI/Video_Preview/script_preview.dart';
+import 'package:video_editing_app/UI/components/common.dart';
 import 'package:video_editing_app/UI/components/common_back_button.dart';
 import 'package:video_editing_app/services/databaseservices.dart';
 import 'package:video_editing_app/util/app_color.dart';
@@ -122,6 +123,7 @@ class _ExportScreenState extends State<ExportScreen>
       });
       setState(() {});
     } catch (e) {
+      errorHandler(context);
       print("Error initializing video player: ${e.toString()}");
     }
   }
@@ -481,10 +483,8 @@ class _ExportScreenState extends State<ExportScreen>
                               // _shareVideo();
                               action = "export";
                               progressController = AnimationController(
-                                /// [AnimationController]s can be created with `vsync: this` because of
-                                /// [TickerProviderStateMixin].
                                 vsync: this,
-                                duration: const Duration(seconds: 8),
+                                duration: const Duration(seconds: 4),
                               )..addListener(() {
                                   setState(() {});
                                 });
@@ -537,8 +537,6 @@ class _ExportScreenState extends State<ExportScreen>
                               backgroundColor: AppColor.elevated_bg_color,
                               progressColor: AppColor.home_plus_color,
                             ),
-                            Text(
-                                "${(progressController.value * 100).round()}%"),
                           ],
                         ),
                       ),
@@ -563,8 +561,8 @@ class _ExportScreenState extends State<ExportScreen>
                   ),
                 ),
               if (action == "Done")
-                Expanded(
-                  flex: 1,
+                SizedBox(
+                  height: height * 0.35,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -577,7 +575,7 @@ class _ExportScreenState extends State<ExportScreen>
                         height: 20,
                       ),
                       Text(
-                        "Saved to Camera Roll",
+                        "Saved to gallery",
                         style: TextStyle(
                             color: AppColor.white_color,
                             fontSize: 20,
@@ -603,9 +601,15 @@ class _ExportScreenState extends State<ExportScreen>
                         child: Row(
                           children: [
                             CommonButton(
-                                image: AppImages.export,
+                                image: AppImages.done,
                                 onPressed: () {
-                                  Navigator.pop(context);
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ProjectsScreen(),
+                                    ),
+                                    (route) => false,
+                                  );
                                 },
                                 text: "Done",
                                 bgcolor: AppColor.elevated_bg_color),
@@ -831,42 +835,7 @@ class _ExportScreenState extends State<ExportScreen>
       return formattedText;
     }
 
-    // String formatTextForCombine(
-    //     Map<String, dynamic> caption, List<dynamic> captions) {
-    //   List<int> idsIntList = caption['combine_ids']
-    //       .toString()
-    //       .split(",")
-    //       .map((id) => int.parse(id.trim()))
-    //       .toList();
-    //   String finlText = "";
-    //   for (var id in idsIntList) {
-    //     var currentCaption = captions[id];
-    //     String text = currentCaption['keyword'];
-    //     String textColor = currentCaption['text_color'].toString().substring(2);
-    //     String bgColor =
-    //         currentCaption['background_color'].toString().substring(2);
-    //     String formattedText =
-    //         '<font color="#$textColor" background="#$bgColor">$text</font>';
-
-    //     if (currentCaption['is_bold'] == "1") {
-    //       formattedText = '<b>$formattedText</b>';
-    //     }
-    //     if (currentCaption['is_italic'] == "1") {
-    //       formattedText = '<i>$formattedText</i>';
-    //     }
-    //     if (currentCaption['is_underline'] == "1") {
-    //       formattedText = '<u>$formattedText</u>';
-    //     }
-    //     print("Combine Ids datas === > $id ==== > ${formattedText}");
-    //     finlText += '$formattedText ';
-    //   }
-
-    //   return finlText;
-    // }
-
-
-  
-String formatTextForCombine(
+    String formatTextForCombine(
         Map<String, dynamic> caption, List<dynamic> captions) {
       List<int> idsIntList = caption['combine_ids']
           .toString()
@@ -887,7 +856,7 @@ String formatTextForCombine(
             currentCaption['background_color'].toString().substring(2);
         String formattedText =
             '<font color="#$textColor" background="#$bgColor">$text</font>';
- 
+
         if (currentCaption['is_bold'] == "1") {
           formattedText = '<b>$formattedText</b>';
         }
@@ -902,9 +871,6 @@ String formatTextForCombine(
       }
       return finlText.trim(); // Trim any trailing spaces
     }
- 
- 
-
 
     String createSrtContent(List<dynamic> captions) {
       StringBuffer srtContent = StringBuffer();

@@ -1,4 +1,7 @@
+import 'package:ffmpeg_kit_flutter_video/ffmpeg_kit_config.dart';
 import 'package:flutter/material.dart';
+import 'package:video_editing_app/FFmpeg/test_api.dart';
+import 'package:video_editing_app/FFmpeg/video_util.dart';
 import 'package:video_editing_app/UI/Profile_screen.dart';
 import 'package:video_editing_app/UI/home_scren.dart';
 import 'package:video_editing_app/UI/myprojects.dart';
@@ -32,6 +35,13 @@ class _ProjectsScreenState extends State<ProjectsScreen>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
+    FFmpegKitConfig.init().then((_) {
+      VideoUtil.registerApplicationFonts();
+
+      Test.testCommonApiMethods();
+      Test.testParseArguments();
+      Test.setSessionHistorySizeTest();
+    });
   }
 
   @override
