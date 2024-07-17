@@ -803,7 +803,42 @@ class _ExportScreenState extends State<ExportScreen> {
       return formattedText;
     }
 
-    String formatTextForCombine(
+    // String formatTextForCombine(
+    //     Map<String, dynamic> caption, List<dynamic> captions) {
+    //   List<int> idsIntList = caption['combine_ids']
+    //       .toString()
+    //       .split(",")
+    //       .map((id) => int.parse(id.trim()))
+    //       .toList();
+    //   String finlText = "";
+    //   for (var id in idsIntList) {
+    //     var currentCaption = captions[id];
+    //     String text = currentCaption['keyword'];
+    //     String textColor = currentCaption['text_color'].toString().substring(2);
+    //     String bgColor =
+    //         currentCaption['background_color'].toString().substring(2);
+    //     String formattedText =
+    //         '<font color="#$textColor" background="#$bgColor">$text</font>';
+
+    //     if (currentCaption['is_bold'] == "1") {
+    //       formattedText = '<b>$formattedText</b>';
+    //     }
+    //     if (currentCaption['is_italic'] == "1") {
+    //       formattedText = '<i>$formattedText</i>';
+    //     }
+    //     if (currentCaption['is_underline'] == "1") {
+    //       formattedText = '<u>$formattedText</u>';
+    //     }
+    //     print("Combine Ids datas === > $id ==== > ${formattedText}");
+    //     finlText += '$formattedText ';
+    //   }
+
+    //   return finlText;
+    // }
+
+
+  
+String formatTextForCombine(
         Map<String, dynamic> caption, List<dynamic> captions) {
       List<int> idsIntList = caption['combine_ids']
           .toString()
@@ -811,15 +846,21 @@ class _ExportScreenState extends State<ExportScreen> {
           .map((id) => int.parse(id.trim()))
           .toList();
       String finlText = "";
+ 
       for (var id in idsIntList) {
-        var currentCaption = captions[id];
+        var currentCaption =
+            captions.firstWhere((e) => e['id'] == id, orElse: () => null);
+        if (currentCaption == null) {
+          return "";
+        }
+        print("currentCaption ==== > $currentCaption");
         String text = currentCaption['keyword'];
         String textColor = currentCaption['text_color'].toString().substring(2);
         String bgColor =
             currentCaption['background_color'].toString().substring(2);
         String formattedText =
             '<font color="#$textColor" background="#$bgColor">$text</font>';
-
+ 
         if (currentCaption['is_bold'] == "1") {
           formattedText = '<b>$formattedText</b>';
         }
@@ -829,12 +870,15 @@ class _ExportScreenState extends State<ExportScreen> {
         if (currentCaption['is_underline'] == "1") {
           formattedText = '<u>$formattedText</u>';
         }
-        print("Combine Ids datas === > $id ==== > ${formattedText}");
+        print("Combine Ids datas === > $id ==== > $formattedText");
         finlText += '$formattedText ';
       }
-
-      return finlText;
+ 
+      return finlText.trim(); // Trim any trailing spaces
     }
+ 
+ 
+
 
     String createSrtContent(List<dynamic> captions) {
       StringBuffer srtContent = StringBuffer();

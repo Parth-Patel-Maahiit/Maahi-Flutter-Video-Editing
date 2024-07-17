@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_editing_app/CommonMettods/common_sharedPreferences.dart';
 import 'package:video_editing_app/Model/login_model.dart';
 import 'package:video_editing_app/UI/on_boarding_screens/OnBoardingScreen.dart';
+import 'package:video_editing_app/UI/update_profile/profile_update.dart';
 import 'package:video_editing_app/util/app_color.dart';
 import 'package:video_editing_app/util/app_images.dart';
 import 'package:video_editing_app/widget/profile_container.dart';
@@ -247,127 +248,136 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 10),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColor.bg_color_1,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  width: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 15),
-                    // child: Column(
-                    //   children: [
-                    //     Row(
-                    //       children: [
-                    //         Text(
-                    //           "Already a App User?",
-                    //           style: TextStyle(
-                    //               color: AppColor.white_color,
-                    //               fontWeight: FontWeight.bold),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //     Text(
-                    //       "Log in or Create an account to access your web Projects across different devices",
-                    //       style: TextStyle(color: AppColor.white_color70),
-                    //     ),
-                    //     SizedBox(
-                    //       height: 10,
-                    //     ),
-                    //     // Padding(
-                    //     //   padding: const EdgeInsets.symmetric(
-                    //     //       horizontal: 3, vertical: 10),
-                    //     //   child: Row(
-                    //     //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    //     //     children: [
-                    //     //       Expanded(
-                    //     //         child: ElevatedButton(
-                    //     //             style: ElevatedButton.styleFrom(
-                    //     //                 backgroundColor: AppColor.signup_color),
-                    //     //             onPressed: () {
-                    //     //               Navigator.pushReplacement(
-                    //     //                   context,
-                    //     //                   MaterialPageRoute(
-                    //     //                     builder: (context) => SignUpScreen(),
-                    //     //                   ));
-                    //     //             },
-                    //     //             child: Padding(
-                    //     //               padding: const EdgeInsets.symmetric(
-                    //     //                   vertical: 12),
-                    //     //               child: Text(
-                    //     //                 "Sign Up",
-                    //     //                 style: TextStyle(
-                    //     //                     color: AppColor.white_color,
-                    //     //                     fontWeight: FontWeight.bold,
-                    //     //                     fontSize: 16),
-                    //     //               ),
-                    //     //             )),
-                    //     //       ),
-                    //     //       SizedBox(
-                    //     //         width: 15,
-                    //     //       ),
-                    //     //       Expanded(
-                    //     //         child: ElevatedButton(
-                    //     //             style: ElevatedButton.styleFrom(
-                    //     //                 backgroundColor: AppColor.login_color),
-                    //     //             onPressed: () {
-                    //     //               Navigator.pushReplacement(
-                    //     //                   context,
-                    //     //                   MaterialPageRoute(
-                    //     //                     builder: (context) => LoginScreen(),
-                    //     //                   ));
-                    //     //             },
-                    //     //             child: Padding(
-                    //     //               padding: const EdgeInsets.symmetric(
-                    //     //                   vertical: 12),
-                    //     //               child: Text(
-                    //     //                 "Log in",
-                    //     //                 style: TextStyle(
-                    //     //                     color: AppColor.white_color,
-                    //     //                     fontWeight: FontWeight.bold,
-                    //     //                     fontSize: 16),
-                    //     //               ),
-                    //     //             )),
-                    //     //       ),
-                    //     //     ],
-                    //     //   ),
-                    //     // )
-                    //   ],
-                    // ),
-                    child: Row(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColor.grey_color),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: ImageIcon(
-                              AssetImage(AppImages.user),
-                              color: const Color.fromARGB(255, 21, 21, 21),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfileUpdateScreen(),
+                        ));
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColor.bg_color_1,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    width: double.infinity,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 15),
+                      // child: Column(
+                      //   children: [
+                      //     Row(
+                      //       children: [
+                      //         Text(
+                      //           "Already a App User?",
+                      //           style: TextStyle(
+                      //               color: AppColor.white_color,
+                      //               fontWeight: FontWeight.bold),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //     Text(
+                      //       "Log in or Create an account to access your web Projects across different devices",
+                      //       style: TextStyle(color: AppColor.white_color70),
+                      //     ),
+                      //     SizedBox(
+                      //       height: 10,
+                      //     ),
+                      //     // Padding(
+                      //     //   padding: const EdgeInsets.symmetric(
+                      //     //       horizontal: 3, vertical: 10),
+                      //     //   child: Row(
+                      //     //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      //     //     children: [
+                      //     //       Expanded(
+                      //     //         child: ElevatedButton(
+                      //     //             style: ElevatedButton.styleFrom(
+                      //     //                 backgroundColor: AppColor.signup_color),
+                      //     //             onPressed: () {
+                      //     //               Navigator.pushReplacement(
+                      //     //                   context,
+                      //     //                   MaterialPageRoute(
+                      //     //                     builder: (context) => SignUpScreen(),
+                      //     //                   ));
+                      //     //             },
+                      //     //             child: Padding(
+                      //     //               padding: const EdgeInsets.symmetric(
+                      //     //                   vertical: 12),
+                      //     //               child: Text(
+                      //     //                 "Sign Up",
+                      //     //                 style: TextStyle(
+                      //     //                     color: AppColor.white_color,
+                      //     //                     fontWeight: FontWeight.bold,
+                      //     //                     fontSize: 16),
+                      //     //               ),
+                      //     //             )),
+                      //     //       ),
+                      //     //       SizedBox(
+                      //     //         width: 15,
+                      //     //       ),
+                      //     //       Expanded(
+                      //     //         child: ElevatedButton(
+                      //     //             style: ElevatedButton.styleFrom(
+                      //     //                 backgroundColor: AppColor.login_color),
+                      //     //             onPressed: () {
+                      //     //               Navigator.pushReplacement(
+                      //     //                   context,
+                      //     //                   MaterialPageRoute(
+                      //     //                     builder: (context) => LoginScreen(),
+                      //     //                   ));
+                      //     //             },
+                      //     //             child: Padding(
+                      //     //               padding: const EdgeInsets.symmetric(
+                      //     //                   vertical: 12),
+                      //     //               child: Text(
+                      //     //                 "Log in",
+                      //     //                 style: TextStyle(
+                      //     //                     color: AppColor.white_color,
+                      //     //                     fontWeight: FontWeight.bold,
+                      //     //                     fontSize: 16),
+                      //     //               ),
+                      //     //             )),
+                      //     //       ),
+                      //     //     ],
+                      //     //   ),
+                      //     // )
+                      //   ],
+                      // ),
+                      child: Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppColor.grey_color),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: ImageIcon(
+                                AssetImage(AppImages.user),
+                                color: const Color.fromARGB(255, 21, 21, 21),
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              name,
-                              style: TextStyle(
-                                  color: AppColor.white_color, fontSize: 20),
-                            ),
-                            Text(
-                              email,
-                              style: TextStyle(
-                                  color: AppColor.white_color, fontSize: 16),
-                            ),
-                          ],
-                        )
-                      ],
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                name,
+                                style: TextStyle(
+                                    color: AppColor.white_color, fontSize: 20),
+                              ),
+                              Text(
+                                email,
+                                style: TextStyle(
+                                    color: AppColor.white_color, fontSize: 16),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -420,6 +430,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   color: AppColor.white_color,
                 ),
                 text: "Privacy Policy",
+                ontap: () {},
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Divider(
+                  color: const Color.fromARGB(42, 255, 255, 255),
+                  height: 3,
+                ),
+              ),
+              ProfileContainer(
+                icon: Icon(
+                  Icons.password,
+                  color: AppColor.white_color,
+                ),
+                text: "Change Password",
                 ontap: () {},
               ),
               Padding(

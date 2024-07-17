@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_editing_app/API/commonapicall.dart';
 import 'package:video_editing_app/Model/login_model.dart' as LoginModel;
 import 'package:video_editing_app/UI/Projects.dart';
@@ -23,6 +24,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   late TextEditingController emailController;
   late TextEditingController passwordController;
+  List<String> selectedVideos = [];
+  List<String> selectedPlatforms = [];
+  List<String> heardAbout = [];
+
+  String select_video = "";
+  String select_plat = "";
+  String about = "";
 
   bool isloading = false;
 
@@ -31,6 +39,26 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     emailController = TextEditingController();
     passwordController = TextEditingController();
+    _loadPreferences();
+  }
+
+  Future<void> _loadPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      selectedVideos = prefs.getStringList('video_about_category') ?? [];
+      selectedPlatforms = prefs.getStringList('video_share_category') ?? [];
+      heardAbout = prefs.getStringList('video_hear_category') ?? [];
+
+      print("selectedVideos == >> $selectedVideos");
+      print("selectedPlatforms == >> $selectedPlatforms");
+      print("heardAbout == >> $heardAbout");
+
+      select_video = selectedVideos.join(",");
+      select_plat = selectedPlatforms.join(",");
+      about = heardAbout.join(",");
+
+      print("selected ===> $select_video");
+    });
   }
 
   Future<void> getLoginData(email, password) async {
@@ -38,7 +66,8 @@ class _LoginScreenState extends State<LoginScreen> {
       isloading = true;
     });
     var response = await CommonApiCall.getApiData(
-        action: "action=userlogin&email_id=$email&password=$password");
+        action:
+            "action=userlogin&email_id=$email&password=$password&video_about_category=$select_video&video_share_category=$select_plat&video_hear_category=$about");
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
       _login = LoginModel.LoginModel.fromJson(responseData);

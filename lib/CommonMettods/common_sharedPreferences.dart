@@ -7,6 +7,11 @@ Future<void> setStringData(key, value) async {
   sharedPreferences.setString(key, value);
 }
 
+Future<void> setStringlist(String key, List<String> list) async {
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  sharedPreferences.setStringList(key, list);
+}
+
 Future<String> getStringData(key) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   if (sharedPreferences.getString(key) == null) {
@@ -60,4 +65,3 @@ Future<dynamic> getStoredApiListdata(String key) async {
     return [];
   }
 }
-

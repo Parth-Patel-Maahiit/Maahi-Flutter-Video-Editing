@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_editing_app/API/commonapicall.dart';
 import 'package:video_editing_app/Model/signup_model.dart' as SignupModel;
 import 'package:video_editing_app/UI/components/common.dart';
@@ -26,6 +27,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   bool isloading = false;
 
+  List<String> selectedVideos = [];
+  List<String> selectedPlatforms = [];
+  List<String> heardAbout = [];
+
+  String select_video = "";
+  String select_plat = "";
+  String about = "";
+
   @override
   void initState() {
     // TODO: implement initState
@@ -34,6 +43,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
     passwordController = TextEditingController();
     nameController = TextEditingController();
     mobileController = TextEditingController();
+    _loadPreferences();
+  }
+
+  Future<void> _loadPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      selectedVideos = prefs.getStringList('video_about_category') ?? [];
+      selectedPlatforms = prefs.getStringList('video_share_category') ?? [];
+      heardAbout = prefs.getStringList('video_hear_category') ?? [];
+
+      print("selectedVideos == >> $selectedVideos");
+      print("selectedPlatforms == >> $selectedPlatforms");
+      print("heardAbout == >> $heardAbout");
+
+      select_video = selectedVideos.join(",");
+      select_plat = selectedPlatforms.join(",");
+      about = heardAbout.join(",");
+    });
   }
 
   Future<void> register(name, email, password, mobile) async {
@@ -42,7 +69,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
     var response = await CommonApiCall.getApiData(
         action:
-            "action=userRegister&name=$name&email_id=$email&password=$password&mobile=$mobile");
+            "action=userRegister&name=$name&email_id=$email&password=$password&mobile=$mobile&video_about_category=$selectedVideos&video_share_category=$selectedPlatforms&video_hear_category=$heardAbout");
     if (response != null) {
       final responseData = json.decode(response.body);
       _signup = SignupModel.SignupModel.fromJson(responseData);
@@ -129,9 +156,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             String email = emailController.text.trim();
                             String password = passwordController.text.trim();
                             String name = nameController.text;
+                            String mobile = mobileController.text.trim();
 
                             if (email.isNotEmpty && password.isNotEmpty) {
-                              register(name, email, password, password);
+                              register(name, email, password, mobile);
                             } else {
                               scaffoldMessengerMessage(
                                   message: "Enter valid email and password",

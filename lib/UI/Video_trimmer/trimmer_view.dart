@@ -84,11 +84,13 @@ class _TrimmerViewState extends State<TrimmerView> {
         } catch (e) {
           print("Error saving trimmed video to database: $e");
         }
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => UseScreen2(
-                  filePath: outputPath,
-                  videoID: widget.videoID,
-                )));
+        Navigator.of(context)
+          ..pop
+          ..pushReplacement(MaterialPageRoute(
+              builder: (context) => UseScreen2(
+                    filePath: outputPath,
+                    videoID: widget.videoID,
+                  )));
       },
     );
     setState(() {});

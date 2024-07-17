@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:video_editing_app/CommonMettods/common_sharedPreferences.dart';
 import 'package:video_editing_app/UI/on_boarding_screens/OnBoardingScreen.dart';
 import 'package:video_editing_app/util/app_color.dart';
 import 'package:video_editing_app/widget/button.dart';
@@ -29,13 +31,19 @@ class _ServayScreenState extends State<ServayScreen>
     });
   }
 
-  void toggleSelection(List<String> list, String item) {
+  Future<void> _setoptions() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setStringList("about", []);
+  }
+
+  void toggleSelection(List<String> list, String item, String key) {
     setState(() {
       if (list.contains(item)) {
         list.remove(item);
       } else {
         list.add(item);
       }
+      setStringlist(key, list);
     });
   }
 
@@ -89,7 +97,7 @@ class _ServayScreenState extends State<ServayScreen>
             ],
             selectedOptions: selectedVideos,
             onSelectionChange: (option) =>
-                toggleSelection(selectedVideos, option),
+                toggleSelection(selectedVideos, option, "video_about_category"),
             onNext: moveToNextTab,
           ),
           buildSurveyPage(
@@ -107,7 +115,7 @@ class _ServayScreenState extends State<ServayScreen>
             ],
             selectedOptions: selectedPlatforms,
             onSelectionChange: (option) =>
-                toggleSelection(selectedPlatforms, option),
+                toggleSelection(selectedPlatforms, option, "video_share_category"),
             onNext: moveToNextTab,
           ),
           buildSurveyPage(
@@ -124,7 +132,8 @@ class _ServayScreenState extends State<ServayScreen>
               {'label': 'Google', 'icon': Icons.search},
             ],
             selectedOptions: heardAbout,
-            onSelectionChange: (option) => toggleSelection(heardAbout, option),
+            onSelectionChange: (option) =>
+                toggleSelection(heardAbout, option, "video_hear_category"),
             onNext: () {
               print('Selected videos: $selectedVideos');
               print('Selected platforms: $selectedPlatforms');
