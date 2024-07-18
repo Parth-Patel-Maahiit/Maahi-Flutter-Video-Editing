@@ -85,12 +85,14 @@ class VideoCaption extends StatelessWidget {
                                 ),
                               if (isLogoShow)
                                 Positioned(
-                                  right: width * 0.1,
+                                  right: aspectRatio == 9 / 16
+                                      ? width * 0.4
+                                      : width * 0.05,
                                   top: aspectRatio == 9 / 16
                                       ? height * 0.04
                                       : aspectRatio == 1 / 1
-                                          ? height * 0.54
-                                          : height * 0.7,
+                                          ? height * 0.23
+                                          : height * 0.38,
                                   child: Image(
                                     height: 90,
                                     image: AssetImage(AppImages.logo),

@@ -1,0 +1,19 @@
+1
+00:00:00,000 --> 00:00:00,500
+<font color="#FFFFFFFF" background="#FFFF0000">this</font>
+ 
+2
+00:00:00,500 --> 00:00:01,000
+<font color="#FFFFFFFF" background="#FFFF0000">is</font>
+ 
+3
+00:00:01,000 --> 00:00:02,000
+<font color="#ff57e91b" background="#FFFF0000">18th</font> <b><font color="#ff3f6de5" background="#FFFF0000">for</font></b>
+ 
+4
+00:00:02,000 --> 00:00:03,500
+<b><font color="#FFFFFFFF" background="#FFFF0000">testing</font></b> <i><font color="#FFFFFFFF" background="#FFFF0000">veed</font></i> <u><font color="#FFFFFFFF" background="#FFFF0000">app.</font></u>
+ 
+5
+00:00:03,500 --> 00:00:04,000
+<font color="#FFFFFFFF" background="#FFFF0000">newly added!</font>

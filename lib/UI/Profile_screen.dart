@@ -10,6 +10,8 @@ import 'package:video_editing_app/util/app_color.dart';
 import 'package:video_editing_app/util/app_images.dart';
 import 'package:video_editing_app/widget/profile_container.dart';
 
+import 'Password_change/PasswordChangeScreen.dart';
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
@@ -250,7 +252,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 10),
                 child: InkWell(
                   highlightColor: Colors.transparent,
-                  
                   onTap: () {
                     Navigator.push(
                         context,
@@ -451,7 +452,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   color: AppColor.white_color,
                 ),
                 text: "Change Password",
-                ontap: () {},
+                ontap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PasswordChangeScreen(),
+                      ));
+                },
               ),
               Padding(
                 padding: const EdgeInsets.all(20),

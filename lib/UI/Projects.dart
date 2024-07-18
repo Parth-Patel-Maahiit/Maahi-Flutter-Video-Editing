@@ -37,6 +37,7 @@ class _ProjectsScreenState extends State<ProjectsScreen>
     );
     FFmpegKitConfig.init().then((_) {
       VideoUtil.registerApplicationFonts();
+      VideoUtil.prepareAssets();
 
       Test.testCommonApiMethods();
       Test.testParseArguments();

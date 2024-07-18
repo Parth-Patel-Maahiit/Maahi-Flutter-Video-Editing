@@ -104,12 +104,12 @@ class _ScriptWriteState extends State<ScriptWrite> {
           'New Script',
           style: TextStyle(color: AppColor.white_color),
         ),
-        actions: [
-          TextButton(
-            onPressed: () {},
-            child: Text("Save", style: TextStyle(color: AppColor.white_color)),
-          )
-        ],
+        // actions: [
+        //   TextButton(
+        //     onPressed: () {},
+        //     child: Text("Save", style: TextStyle(color: AppColor.white_color)),
+        //   )
+        // ],
       ),
       body: SafeArea(
         child: Padding(

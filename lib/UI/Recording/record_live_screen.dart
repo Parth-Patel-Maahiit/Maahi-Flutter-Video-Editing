@@ -143,6 +143,11 @@ class _CameraPageState extends State<CameraPage> {
       body: Stack(
         children: [
           CameraAwesomeBuilder.custom(
+            progressIndicator: Center(
+              child: CircularProgressIndicator(
+                color: AppColor.home_plus_color,
+              ),
+            ),
             builder: (state, preview) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.end,

@@ -930,7 +930,7 @@ class _VideoMergeState extends State<VideoMerge> {
                           children: [
                             CommonButton(
                               bgcolor: AppColor.elevated_bg_color,
-                              text: "Before",
+                              text: "Intro",
                               image: AppImages.edit,
                               onPressed: () {
                                 setState(() {
@@ -946,7 +946,7 @@ class _VideoMergeState extends State<VideoMerge> {
                             ),
                             CommonButton(
                               bgcolor: AppColor.elevated_bg_color,
-                              text: "After",
+                              text: "Outro",
                               image: AppImages.edit,
                               onPressed: () {
                                 setState(() {

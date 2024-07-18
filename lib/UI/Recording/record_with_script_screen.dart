@@ -176,6 +176,95 @@ class _RecordWithScriptScreenState extends State<RecordWithScriptScreen> {
     return '${testDir.path}/${position == SensorPosition.front ? 'front_' : 'back_'}${DateTime.now().millisecondsSinceEpoch}.mp4';
   }
 
+  // Future<void> _handleOnPress(CameraState state) async {
+  //   if (state is VideoRecordingCameraState) {
+  //     if (_recordingDuration <= 1) {
+  //       await Future.delayed(Duration(seconds: 1 - _recordingDuration));
+  //     }
+  //     await state.stopRecording();
+  //     String durationOfVideo = _recordingTime;
+  //     _stopRecordingTimer();
+  //     if (captureRequest?.path != null) {
+  //       filePath = captureRequest!.path!;
+  //       try {
+  //         String thumbnailPath = await generateThumbnail(filePath);
+
+  //         await _databaseService.addfile(
+  //             filePath, thumbnailPath, widget.title, widget.title, 9, 16);
+
+  //         AddVideo(widget.title, script_id, filePath);
+
+  //         // Calculate intervals
+  //         print("durationOfVideo === > $durationOfVideo");
+  //         int videoID = await _databaseService.getVidId(filePath);
+  //         final int durationInSeconds = parseDuration(durationOfVideo);
+  //         print("Video duration: $durationInSeconds seconds");
+
+  //         final int intervalMilliseconds = 500;
+  //         // final int delayMilliseconds = 100;
+  //         final int totalIntervals =
+  //             (durationInSeconds * 1000 / intervalMilliseconds).ceil();
+  //         // final int totalIntervals = (durationInSeconds *
+  //         //         1000 /
+  //         //         (intervalMilliseconds + delayMilliseconds))
+  //         //     .ceil();
+
+  //         List<String> parts = widget.script
+  //             .split(RegExp(r'\s+'))
+  //             .where((part) => part.isNotEmpty)
+  //             .toList();
+  //         int partIndex = 0;
+  //         for (int i = 0; i < totalIntervals && partIndex < parts.length; i++) {
+  //           final int startTimeMs = i * intervalMilliseconds;
+  //           final int endTimeMs = startTimeMs + intervalMilliseconds;
+  //           final String startTime =
+  //               _formatDuration(Duration(milliseconds: startTimeMs));
+  //           final String endTime =
+  //               _formatDuration(Duration(milliseconds: endTimeMs));
+  //           await _databaseService.addCaptions(
+  //             videoId: videoID.toString(),
+  //             startTime: startTime,
+  //             toTime: endTime,
+  //             keywords: parts[partIndex],
+  //             text: parts[partIndex],
+  //           );
+  //           partIndex++;
+  //         }
+  //         //var ff = _databaseService.addfile(filePath);
+  //         Navigator.of(context)
+  //           ..pop()
+  //           ..pushReplacement(
+  //             MaterialPageRoute(
+  //                 builder: (context) => VideoSavePage(
+  //                       videoID: videoID.toString(),
+  //                       filePath: filePath,
+  //                       isBackExport: true,
+  //                     )),
+  //           );
+  //         print("File is saved successfully to the database");
+  //       } catch (e) {
+  //         print("Error storing file == > ${e.toString()}");
+  //       }
+  //       setState(() {
+  //         isrecording = false;
+  //         settimer = false;
+  //         //myfile = File(filePath);
+  //       });
+  //     }
+  //   } else if (state is VideoCameraState) {
+  //     captureRequest = await state.startRecording();
+  //     _startRecordingTimer();
+  //     _startAutoScroll();
+  //     AddSript(widget.title, widget.script);
+  //     setState(() {
+  //       isrecording = true;
+  //       isspeed = true;
+  //       isfont = false;
+  //       settimer = true;
+  //     });
+  //   }
+  // }
+
   Future<void> _handleOnPress(CameraState state) async {
     if (state is VideoRecordingCameraState) {
       if (_recordingDuration <= 1) {
@@ -201,21 +290,34 @@ class _RecordWithScriptScreenState extends State<RecordWithScriptScreen> {
           print("Video duration: $durationInSeconds seconds");
 
           final int intervalMilliseconds = 500;
-          // final int delayMilliseconds = 100;
-          final int totalIntervals =
-              (durationInSeconds * 1000 / intervalMilliseconds).ceil();
-          // final int totalIntervals = (durationInSeconds *
-          //         1000 /
-          //         (intervalMilliseconds + delayMilliseconds))
-          //     .ceil();
+          final int firstWordDuration = 1000; // 1 second
 
           List<String> parts = widget.script
               .split(RegExp(r'\s+'))
               .where((part) => part.isNotEmpty)
               .toList();
           int partIndex = 0;
-          for (int i = 0; i < totalIntervals && partIndex < parts.length; i++) {
-            final int startTimeMs = i * intervalMilliseconds;
+
+          // Handle the first word separately
+          if (partIndex < parts.length) {
+            await _databaseService.addCaptions(
+              videoId: videoID.toString(),
+              startTime: _formatDuration(Duration(milliseconds: 0)),
+              toTime:
+                  _formatDuration(Duration(milliseconds: firstWordDuration)),
+              keywords: parts[partIndex],
+              text: parts[partIndex],
+            );
+            partIndex++;
+          }
+
+          // Handle the rest of the words
+          for (int i = 1;
+              i < durationInSeconds * 1000 / intervalMilliseconds &&
+                  partIndex < parts.length;
+              i++) {
+            final int startTimeMs =
+                firstWordDuration + (i - 1) * intervalMilliseconds;
             final int endTimeMs = startTimeMs + intervalMilliseconds;
             final String startTime =
                 _formatDuration(Duration(milliseconds: startTimeMs));
@@ -230,7 +332,7 @@ class _RecordWithScriptScreenState extends State<RecordWithScriptScreen> {
             );
             partIndex++;
           }
-          //var ff = _databaseService.addfile(filePath);
+
           Navigator.of(context)
             ..pop()
             ..pushReplacement(
@@ -321,6 +423,11 @@ class _RecordWithScriptScreenState extends State<RecordWithScriptScreen> {
       body: Stack(
         children: [
           CameraAwesomeBuilder.custom(
+            progressIndicator: Center(
+              child: CircularProgressIndicator(
+                color: AppColor.home_plus_color,
+              ),
+            ),
             builder: (state, preview) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.end,

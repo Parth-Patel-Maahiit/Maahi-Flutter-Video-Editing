@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:video_editing_app/FFmpeg/video_util.dart';
 import 'package:video_editing_app/Model/get_caption_data_model.dart';
 import 'package:video_editing_app/UI/Projects.dart';
 import 'package:video_editing_app/UI/Video_Preview/script_preview.dart';
@@ -832,7 +833,7 @@ class _ExportScreenState extends State<ExportScreen>
         text = '<u>$text</u>';
       }
 
-      return formattedText;
+      return '{\\a3}$formattedText';
     }
 
     String formatTextForCombine(
@@ -935,10 +936,51 @@ class _ExportScreenState extends State<ExportScreen>
     ffmpegButton(true, isAssFile: false);
   }
 
-  late String finalpath;
+//   Future<void> _addWatermark() async {
+//   setState(() {
+//   });
 
+//   try {
+//     final directory = await getApplicationDocumentsDirectory();
+//     final watermarkPath = 'assets/watermark.png';
+//     final outputPath = '${directory.path}/output.mp4';
+
+//     // final watermarkAbsolutePath = await _getAssetAbsolutePath(watermarkPath);
+
+//     final ffmpegCommand =
+//         '-i ${widget.filePath} -i $watermarkAbsolutePath -filter_complex "overlay=10:10" -y $outputPath';
+
+//     //   final ffmpegCommand =
+//     // '-i ${widget.filePath} -i $watermarkAbsolutePath -filter_complex "overlay=10:10" -c:v libx264 -crf 20 -preset fast -b:v 2000k -y $outputPath';
+
+//     final session = await FFmpegKit.execute(ffmpegCommand);
+//     final returnCode = await session.getReturnCode();
+
+//     if (ReturnCode.isSuccess(returnCode)) {
+//       print('Watermark added successfully');
+//       setState(() {
+//         _outputPath = outputPath;
+//         _initializeVideoPlayer();
+//       });
+//     } else {
+//       final logs = await session.getAllLogsAsString();
+//       final statistics = await session.getStatistics();
+//       print('Failed to add watermark');
+//       print('FFmpeg log: $logs');
+//       print('FFmpeg statistics: $statistics');
+//     }
+//   } catch (e) {
+//     print('Error adding watermark: $e');
+//   } finally {
+//     setState(() {
+//     });
+//   }
+// }
+
+  late String finalpath;
   String srtFilePath = "";
-  void ffmpegButton(bool isCaption, {bool isAssFile = false}) {
+  String waterMarkPath = "";
+  void ffmpegButton(bool isCaption, {bool isAssFile = false}) async {
     print("ffmpge start");
     String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
     int height = _videoPlayerController.value.size.height.round();
@@ -947,6 +989,9 @@ class _ExportScreenState extends State<ExportScreen>
     print(
         "height === > ${_videoPlayerController.value.size.height.toString()}");
 
+    await VideoUtil.assetPath(VideoUtil.ASSET_1).then((path) {
+      waterMarkPath = path;
+    });
     // String cropFilter;
     // if (aspectRatio == 1 / 1) {
     //   cropFilter = "crop=in_h:in_h";
@@ -960,21 +1005,39 @@ class _ExportScreenState extends State<ExportScreen>
     // }
     finalpath = "/storage/emulated/0/Download/output_$timestamp.mp4";
     String command = "";
+    int watermarkWidth = 300; // Example width
+    int watermarkHeight = 100; // Example height
+    String resizeFilter =
+        '[1:v]scale=$watermarkWidth:$watermarkHeight [watermark];';
+
+    String overlayFilter =
+        '[0:v][watermark]overlay=' + '(main_w-overlay_w-20):(10)';
+
+    String subtitleFilter = isAssFile
+        ? 'ass=$srtFilePath'
+        : "subtitles='$srtFilePath':force_style='Fontname=Roboto-Condensed-Bold,Fontsize=24,Outline=1,Shadow=1'";
+
     if (isCaption) {
       // Construct the FFmpeg command
 
       // '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}'$srtFilePath:force_style=Fontname=Trueno'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
 
 // working
+      // '-i $downloadDirPath/mib2.mp4 -i $downloadDirPath/info2-image.png -filter_complex "overlay=10:10" -y $downloadDirPath/output999.mp4';// watermark working
+
+      // command =
+      //     '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}$srtFilePath:force_style='Fontname==Roboto-Condensed-Bold,Fontsize=24,Outline=1,Shadow=1'" -s ${width}x$height $finalpath''';
+
       command =
-          '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}$srtFilePath:force_style='Fontname==Roboto-Condensed-Bold,Fontsize=24,Outline=1,Shadow=1'" -s ${width}x$height $finalpath''';
+          '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "$resizeFilter $overlayFilter,$subtitleFilter" -s ${width}x$height "$finalpath"';
 
       // '''-y -i "$_outputPath" -vf "$cropFilter,${isAssFile ? "ass=" : "subtitles="}$srtFilePath:force_style='Fontname=Trueno,Fontsize=24,Outline=1,Shadow=1,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BackColour=&H80000000'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
       // '''-y -i "$_outputPath" -vf "$cropFilter,scale=$width:$height" -c:a copy "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
     } else {
-      command = '''-i $_outputPath -c:v copy -y $finalpath''';
+      // command = '''-i $_outputPath -c:v copy -y $finalpath''';
+      command =
+          '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "$resizeFilter$overlayFilter" -c:v mpeg4 -q:v 5 -c:a aac -strict -2 "$finalpath"';
     }
-
     print("command === > $command");
     FFmpegKit.execute(command).then((session) async {
       final returnCode = await session.getReturnCode();

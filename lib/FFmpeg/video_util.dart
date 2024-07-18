@@ -7,14 +7,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 class VideoUtil {
-  static const String ASSET_1 = "machupicchu.jpg";
-  static const String ASSET_2 = "pyramid.jpg";
-  static const String ASSET_3 = "stonehenge.jpg";
-  static const String SUBTITLE_ASSET = "subtitle.srt";
-  static const String SUBTITLE_ASSET1 = "testword1.srt";
-  static const String FONT_ASSET_1 = "doppioone_regular.ttf";
-  static const String FONT_ASSET_2 = "truenorg.otf";
-  static const String VIDEO_PATH = "mib2.mp4";
+  static const String ASSET_1 = "logo.png";
 
   static void registerApplicationFonts() {
     var fontNameMapping = Map<String, String>();
@@ -33,7 +26,7 @@ class VideoUtil {
   }
 
   static void prepareAssets() async {
-
+    await VideoUtil.assetToFile(ASSET_1);
   }
 
   static Future<File> assetToFile(String assetName) async {

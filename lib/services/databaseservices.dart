@@ -710,6 +710,41 @@ class DatabaseService {
     }
   }
 
+  Future<int> addLastCaptions(
+      {required String videoId,
+      required String startTime,
+      required String toTime,
+      required String keywords,
+      required String text}) async {
+    try {
+      final db = await database;
+      int id = await db.insert(_captionTable, {
+        _captionVideoId: videoId,
+        _captionStartFrom: startTime,
+        _captionEndTo: toTime,
+        _captionKeyword: keywords,
+        _captionText: text,
+        _captionTextColor: "0xFFFFFFFF",
+        _captionBackgroundColor: "0xFFFF0000",
+        _captionIsBold: "0",
+        _captionIsUnderline: "0",
+        _captionIsItalic: "0",
+      });
+      await db.update(
+        _captionTable,
+        {
+          _captionCombineIds: "$id",
+        },
+        where: '$_captionId = ?',
+        whereArgs: [id],
+      );
+      return id;
+    } catch (e) {
+      print("Failed to add file: $e");
+    }
+    return 0;
+  }
+
   Future<List<Map<String, dynamic>>> getCaptionForVideo(
       {required String videoId}) async {
     try {

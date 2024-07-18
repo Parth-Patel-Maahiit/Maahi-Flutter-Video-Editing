@@ -942,42 +942,133 @@ class _VideoSavePageState extends State<VideoSavePage>
     );
   }
 
+  // Widget getCpationList(bool isPlaying) {
+  //   return SizedBox(
+  //     height: 45,
+  //     //  isPlaying ? 45 : 0,
+  //     child: ScrollablePositionedList.builder(
+  //       shrinkWrap: true,
+  //       initialAlignment: BorderSide.strokeAlignCenter,
+  //       itemScrollController: _scrollControllerList,
+  //       itemPositionsListener: _positionsListener,
+  //       itemCount: _getCations.length,
+  //       scrollDirection: Axis.horizontal,
+  //       itemBuilder: (context, index) {
+  //         GetCaptionDataModel caption = _getCations[index];
+  //         final isActive = _videoPlayerController.value.position >=
+  //                 parseDuration(caption.startFrom) &&
+  //             _videoPlayerController.value.position <=
+  //                 parseDuration(caption.endTo);
+
+  //         if (isActive) {
+  //           activeCaptionIndex = index;
+  //           print("Active index ==> $activeCaptionIndex");
+  //         }
+  //         return Container(
+  //           margin: index == 0
+  //               ? EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.4)
+  //               : index == _getCations.length - 1
+  //                   ? EdgeInsets.only(
+  //                       right: MediaQuery.of(context).size.width * 0.4)
+  //                   : null,
+  //           decoration: isActive
+  //               ? BoxDecoration(
+  //                   color: const Color.fromARGB(255, 58, 55, 55),
+  //                   borderRadius: BorderRadius.circular(5),
+  //                   border: Border.all(color: Colors.blue, width: 2.0),
+  //                 )
+  //               : null,
+  //           child: InkWell(
+  //             onTap: !isActive
+  //                 ? () {
+  //                     print("caption.startFrom === > ${caption.startFrom}");
+  //                     if (action != "") {
+  //                       action = "isStyle";
+  //                     }
+  //                     _videoPlayerController
+  //                         .seekTo(parseDuration(caption.startFrom) +
+  //                             Duration(milliseconds: 5))
+  //                         .then((_) {
+  //                       setState(() {}); // Ensures the UI updates after seeking
+  //                     });
+  //                   }
+  //                 : null,
+  //             child: EditableWord(
+  //               isActive: isActive,
+  //               text: caption.keyword,
+  //               onSubmitted: (newText) {
+  //                 _databaseService.getUpdateCaptionValueById(
+  //                     mainIndexId: caption.id.toString(),
+  //                     combineIds: caption.combineIds,
+  //                     text: newText);
+  //                 setState(() {
+  //                   _getCations[index].keyword = newText;
+  //                 });
+  //               },
+  //             ),
+  //             onDoubleTap: () {},
+  //           ),
+  //         );
+  //       },
+  //     ),
+
+  //   );
+  // }
   Widget getCpationList(bool isPlaying) {
     return SizedBox(
-      height: 45,
-      //  isPlaying ? 45 : 0,
+      height: 35,
       child: ScrollablePositionedList.builder(
         shrinkWrap: true,
         initialAlignment: BorderSide.strokeAlignCenter,
         itemScrollController: _scrollControllerList,
         itemPositionsListener: _positionsListener,
-        itemCount: _getCations.length,
+        itemCount:
+            _getCations.length + 1, // Add 1 to the item count for the icon
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
+          if (index == _getCations.length) {
+            // If it's the last index, add the icon
+            return Container(
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color.fromARGB(169, 67, 67, 67),
+              ),
+              margin: EdgeInsets.only(
+                right: MediaQuery.of(context).size.width * 0.4,
+              ),
+              child: IconButton(
+                onPressed: _addNewCaption,
+                icon: Icon(Icons.add),
+                iconSize: 20,
+              ),
+            );
+          }
           GetCaptionDataModel caption = _getCations[index];
           final isActive = _videoPlayerController.value.position >=
                   parseDuration(caption.startFrom) &&
               _videoPlayerController.value.position <=
                   parseDuration(caption.endTo);
-
           if (isActive) {
             activeCaptionIndex = index;
             print("Active index ==> $activeCaptionIndex");
           }
+
           return Container(
             margin: index == 0
                 ? EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.4)
-                : index == _getCations.length - 1
-                    ? EdgeInsets.only(
-                        right: MediaQuery.of(context).size.width * 0.4)
-                    : null,
+                : EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width * 0.014),
+            padding: EdgeInsets.symmetric(horizontal: 7),
             decoration: isActive
                 ? BoxDecoration(
                     color: const Color.fromARGB(255, 58, 55, 55),
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: Colors.blue, width: 2.0),
                   )
-                : null,
+                : BoxDecoration(
+                    color: const Color.fromARGB(255, 58, 55, 55),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
             child: InkWell(
               onTap: !isActive
                   ? () {
@@ -1012,6 +1103,67 @@ class _VideoSavePageState extends State<VideoSavePage>
         },
       ),
     );
+  }
+
+  Duration parseDuration(String duration) {
+    List<String> parts = duration.split(':');
+    List<String> secondsParts = parts[2].split('.');
+    int hours = int.parse(parts[0]);
+    int minutes = int.parse(parts[1]);
+    int seconds = int.parse(secondsParts[0]);
+    int milliseconds = int.parse(secondsParts[1]);
+    return Duration(
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds,
+        milliseconds: milliseconds);
+  }
+
+// Helper function to format the duration back to a string in the format "HH:mm:ss.SSS"
+  String formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String threeDigits(int n) => n.toString().padLeft(3, "0");
+    String hours = twoDigits(duration.inHours.remainder(24));
+    String minutes = twoDigits(duration.inMinutes.remainder(60));
+    String seconds = twoDigits(duration.inSeconds.remainder(60));
+    String milliseconds = threeDigits(duration.inMilliseconds.remainder(1000));
+    return "$hours:$minutes:$seconds.$milliseconds";
+  }
+
+  void _addNewCaption() async {
+    if (_getCations.isNotEmpty) {
+      String starttime = _getCations.last.endTo;
+
+      String endtime =
+          formatDuration(parseDuration(starttime) + Duration(milliseconds: 500))
+              .toString();
+      int id = await _databaseService.addLastCaptions(
+          keywords: "Hello",
+          startTime: starttime,
+          text: "Hello",
+          toTime: endtime,
+          videoId: widget.videoID!);
+
+      final defaultCaption = GetCaptionDataModel(
+        id: id,
+        vidId: widget.videoID,
+        startFrom: starttime,
+        endTo: endtime,
+        keyword: 'Hello',
+        text: 'Hello',
+        textColor: "0xFFFFFFFF",
+        backgroundColor: "0xFFFF0000",
+        isBold: "0",
+        isUnderLine: "0",
+        isItalic: "0",
+        combineIds: '$id',
+      );
+
+      // Update the list and refresh the UI
+      setState(() {
+        _getCations.add(defaultCaption);
+      });
+    }
   }
 
   Widget getEditingMenu() {
@@ -1390,49 +1542,41 @@ class _EditableWordState extends State<EditableWord> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 2),
-      child: Container(
-        decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 58, 55, 55),
-            borderRadius: BorderRadius.circular(5)),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            width: _width,
-            alignment: Alignment.center,
-            child: widget.isActive
-                ? TextField(
-                    controller: _controller,
-                    enableInteractiveSelection: false,
-                    style: TextStyle(
-                        color: AppColor.white_color,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                    onChanged: (text) {
-                      print("onChanged === > $text");
-                      widget.onSubmitted(text);
-                    },
-                    onSubmitted: (text) {
-                      print("onSubmitted === > $text");
-                      widget.onSubmitted(text);
-                    },
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      isDense: true,
-                      contentPadding: EdgeInsets.all(1),
-                    ),
-                  )
-                : Text(
-                    widget.text,
-                    style: TextStyle(
-                        color: AppColor.white_color,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  ),
-          ),
-        ),
-      ),
+    return Container(
+      width: _width,
+      decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 58, 55, 55),
+          borderRadius: BorderRadius.circular(5)),
+      alignment: Alignment.center,
+      child: widget.isActive
+          ? TextField(
+              controller: _controller,
+              enableInteractiveSelection: false,
+              style: TextStyle(
+                  color: AppColor.white_color,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold),
+              onChanged: (text) {
+                print("onChanged === > $text");
+                widget.onSubmitted(text);
+              },
+              onSubmitted: (text) {
+                print("onSubmitted === > $text");
+                widget.onSubmitted(text);
+              },
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: EdgeInsets.all(1),
+              ),
+            )
+          : Text(
+              widget.text,
+              style: TextStyle(
+                  color: AppColor.white_color,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold),
+            ),
     );
   }
 }
