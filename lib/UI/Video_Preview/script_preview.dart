@@ -437,19 +437,19 @@ class _VideoSavePageState extends State<VideoSavePage>
                 isPlaying: isPlaying,
                 videoPlayerController: _videoPlayerController,
               ),
-              if (_getCations.isNotEmpty)
-                Visibility(
-                  visible: true,
-                  child: Positioned(
-                      bottom: 30,
-                      left: 0,
-                      right: 0,
-                      child: getCpationList(!isPlaying &&
-                          (action == "isStyle" ||
-                              action == "isHighilight" ||
-                              action == "isMerge" ||
-                              action == "isSplit"))),
-                ),
+              // if (_getCations.isNotEmpty)
+              Visibility(
+                visible: true,
+                child: Positioned(
+                    bottom: 30,
+                    left: 0,
+                    right: 0,
+                    child: getCpationList(!isPlaying &&
+                        (action == "isStyle" ||
+                            action == "isHighilight" ||
+                            action == "isMerge" ||
+                            action == "isSplit"))),
+              ),
               if (!isPlaying)
                 Positioned(
                     top: 40,
@@ -1014,6 +1014,97 @@ class _VideoSavePageState extends State<VideoSavePage>
 
   //   );
   // }
+  // Widget getCpationList(bool isPlaying) {
+  //   return SizedBox(
+  //     height: 35,
+  //     child: ScrollablePositionedList.builder(
+  //       shrinkWrap: true,
+  //       initialAlignment: BorderSide.strokeAlignCenter,
+  //       itemScrollController: _scrollControllerList,
+  //       itemPositionsListener: _positionsListener,
+  //       itemCount:
+  //           _getCations.length + 1, // Add 1 to the item count for the icon
+  //       scrollDirection: Axis.horizontal,
+  //       itemBuilder: (context, index) {
+  //         if (index == _getCations.length) {
+  //           // If it's the last index, add the icon
+  //           return Container(
+  //             decoration: const BoxDecoration(
+  //               shape: BoxShape.circle,
+  //               color: Color.fromARGB(169, 67, 67, 67),
+  //             ),
+  //             margin: EdgeInsets.only(
+  //               right: MediaQuery.of(context).size.width * 0.4,
+  //             ),
+  //             child: IconButton(
+  //               onPressed: _addNewCaption,
+  //               icon: Icon(Icons.add),
+  //               iconSize: 20,
+  //             ),
+  //           );
+  //         }
+  //         GetCaptionDataModel caption = _getCations[index];
+  //         final isActive = _videoPlayerController.value.position >=
+  //                 parseDuration(caption.startFrom) &&
+  //             _videoPlayerController.value.position <=
+  //                 parseDuration(caption.endTo);
+  //         if (isActive) {
+  //           activeCaptionIndex = index;
+  //           print("Active index ==> $activeCaptionIndex");
+  //         }
+
+  //         return Container(
+  //           margin: index == 0
+  //               ? EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.4)
+  //               : EdgeInsets.only(
+  //                   left: MediaQuery.of(context).size.width * 0.014),
+  //           padding: EdgeInsets.symmetric(horizontal: 7),
+  //           decoration: isActive
+  //               ? BoxDecoration(
+  //                   color: const Color.fromARGB(255, 58, 55, 55),
+  //                   borderRadius: BorderRadius.circular(5),
+  //                   border: Border.all(color: Colors.blue, width: 2.0),
+  //                 )
+  //               : BoxDecoration(
+  //                   color: const Color.fromARGB(255, 58, 55, 55),
+  //                   borderRadius: BorderRadius.circular(5),
+  //                 ),
+  //           child: InkWell(
+  //             onTap: !isActive
+  //                 ? () {
+  //                     print("caption.startFrom === > ${caption.startFrom}");
+  //                     if (action != "") {
+  //                       action = "isStyle";
+  //                     }
+  //                     _videoPlayerController
+  //                         .seekTo(parseDuration(caption.startFrom) +
+  //                             Duration(milliseconds: 5))
+  //                         .then((_) {
+  //                       setState(() {}); // Ensures the UI updates after seeking
+  //                     });
+  //                   }
+  //                 : null,
+  //             child: EditableWord(
+  //               isActive: isActive,
+  //               text: caption.keyword,
+  //               onSubmitted: (newText) {
+  //                 _databaseService.getUpdateCaptionValueById(
+  //                     mainIndexId: caption.id.toString(),
+  //                     combineIds: caption.combineIds,
+  //                     text: newText);
+  //                 setState(() {
+  //                   _getCations[index].keyword = newText;
+  //                 });
+  //               },
+  //             ),
+  //             onDoubleTap: () {},
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
+
   Widget getCpationList(bool isPlaying) {
     return SizedBox(
       height: 35,
@@ -1022,11 +1113,31 @@ class _VideoSavePageState extends State<VideoSavePage>
         initialAlignment: BorderSide.strokeAlignCenter,
         itemScrollController: _scrollControllerList,
         itemPositionsListener: _positionsListener,
-        itemCount:
-            _getCations.length + 1, // Add 1 to the item count for the icon
+        itemCount: _getCations.isEmpty
+            ? 1
+            : _getCations.length +
+                1, // Adjust item count based on the presence of captions
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
-          if (index == _getCations.length) {
+          if (_getCations.isEmpty) {
+            // If no captions, show the "Add Caption" button in the center
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 170),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color.fromARGB(169, 67, 67, 67),
+                  ),
+                  child: IconButton(
+                    onPressed: _addNewCaption,
+                    icon: Icon(Icons.add),
+                    iconSize: 20,
+                  ),
+                ),
+              ),
+            );
+          } else if (index == _getCations.length) {
             // If it's the last index, add the icon
             return Container(
               decoration: const BoxDecoration(
@@ -1043,6 +1154,7 @@ class _VideoSavePageState extends State<VideoSavePage>
               ),
             );
           }
+
           GetCaptionDataModel caption = _getCations[index];
           final isActive = _videoPlayerController.value.position >=
                   parseDuration(caption.startFrom) &&
@@ -1130,40 +1242,83 @@ class _VideoSavePageState extends State<VideoSavePage>
     return "$hours:$minutes:$seconds.$milliseconds";
   }
 
-  void _addNewCaption() async {
-    if (_getCations.isNotEmpty) {
-      String starttime = _getCations.last.endTo;
+  // void _addNewCaption() async {
+  //   if (_getCations.isNotEmpty) {
+  //     String starttime = _getCations.last.endTo;
 
-      String endtime =
+  //     String endtime =
+  //         formatDuration(parseDuration(starttime) + Duration(milliseconds: 500))
+  //             .toString();
+  //     int id = await _databaseService.addLastCaptions(
+  //         keywords: "Hello",
+  //         startTime: starttime,
+  //         text: "Hello",
+  //         toTime: endtime,
+  //         videoId: widget.videoID!);
+
+  //     final defaultCaption = GetCaptionDataModel(
+  //       id: id,
+  //       vidId: widget.videoID,
+  //       startFrom: starttime,
+  //       endTo: endtime,
+  //       keyword: 'Hello',
+  //       text: 'Hello',
+  //       textColor: "0xFFFFFFFF",
+  //       backgroundColor: "0xFFFF0000",
+  //       isBold: "0",
+  //       isUnderLine: "0",
+  //       isItalic: "0",
+  //       combineIds: '$id',
+  //     );
+
+  //     // Update the list and refresh the UI
+  //     setState(() {
+  //       _getCations.add(defaultCaption);
+  //     });
+  //   }
+  // }
+
+  void _addNewCaption() async {
+    String starttime;
+    String endtime;
+
+    if (_getCations.isNotEmpty) {
+      starttime = _getCations.last.endTo;
+      endtime =
           formatDuration(parseDuration(starttime) + Duration(milliseconds: 500))
               .toString();
-      int id = await _databaseService.addLastCaptions(
-          keywords: "Hello",
-          startTime: starttime,
-          text: "Hello",
-          toTime: endtime,
-          videoId: widget.videoID!);
-
-      final defaultCaption = GetCaptionDataModel(
-        id: id,
-        vidId: widget.videoID,
-        startFrom: starttime,
-        endTo: endtime,
-        keyword: 'Hello',
-        text: 'Hello',
-        textColor: "0xFFFFFFFF",
-        backgroundColor: "0xFFFF0000",
-        isBold: "0",
-        isUnderLine: "0",
-        isItalic: "0",
-        combineIds: '$id',
-      );
-
-      // Update the list and refresh the UI
-      setState(() {
-        _getCations.add(defaultCaption);
-      });
+    } else {
+      starttime = "00:00:00.000"; // Default start time for the first caption
+      endtime = "00:00:01.000"; // Default end time for the first caption
     }
+
+    int id = await _databaseService.addLastCaptions(
+      keywords: "Hello",
+      startTime: starttime,
+      text: "Hello",
+      toTime: endtime,
+      videoId: widget.videoID!,
+    );
+
+    final defaultCaption = GetCaptionDataModel(
+      id: id,
+      vidId: widget.videoID,
+      startFrom: starttime,
+      endTo: endtime,
+      keyword: 'Hello',
+      text: 'Hello',
+      textColor: "0xFFFFFFFF",
+      backgroundColor: "0xFFFF0000",
+      isBold: "0",
+      isUnderLine: "0",
+      isItalic: "0",
+      combineIds: '$id',
+    );
+
+    // Update the list and refresh the UI
+    setState(() {
+      _getCations.add(defaultCaption);
+    });
   }
 
   Widget getEditingMenu() {

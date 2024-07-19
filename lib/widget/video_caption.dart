@@ -76,11 +76,11 @@ class VideoCaption extends StatelessWidget {
                                   bottom: aspectRatio == 9 / 16
                                       ? height * 0.1
                                       : aspectRatio == 1 / 1
-                                          ? height * 0.6
-                                          : height * 0.75,
+                                          ? height * 0.37
+                                          : height * 0.5,
                                   child: Container(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 30),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: width * 0.55),
                                       child: captionData()),
                                 ),
                               if (isLogoShow)

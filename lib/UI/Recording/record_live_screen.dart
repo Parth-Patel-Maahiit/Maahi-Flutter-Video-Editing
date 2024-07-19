@@ -277,7 +277,7 @@ class _CameraPageState extends State<CameraPage> {
             ),
             enablePhysicalButton: true,
             previewAlignment: Alignment.center,
-            previewFit: CameraPreviewFit.cover,
+            previewFit: CameraPreviewFit.fitHeight,
             saveConfig: SaveConfig.video(
                 videoOptions: VideoOptions(
                   quality: VideoRecordingQuality.highest,

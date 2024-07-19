@@ -638,7 +638,7 @@ class _RecordWithScriptScreenState extends State<RecordWithScriptScreen> {
                     fps: 30,
                   ),
                   android: AndroidVideoOptions(
-                    bitrate: 6000000,
+                    bitrate: 6000,
                     fallbackStrategy: QualityFallbackStrategy.lower,
                   ),
                 ),

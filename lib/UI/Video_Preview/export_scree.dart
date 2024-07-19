@@ -833,7 +833,7 @@ class _ExportScreenState extends State<ExportScreen>
         text = '<u>$text</u>';
       }
 
-      return '{\\a3}$formattedText';
+      return '$formattedText';
     }
 
     String formatTextForCombine(
@@ -852,9 +852,9 @@ class _ExportScreenState extends State<ExportScreen>
         }
         print("currentCaption ==== > $currentCaption");
         String text = currentCaption['keyword'];
-        String textColor = currentCaption['text_color'].toString().substring(2);
+        String textColor = currentCaption['text_color'].toString().substring(4);
         String bgColor =
-            currentCaption['background_color'].toString().substring(2);
+            currentCaption['background_color'].toString().substring(4);
         String formattedText =
             '<font color="#$textColor" background="#$bgColor">$text</font>';
 
@@ -980,6 +980,102 @@ class _ExportScreenState extends State<ExportScreen>
   late String finalpath;
   String srtFilePath = "";
   String waterMarkPath = "";
+  // void ffmpegButton(bool isCaption, {bool isAssFile = false}) async {
+  //   print("ffmpge start");
+  //   String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
+  //   int height = _videoPlayerController.value.size.height.round();
+  //   int width = _videoPlayerController.value.size.width.round();
+  //   print("width === > ${_videoPlayerController.value.size.width.toString()}");
+  //   print(
+  //       "height === > ${_videoPlayerController.value.size.height.toString()}");
+
+  //   await VideoUtil.assetPath(VideoUtil.ASSET_1).then((path) {
+  //     waterMarkPath = path;
+  //   });
+  //   // String cropFilter;
+  //   // if (aspectRatio == 1 / 1) {
+  //   //   cropFilter = "crop=in_h:in_h";
+  //   // } else if (aspectRatio == 9 / 16) {
+  //   //   cropFilter = "crop=in_h*9/16:in_h";
+  //   // } else if (aspectRatio == 4 / 3) {
+  //   //   cropFilter = "crop=in_h*4/3:in_h";
+  //   // } else {
+  //   //   print("Unsupported aspect ratio");
+  //   //   return;
+  //   // }
+  //   finalpath = "/storage/emulated/0/Download/output_$timestamp.mp4";
+  //   String command = "";
+  //   int watermarkWidth = 300; // Example width
+  //   int watermarkHeight = 100; // Example height
+  //   String resizeFilter =
+  //       '[1:v]scale=$watermarkWidth:$watermarkHeight [watermark];';
+
+  //   String overlayFilter =
+  //       '[0:v][watermark]overlay=' + '(main_w-overlay_w-20):(10)';
+
+  //   String subtitleFilter = isAssFile
+  //       ? 'ass=$srtFilePath'
+  //       : "subtitles='$srtFilePath':force_style='Fontname=Roboto-Condensed-Bold,Fontsize=24,Outline=1,Shadow=1'";
+
+  //   if (isCaption) {
+  //     // Construct the FFmpeg command
+
+  //     // '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}'$srtFilePath:force_style=Fontname=Trueno'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
+
+  //    // working
+  //     // '-i $downloadDirPath/mib2.mp4 -i $downloadDirPath/info2-image.png -filter_complex "overlay=10:10" -y $downloadDirPath/output999.mp4';// watermark working
+
+  //     // command =
+  //     //     '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}$srtFilePath:force_style='Fontname==Roboto-Condensed-Bold,Fontsize=24,Outline=1,Shadow=1'" -s ${width}x$height $finalpath''';
+
+  //     command =
+  //         '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "$resizeFilter $overlayFilter,$subtitleFilter" -s ${width}x$height "$finalpath"';
+
+  //     // '''-y -i "$_outputPath" -vf "$cropFilter,${isAssFile ? "ass=" : "subtitles="}$srtFilePath:force_style='Fontname=Trueno,Fontsize=24,Outline=1,Shadow=1,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BackColour=&H80000000'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
+  //     // '''-y -i "$_outputPath" -vf "$cropFilter,scale=$width:$height" -c:a copy "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
+  //   } else {
+  //     // command = '''-i $_outputPath -c:v copy -y $finalpath''';
+  //     command =
+  //         '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "$resizeFilter$overlayFilter" -c:v mpeg4 -q:v 5 -c:a aac -strict -2 "$finalpath"';
+  //   }
+  //   print("command === > $command");
+  //   FFmpegKit.execute(command).then((session) async {
+  //     final returnCode = await session.getReturnCode();
+
+  //     final allLogs = await session.getAllLogs();
+  //     allLogs.forEach((log) {
+  //       print("session logs ==== > ${log.getMessage()}");
+  //     });
+  //     final satastic = await session.getAllStatistics();
+  //     print("session satastic ==== > ${satastic.toString()}");
+  //     satastic.forEach((satastic) {
+  //       print("session Time ==== > ${satastic.getTime()}");
+  //       print("session VideoQuality ==== > ${satastic.getVideoQuality()}");
+  //     });
+  //     print("session commonds === > ${session.getCommand()}");
+  //     print("session Arguments === > ${session.getArguments()}");
+
+  //     if (ReturnCode.isSuccess(returnCode)) {
+  //       print("Log 1--------------------------------------> SUCCESS");
+  //       setState(() {
+  //         action = "Done";
+  //         progressController.dispose();
+  //       });
+  //     } else if (ReturnCode.isCancel(returnCode)) {
+  //       print("Log 2--------------------------------------> CANCEL");
+  //     } else {
+  //       print("Log 3--------------------------------------> ERROR");
+  //       print('Error adding subtitles: ${await session.getFailStackTrace()}');
+  //       print("${returnCode}");
+
+  //       setState(() {
+  //         action = "";
+  //         progressController.dispose();
+  //       });
+  //     }
+  //   });
+  // }
+
   void ffmpegButton(bool isCaption, {bool isAssFile = false}) async {
     print("ffmpge start");
     String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
@@ -1022,21 +1118,21 @@ class _ExportScreenState extends State<ExportScreen>
 
       // '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}'$srtFilePath:force_style=Fontname=Trueno'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
 
-// working
+      // working
       // '-i $downloadDirPath/mib2.mp4 -i $downloadDirPath/info2-image.png -filter_complex "overlay=10:10" -y $downloadDirPath/output999.mp4';// watermark working
 
       // command =
       //     '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}$srtFilePath:force_style='Fontname==Roboto-Condensed-Bold,Fontsize=24,Outline=1,Shadow=1'" -s ${width}x$height $finalpath''';
 
       command =
-          '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "$resizeFilter $overlayFilter,$subtitleFilter" -s ${width}x$height "$finalpath"';
+          '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "$resizeFilter$overlayFilter,$subtitleFilter" -s ${width}x$height -c:v mpeg4 -q:v 1 -c:a aac -b:a 192k -strict -2 "$finalpath"';
 
       // '''-y -i "$_outputPath" -vf "$cropFilter,${isAssFile ? "ass=" : "subtitles="}$srtFilePath:force_style='Fontname=Trueno,Fontsize=24,Outline=1,Shadow=1,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BackColour=&H80000000'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
       // '''-y -i "$_outputPath" -vf "$cropFilter,scale=$width:$height" -c:a copy "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
     } else {
       // command = '''-i $_outputPath -c:v copy -y $finalpath''';
       command =
-          '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "$resizeFilter$overlayFilter" -c:v mpeg4 -q:v 5 -c:a aac -strict -2 "$finalpath"';
+          '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "$resizeFilter$overlayFilter" -c:v mpeg4 -q:v 1 -c:a aac -strict -2 "$finalpath"';
     }
     print("command === > $command");
     FFmpegKit.execute(command).then((session) async {

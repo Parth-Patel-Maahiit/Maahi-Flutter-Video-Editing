@@ -144,8 +144,12 @@ class _AudioPickerState extends State<AudioPicker> {
 
     // Add your merging command logic here, e.g., using FFmpeg
     //  '-i $downloadDirPath/mib2.mp4 -i $downloadDirPath/aduio.mp3 -c:v copy -c:a aac -strict experimental -map 0:v:0 -map 1:a:0 -y $downloadDirPath/output909.mp4'; // working add audio
+    // String command =
+    //     '-i ${widget.filepath} -i $_audioPath -c:v copy -c:a aac -strict experimental -map 0:v:0 -map 1:a:0 -shortest -y $outputpath';
+
     String command =
-        '-i ${widget.filepath} -i $_audioPath -c:v copy -c:a aac -strict experimental -map 0:v:0 -map 1:a:0 -shortest -y $outputpath';
+        '-i ${widget.filepath} -i $_audioPath -c:v mpeg4 -q:v 1 -c:a aac -b:a 192k -strict experimental -map 0:v:0 -map 1:a:0 -shortest -y $outputpath';
+
     print("Merging command: $command");
 
     // Execute the merging command

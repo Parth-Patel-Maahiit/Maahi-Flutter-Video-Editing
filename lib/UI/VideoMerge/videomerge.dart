@@ -647,7 +647,7 @@ class _VideoMergeState extends State<VideoMerge> {
           "[0:v]scale='if(gt(a,1080/1920),1080,-2)':'if(gt(a,1080/1920),-2,1920)',pad=1080:1920:(1080-iw)/2:(1920-ih)/2,fps=12,format=yuv420p[v0];"
           "[1:v]scale='if(gt(a,1080/1920),1080,-2)':'if(gt(a,1080/1920),-2,1920)',pad=1080:1920:(1080-iw)/2:(1920-ih)/2,fps=12,format=yuv420p[v1];"
           "[v0][0:a][v1][1:a]concat=n=2:v=1:a=1[outv][outa]\" "
-          "-map \"[outv]\" -map \"[outa]\" -c:v mpeg4 -b:v 4M -c:a aac -b:a 128k -y $outputpath";
+          "-map \"[outv]\" -map \"[outa]\" -c:v mpeg4 -q:v 1 -c:a aac -b:a 128k -y $outputpath";
 
       print("Merging command: $command");
     } else {
@@ -655,7 +655,7 @@ class _VideoMergeState extends State<VideoMerge> {
           "[0:v]scale='if(gt(a,1080/1920),1080,-2)':'if(gt(a,1080/1920),-2,1920)',pad=1080:1920:(1080-iw)/2:(1920-ih)/2,fps=12,format=yuv420p[v0];"
           "[1:v]scale='if(gt(a,1080/1920),1080,-2)':'if(gt(a,1080/1920),-2,1920)',pad=1080:1920:(1080-iw)/2:(1920-ih)/2,fps=12,format=yuv420p[v1];"
           "[v0][0:a][v1][1:a]concat=n=2:v=1:a=1[outv][outa]\" "
-          "-map \"[outv]\" -map \"[outa]\" -c:v mpeg4 -b:v 4M -c:a aac -b:a 128k -y $outputpath";
+          "-map \"[outv]\" -map \"[outa]\" -c:v mpeg4 -q:v 1 -c:a aac -b:a 128k -y $outputpath";
     }
 
     FFmpegKit.execute(command).then((session) async {
