@@ -1,16 +1,21 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:camerawesome/camerawesome_plugin.dart';
 import 'package:camerawesome/pigeon.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:video_editing_app/API/commonapicall.dart';
+import 'package:video_editing_app/Model/login_model.dart';
 import 'package:video_editing_app/UI/UseVideo/usescreen.dart';
 import 'package:video_editing_app/UI/components/common.dart';
 
 import 'package:video_editing_app/services/databaseservices.dart';
 import 'package:video_editing_app/util/app_color.dart';
 import 'package:video_editing_app/util/app_images.dart';
+
+import '../../CommonMettods/common_sharedPreferences.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
@@ -65,6 +70,69 @@ class _CameraPageState extends State<CameraPage> {
     });
   }
 
+  LoginModel? _login = LoginModel();
+  late String script_id;
+
+  Future<void> AddVideo(String title, String id, String path) async {
+    var loginData = await getStoreApidata("loginData");
+    if (loginData != null) {
+      _login = LoginModel.fromJson(loginData);
+    }
+
+    if (_login != null && _login!.data?.id != null) {
+      var response = await CommonApiCall.getApiData(
+          action:
+              "user_id=${_login!.data?.id}&action=add_video&title=$title&script_id=$id&file_name=$path");
+      if (response != null) {
+        final responseData = json.decode(response.body);
+        print(_login?.data);
+        if (responseData['status'] == 'success') {
+          print("Script added successfully");
+        } else {
+          print("Failed to add script: ${responseData['message']}");
+        }
+      } else {
+        print('Error: Response is null');
+      }
+    } else {
+      print('Error: User is not logged in');
+    }
+  }
+
+  Future<void> AddSript(String title, String script) async {
+    var loginData = await getStoreApidata("loginData");
+    if (loginData != null) {
+      _login = LoginModel.fromJson(loginData);
+    }
+
+    print(_login!.data);
+
+    if (_login != null && _login!.data?.id != null) {
+      var response = await CommonApiCall.getApiData(
+          action:
+              "action=add_script&user_id=${_login!.data?.id}&title=$title&script_text=$script");
+
+      if (response != null) {
+        final responseData = json.decode(response.body);
+        print(_login?.data);
+        print("id of the script is === >>>${responseData["data"]}");
+        setState(() {
+          script_id = responseData["data"];
+        });
+
+        if (responseData['status'] == 'success') {
+          print("Script added successfully");
+        } else {
+          print("Failed to add script: ${responseData['message']}");
+        }
+      } else {
+        print('Error: Response is null');
+      }
+    } else {
+      print('Error: User is not logged in');
+    }
+  }
+
   String filePath = "";
   CaptureRequest? captureRequest;
   //late File myfile;
@@ -91,7 +159,7 @@ class _CameraPageState extends State<CameraPage> {
             status++;
           });
           String name = filePath.split('/').last;
-          _databaseService.addfile(
+          await _databaseService.addfile(
             filePath,
             thumbnailPath,
             name,
@@ -99,17 +167,20 @@ class _CameraPageState extends State<CameraPage> {
             9,
             16,
           );
+          // AddVideo("", script_id, "");
 
           print("File is saved successfully to the database");
         } catch (e) {
           print("Error storing file == > ${e.toString()}");
         }
+        int videoID = await _databaseService.getVidId(filePath);
+        print("vidID ==>  $videoID");
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (context) => UseScreen(
                     filePath: filePath,
-                    videoID: "0",
+                    videoID: videoID.toString(),
                   )),
         );
 

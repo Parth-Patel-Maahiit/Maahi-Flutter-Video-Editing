@@ -31,13 +31,15 @@ class _TrimmerViewState extends State<TrimmerView> {
   double _endValue = 0.0;
   bool _isPlaying = false;
   List<GetCaptionDataModel> getCations = [];
+  late double size;
   //File f = Widget.filePath;
   @override
   void initState() {
     super.initState();
+    getsize();
+    _getVidId();
     _loadVideo();
     getCaptionDatas();
-    _getVidId();
   }
 
   void getCaptionDatas() async {
@@ -58,6 +60,13 @@ class _TrimmerViewState extends State<TrimmerView> {
       quality: 100,
     );
     return thumbnailPath;
+  }
+
+  Future<void> getsize() async {
+    print("video id ==> ${widget.videoID}");
+    size = await _databaseService.getfontsize(int.parse(widget.videoID!));
+    size = size * 3;
+    print("size = $size");
   }
 
   late int vidId;
@@ -300,7 +309,7 @@ class _TrimmerViewState extends State<TrimmerView> {
               decoration: caption.isUnderLine == "1"
                   ? TextDecoration.underline
                   : TextDecoration.none,
-              fontSize: 70,
+              fontSize: size,
               color: Color(int.parse(caption.textColor.toString())),
             ),
           ),

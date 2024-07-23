@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_editing_app/FFmpeg/video_util.dart';
+import 'package:video_editing_app/Model/filepath.dart';
 import 'package:video_editing_app/Model/get_caption_data_model.dart';
 import 'package:video_editing_app/UI/Projects.dart';
 import 'package:video_editing_app/UI/Video_Preview/script_preview.dart';
@@ -45,24 +46,37 @@ class _ExportScreenState extends State<ExportScreen>
   String isactive = "Standard";
   String action = "";
   String option = "";
+  late double size;
 
   late String name;
 
   List<GetCaptionDataModel> _getCations = [];
+  List<FilePath> getfile = [];
 
   @override
   void initState() {
     super.initState();
     _outputPath = widget.filePath;
     _initi();
-
+    getVideo();
     getCaptionData();
+    getsize();
     getratio();
     _initializeVideoPlayer().then((_) {
       setState(() {
         isPlaying = true;
+        print(
+            "width === > ${_videoPlayerController.value.size.width.toString()}");
+        print(
+            "height === > ${_videoPlayerController.value.size.height.toString()}");
       });
     });
+  }
+
+  Future<void> getsize() async {
+    print("video id ==> ${widget.videoID}");
+    size = await _databaseService.getfontsize(int.parse(widget.videoID));
+    print("size = $size");
   }
 
   Future<void> _initi() async {
@@ -95,6 +109,36 @@ class _ExportScreenState extends State<ExportScreen>
       }
     }
     setState(() {});
+  }
+
+  void getVideo() async {
+    getfile.clear();
+    // ignore: unnecessary_null_comparison
+    if (widget.videoID != null) {
+      var videofile = await _databaseService.getVideoFile(
+          videoId: int.parse(widget.videoID));
+      print("videofile.first[0] =====> ${videofile.first["font_size"]}");
+
+      if (videofile.isNotEmpty) {
+        print(
+            "videofileff f ======================================> ${videofile.first["font_size"]}");
+
+        setState(() {
+          getfile.add(FilePath(
+              id: videofile.first["id"],
+              vid_id: videofile.first["vid_id"],
+              path: videofile.first["content"],
+              thumbnail: videofile.first["thumbnail"],
+              version: videofile.first["version"],
+              title: videofile.first["title"],
+              width: videofile.first["width"],
+              height: videofile.first["height"],
+              date: videofile.first["date"],
+              name: videofile.first["name"],
+              font_size: videofile.first["font_size"]));
+        });
+      }
+    }
   }
 
   Future<void> _initializeVideoPlayer() async {
@@ -168,6 +212,8 @@ class _ExportScreenState extends State<ExportScreen>
   Future<void> getratio() async {
     w = await _databaseService.getwidth(_outputPath);
     h = await _databaseService.getheight(_outputPath);
+    print("w ===> $w");
+    print("h ===> $h");
     aspectRatio = w / h;
   }
 
@@ -346,6 +392,7 @@ class _ExportScreenState extends State<ExportScreen>
                         height: height,
                         isPlaying: isPlaying,
                         videoPlayerController: _videoPlayerController,
+                        getfile: getfile,
                       ),
                     ],
                   ),
@@ -1079,8 +1126,14 @@ class _ExportScreenState extends State<ExportScreen>
   void ffmpegButton(bool isCaption, {bool isAssFile = false}) async {
     print("ffmpge start");
     String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
+    // int height = _videoPlayerController.value.size.height.round();
+    // int width = _videoPlayerController.value.size.width.round();
     int height = _videoPlayerController.value.size.height.round();
     int width = _videoPlayerController.value.size.width.round();
+
+    // height = width * 4 / 3;
+    // height = width * 9 / 16;
+
     print("width === > ${_videoPlayerController.value.size.width.toString()}");
     print(
         "height === > ${_videoPlayerController.value.size.height.toString()}");
@@ -1099,6 +1152,9 @@ class _ExportScreenState extends State<ExportScreen>
     //   print("Unsupported aspect ratio");
     //   return;
     // }
+    print("w ===> $w");
+    print("h ===> $h");
+
     finalpath = "/storage/emulated/0/Download/output_$timestamp.mp4";
     String command = "";
     int watermarkWidth = 300; // Example width
@@ -1111,28 +1167,42 @@ class _ExportScreenState extends State<ExportScreen>
 
     String subtitleFilter = isAssFile
         ? 'ass=$srtFilePath'
-        : "subtitles='$srtFilePath':force_style='Fontname=Roboto-Condensed-Bold,Fontsize=24,Outline=1,Shadow=1'";
+        : "subtitles='$srtFilePath':force_style='Fontname=Roboto-Condensed-Bold,Fontsize=$size,Outline=1,Shadow=1'";
 
     if (isCaption) {
-      // Construct the FFmpeg command
-
-      // '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}'$srtFilePath:force_style=Fontname=Trueno'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
-
-      // working
-      // '-i $downloadDirPath/mib2.mp4 -i $downloadDirPath/info2-image.png -filter_complex "overlay=10:10" -y $downloadDirPath/output999.mp4';// watermark working
-
+      if (w == 1 && h == 1) {
+        // width = 1080;
+        height = width;
+        command =
+            '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "[0:v]crop=$width:$height:420:0[video];$resizeFilter[video][watermark]overlay=(main_w-overlay_w-20):(10),$subtitleFilter" -s ${width}x$height -c:v mpeg4 -q:v 1 -c:a aac -b:a 192k -strict -2 "$finalpath"';
+      } else if (w == 4 && h == 3) {
+        // width = 1080;
+        double height = (width * 3) / 4;
+        int h = height.round();
+        command =
+            '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "[0:v]crop=$width:$h:0:555[video];$resizeFilter[video][watermark]overlay=(main_w-overlay_w-20):(10),$subtitleFilter" -s ${width}x$h -c:v mpeg4 -q:v 1 -c:a aac -b:a 192k -strict -2 "$finalpath"';
+      } else {
+        command =
+            '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "$resizeFilter$overlayFilter,$subtitleFilter" -s ${width}x$height -c:v mpeg4 -q:v 1 -c:a aac -b:a 192k -strict -2 "$finalpath"';
+      }
       // command =
-      //     '''-y -i "$_outputPath" -vf "${isAssFile ? "ass=" : "subtitles="}$srtFilePath:force_style='Fontname==Roboto-Condensed-Bold,Fontsize=24,Outline=1,Shadow=1'" -s ${width}x$height $finalpath''';
-
-      command =
-          '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "$resizeFilter$overlayFilter,$subtitleFilter" -s ${width}x$height -c:v mpeg4 -q:v 1 -c:a aac -b:a 192k -strict -2 "$finalpath"';
-
-      // '''-y -i "$_outputPath" -vf "$cropFilter,${isAssFile ? "ass=" : "subtitles="}$srtFilePath:force_style='Fontname=Trueno,Fontsize=24,Outline=1,Shadow=1,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BackColour=&H80000000'" -s ${width}x$height "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
-      // '''-y -i "$_outputPath" -vf "$cropFilter,scale=$width:$height" -c:a copy "/storage/emulated/0/Download/output_${extension}_$timestamp.mp4"''';
+      //     '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "$resizeFilter$overlayFilter,$subtitleFilter" -s ${width}x$height -c:v mpeg4 -q:v 1 -c:a aac -b:a 192k -strict -2 "$finalpath"';
     } else {
-      // command = '''-i $_outputPath -c:v copy -y $finalpath''';
-      command =
-          '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "$resizeFilter$overlayFilter" -c:v mpeg4 -q:v 1 -c:a aac -strict -2 "$finalpath"';
+      if (w == 1 && h == 1) {
+        height = width;
+        command =
+            '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "crop=$width:$height:0:420[video],$resizeFilter[video][watermark]overlay=(main_w-overlay_w-20):(10)" -c:v mpeg4 -q:v 1 -c:a aac -b:a 192k -strict -2 "$finalpath"';
+      } else if (w == 4 && h == 3) {
+         double height = (width * 3) / 4;
+        int h = height.round();
+        command =
+            '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "crop=$width:$h:0:555[video],$resizeFilter[video][watermark]overlay=(main_w-overlay_w-20):(10)" -c:v mpeg4 -q:v 1 -c:a aac -b:a 192k -strict -2 "$finalpath"';
+      } else {
+        command =
+            '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "$resizeFilter$overlayFilter" -c:v mpeg4 -q:v 1 -c:a aac -strict -2 "$finalpath"';
+      }
+      // command =
+      //     '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "$resizeFilter$overlayFilter" -c:v mpeg4 -q:v 1 -c:a aac -strict -2 "$finalpath"';
     }
     print("command === > $command");
     FFmpegKit.execute(command).then((session) async {

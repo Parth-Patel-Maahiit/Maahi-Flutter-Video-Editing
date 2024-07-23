@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:video_editing_app/Model/filepath.dart' as filepath;
 import 'package:video_editing_app/util/app_color.dart';
 import 'package:video_editing_app/util/app_images.dart';
 import 'package:video_player/video_player.dart';
@@ -16,7 +17,8 @@ class VideoCaption extends StatelessWidget {
       required this.height,
       required this.getCations,
       this.width = 180,
-      this.isLogoShow = false});
+      this.isLogoShow = false,
+      required this.getfile});
   final Function() onTapToggle;
   final VideoPlayerController videoPlayerController;
   final bool isPlaying;
@@ -25,6 +27,7 @@ class VideoCaption extends StatelessWidget {
   final double width;
   final bool isLogoShow;
   final List<getcaptiondatamodel.GetCaptionDataModel> getCations;
+  final List<filepath.FilePath> getfile;
 
   @override
   Widget build(BuildContext context) {
@@ -118,6 +121,7 @@ class VideoCaption extends StatelessWidget {
     String startPoint = "";
     String endPoint = "";
     List<TextSpan> textSpans = [];
+    double size = double.parse(getfile.first.font_size.toString()) * 3;
 
     for (var caption in getCations) {
       List<int> idsIntList = caption.combineIds
@@ -144,7 +148,7 @@ class VideoCaption extends StatelessWidget {
               decoration: caption.isUnderLine == "1"
                   ? TextDecoration.underline
                   : TextDecoration.none,
-              fontSize: 70,
+              fontSize: size,
               color: Color(int.parse(caption.textColor.toString())),
               // background: Paint()
               //   ..color = Color(int.parse(caption.backgroundColor.toString())),

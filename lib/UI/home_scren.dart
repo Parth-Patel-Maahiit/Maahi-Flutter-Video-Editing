@@ -63,30 +63,32 @@ class _HomeScreenState extends State<HomeScreen> {
         if (type == "caption") {
           String thumbnailPath = await generateThumbnail(pickedFilePath);
           String name = pickedFilePath.split('/').last;
-          _databaseService.addfile(
+          await _databaseService.addfile(
               pickedFilePath, thumbnailPath, name, name, 9, 16);
+          int vidId = await _databaseService.getVidId(pickedFilePath);
           widget.onTap();
           Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => VideoSavePage(
                       filePath: pickedFilePath,
-                      videoID: "0",
+                      videoID: vidId.toString(),
                       isBackExport: true,
                     )),
           );
         } else if (type == "reel") {
           String thumbnailPath = await generateThumbnail(pickedFilePath);
           String name = pickedFilePath.split('/').last;
-          _databaseService.addfile(
+          await _databaseService.addfile(
               pickedFilePath, thumbnailPath, name, name, 9, 16);
+          int vidId = await _databaseService.getVidId(pickedFilePath);
           widget.onTap();
           Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => VideoSavePage(
                       filePath: pickedFilePath,
-                      videoID: "0",
+                      videoID: vidId.toString(),
                       isBackExport: true,
                     )),
           );

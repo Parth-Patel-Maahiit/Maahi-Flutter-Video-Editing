@@ -21,6 +21,7 @@ class DatabaseService {
   final String _videoheightColumnName = "height";
   final String _videoDateColumnName = "date";
   final String _videoNameColumnName = "name";
+  final String _videoFontSizeColumnName = "font_size";
 
   Future<Database> get database async {
     if (_db != null) {
@@ -59,7 +60,8 @@ class DatabaseService {
           $_videoWidthColumnName INTEGER,
           $_videoheightColumnName INTEGER,
           $_videoDateColumnName TEXT,
-          $_videoNameColumnName TEXT
+          $_videoNameColumnName TEXT,
+          $_videoFontSizeColumnName INTEGER
         )
         ''');
   }
@@ -159,6 +161,7 @@ class DatabaseService {
         _videoheightColumnName: height,
         _videoDateColumnName: dateTime.toString(),
         _videoNameColumnName: filename,
+        _videoFontSizeColumnName: 24,
       });
 
       print("File added successfully: $file");
@@ -219,6 +222,7 @@ class DatabaseService {
           _videoheightColumnName: result.last[_videoheightColumnName],
           _videoDateColumnName: dateTime.toString(),
           _videoNameColumnName: result.first[_videoNameColumnName],
+          _videoFontSizeColumnName: result.first[_videoFontSizeColumnName],
         });
 
         print("File edited successfully: $newFilePath");
@@ -248,6 +252,7 @@ class DatabaseService {
               height: e[_videoheightColumnName] as int,
               date: e["date"] as String,
               name: e["name"] as String,
+              font_size: e["font_size"] as int,
             ))
         .toList();
     return files;
@@ -280,6 +285,7 @@ class DatabaseService {
               height: e[_videoheightColumnName] as int,
               date: e[_videoDateColumnName] as String,
               name: e["name"] as String,
+              font_size: e["font_size"] as int,
             ))
         .toList();
 
@@ -363,6 +369,7 @@ class DatabaseService {
           height: file[_videoheightColumnName] as int,
           date: file[_videoDateColumnName] as String,
           name: file[_videoNameColumnName] as String,
+          font_size: file[_videoFontSizeColumnName] as int,
         );
       }
     } catch (e) {
@@ -579,6 +586,74 @@ class DatabaseService {
     }
   }
 
+  // Future<void> updatefont(int VideoId) async {
+  //   try {
+  //     final db = await database;
+
+  //     await db.update(_videotable, {_videoFontSizeColumnName: });
+  //   } catch (e) {}
+  // }
+  Future<void> increaseFontSize(int videoId) async {
+    try {
+      final db = await database;
+
+      // Retrieve the current font size
+      final List<Map<String, dynamic>> result = await db.query(
+        _videotable,
+        columns: [_videoFontSizeColumnName],
+        where: '$_videovidIdColumnName = ?',
+        whereArgs: [videoId],
+      );
+
+      if (result.isNotEmpty) {
+        final currentFontSize = result.first[_videoFontSizeColumnName] as int;
+        final newFontSize = currentFontSize + 2;
+
+        // Update the font size in the database
+        await db.update(
+          _videotable,
+          {_videoFontSizeColumnName: newFontSize},
+          where: '$_videovidIdColumnName = ?',
+          whereArgs: [videoId],
+        );
+      } else {
+        // Handle the case where the video ID is not found
+        print('Video ID not found');
+      }
+    } catch (e) {
+      print('Error updating font size: $e');
+    }
+  }
+
+  Future<void> decreseFontSize(int videoId) async {
+    try {
+      final db = await database;
+
+      final List<Map<String, dynamic>> result = await db.query(
+        _videotable,
+        columns: [_videoFontSizeColumnName],
+        where: '$_videovidIdColumnName = ?',
+        whereArgs: [videoId],
+      );
+
+      if (result.isNotEmpty) {
+        final currentFontSize = result.first[_videoFontSizeColumnName] as int;
+        final newFontSize = currentFontSize + 2;
+
+        await db.update(
+          _videotable,
+          {_videoFontSizeColumnName: newFontSize},
+          where: '$_videovidIdColumnName = ?',
+          whereArgs: [videoId],
+        );
+      } else {
+        print('Video ID not found');
+      }
+    } catch (e) {
+      print('Error updating font size: $e');
+    }
+  }
+
   // Future<void> renameFilesByVidId(int vidId, String newFilePath) async {
   //   try {
   //     final db = await database;
@@ -640,6 +715,38 @@ class DatabaseService {
       // Use logging instead of print if available
       print("Failed to get filename by video ID: $e");
       return "";
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getVideoFile(
+      {required int videoId}) async {
+    try {
+      final db = await database;
+      final data = await db.query(
+        _videotable,
+        where: '$_videovidIdColumnName = ?',
+        whereArgs: [videoId],
+      );
+      print("Video file === > $data");
+      return data;
+    } catch (e) {
+      print("Failed to fetch Video File: $e");
+      return [];
+    }
+  }
+
+  Future<double> getfontsize(int vidId) async {
+    try {
+      final db = await database;
+      final data = await db.query(_videotable,
+          columns: [_videoFontSizeColumnName],
+          where: '$_videovidIdColumnName = ?',
+          whereArgs: [vidId]);
+
+      print("fffsize ${data.first[_videoFontSizeColumnName]}");
+      return double.parse(data.first[_videoFontSizeColumnName].toString());
+    } catch (e) {
+      return 0;
     }
   }
 

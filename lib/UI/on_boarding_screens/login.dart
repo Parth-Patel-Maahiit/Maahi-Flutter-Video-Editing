@@ -126,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: isloading
                             ? () {}
                             : () {
-                                String email = emailController.text.trim();
+                                String email = emailController.text.trim(); 
                                 String password =
                                     passwordController.text.trim();
 

@@ -77,10 +77,12 @@ class _VideoSavePageState extends State<VideoSavePage>
   String action = "";
 
   List<GetCaptionDataModel> _getCations = [];
+  List<FilePath> getfile = [];
 
   @override
   void initState() {
     super.initState();
+    getVideo();
     getCaptionDatas();
     _outputPath = widget.filePath;
     getminversion();
@@ -217,6 +219,35 @@ class _VideoSavePageState extends State<VideoSavePage>
       }
     } catch (e) {
       print("Not Working!!!!");
+    }
+  }
+
+  void getVideo() async {
+    getfile.clear();
+    if (widget.videoID != null) {
+      var videofile = await _databaseService.getVideoFile(
+          videoId: int.parse(widget.videoID!));
+      print("videofile.first[0] =====> ${videofile.first["font_size"]}");
+
+      if (videofile.isNotEmpty) {
+        print(
+            "videofileff f ======================================> ${videofile.first["font_size"]}");
+
+        setState(() {
+          getfile.add(FilePath(
+              id: videofile.first["id"],
+              vid_id: videofile.first["vid_id"],
+              path: videofile.first["content"],
+              thumbnail: videofile.first["thumbnail"],
+              version: videofile.first["version"],
+              title: videofile.first["title"],
+              width: videofile.first["width"],
+              height: videofile.first["height"],
+              date: videofile.first["date"],
+              name: videofile.first["name"],
+              font_size: videofile.first["font_size"]));
+        });
+      }
     }
   }
 
@@ -429,14 +460,16 @@ class _VideoSavePageState extends State<VideoSavePage>
         body: SafeArea(
           child: Stack(
             children: [
-              VideoCaption(
-                onTapToggle: _togglePlayPause,
-                aspectRatio: aspectRatio,
-                getCations: _getCations,
-                height: height,
-                isPlaying: isPlaying,
-                videoPlayerController: _videoPlayerController,
-              ),
+              if (getfile.isNotEmpty)
+                VideoCaption(
+                  onTapToggle: _togglePlayPause,
+                  aspectRatio: aspectRatio,
+                  getCations: _getCations,
+                  height: height,
+                  isPlaying: isPlaying,
+                  videoPlayerController: _videoPlayerController,
+                  getfile: getfile,
+                ),
               // if (_getCations.isNotEmpty)
               Visibility(
                 visible: true,
@@ -682,6 +715,7 @@ class _VideoSavePageState extends State<VideoSavePage>
                         ],
                       ),
                     )),
+
               if (!isPlaying && !_keyboardVisible && action == "isStyle")
                 Positioned(
                   left: 30,
@@ -699,7 +733,7 @@ class _VideoSavePageState extends State<VideoSavePage>
                 ),
               if (!isPlaying && !_keyboardVisible && action == "isStyle")
                 Positioned(
-                  right: 30,
+                  right: 90,
                   bottom: 100,
                   child: EditingButton(
                     onTap: () {
@@ -708,6 +742,21 @@ class _VideoSavePageState extends State<VideoSavePage>
                     },
                     imagePath: "assets/split.png",
                     buttonName: " Split ",
+                    imageColor: Colors.white,
+                    isBackGroundNeed: true,
+                  ),
+                ),
+              if (!isPlaying && !_keyboardVisible && action == "isStyle")
+                Positioned(
+                  right: 30,
+                  bottom: 100,
+                  child: EditingButton(
+                    onTap: () {
+                      action = "isFont";
+                      setState(() {});
+                    },
+                    imagePath: AppImages.A,
+                    buttonName: " Font ",
                     imageColor: Colors.white,
                     isBackGroundNeed: true,
                   ),
@@ -758,7 +807,7 @@ class _VideoSavePageState extends State<VideoSavePage>
                 ),
               if (!isPlaying && !_keyboardVisible && action == "isStyle")
                 Positioned(
-                  right: 100,
+                  right: 150,
                   bottom: 100,
                   child: EditingButton(
                     onTap: () {
@@ -809,6 +858,53 @@ class _VideoSavePageState extends State<VideoSavePage>
                           },
                           imagePath: "assets/merge.png",
                           buttonName: "After",
+                          imageColor: Colors.white,
+                          isBackGroundNeed: true,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              if (!isPlaying && !_keyboardVisible && action == "isFont")
+                Positioned(
+                  bottom: 100,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 40),
+                    child: Row(
+                      children: [
+                        CommonBackButton(
+                          onTap: () {
+                            FocusScope.of(context)
+                                .requestFocus(new FocusNode());
+                            action = "isStyle";
+                            setState(() {});
+                          },
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        EditingButton(
+                          onTap: () {
+                            // getMarge(true);
+                            updatefontsize("plus");
+                            setState(() {});
+                          },
+                          imagePath: AppImages.plus1,
+                          buttonName: "Plus",
+                          imageColor: Colors.white,
+                          isBackGroundNeed: true,
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        EditingButton(
+                          onTap: () {
+                            // getMarge(false);
+                            updatefontsize("minus");
+                            setState(() {});
+                          },
+                          imagePath: AppImages.minus,
+                          buttonName: "minus",
                           imageColor: Colors.white,
                           isBackGroundNeed: true,
                         ),
@@ -885,6 +981,17 @@ class _VideoSavePageState extends State<VideoSavePage>
       }
     }
     print("idsString ==== > ${idsString}");
+    setState(() {});
+  }
+
+  Future<void> updatefontsize(String action) async {
+    if (action == "plus") {
+      await _databaseService.increaseFontSize(int.parse(widget.videoID!));
+      getfile.first.font_size = getfile.first.font_size + 2;
+    } else if (action == "minus") {
+      await _databaseService.decreseFontSize(int.parse(widget.videoID!));
+      getfile.first.font_size = getfile.first.font_size - 2;
+    }
     setState(() {});
   }
 

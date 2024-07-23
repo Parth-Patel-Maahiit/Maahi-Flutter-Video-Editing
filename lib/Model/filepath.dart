@@ -6,6 +6,7 @@ class FilePath {
   final int width;
   final int height;
   final String name;
+  int font_size;
   //final String script;
 
   FilePath({
@@ -19,5 +20,6 @@ class FilePath {
     required this.height,
     required this.date,
     required this.name,
+    required this.font_size,
   });
 }
