@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_editing_app/UI/components/common.dart';
@@ -7,7 +6,6 @@ import 'package:video_editing_app/UI/components/common_back_button.dart';
 import 'package:video_editing_app/UI/components/common_save_button.dart';
 import 'package:video_editing_app/util/app_color.dart';
 import 'package:video_editing_app/widget/update_profile_form.dart';
-
 import '../../API/commonapicall.dart';
 import '../../CommonMettods/common_sharedPreferences.dart';
 import '../../Model/login_model.dart' as LoginModel;

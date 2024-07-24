@@ -19,7 +19,7 @@ class CommonRatioWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       flex: 1,
-      child: InkWell( 
+      child: InkWell(
         splashFactory: NoSplash.splashFactory,
         highlightColor: Colors.transparent,
         onTap: onTap,

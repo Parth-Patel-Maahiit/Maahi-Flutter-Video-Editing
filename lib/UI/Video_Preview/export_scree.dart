@@ -7,9 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:video_editing_app/API/commonapicall.dart';
 import 'package:video_editing_app/FFmpeg/video_util.dart';
 import 'package:video_editing_app/Model/filepath.dart';
 import 'package:video_editing_app/Model/get_caption_data_model.dart';
+import 'package:video_editing_app/Model/get_video_model.dart';
 import 'package:video_editing_app/UI/Projects.dart';
 import 'package:video_editing_app/UI/Video_Preview/script_preview.dart';
 import 'package:video_editing_app/UI/components/common.dart';
@@ -19,6 +21,8 @@ import 'package:video_editing_app/util/app_color.dart';
 import 'package:video_editing_app/util/app_images.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../CommonMettods/common_sharedPreferences.dart';
+import '../../Model/login_model.dart';
 import '../../widget/button.dart';
 import '../../widget/video_caption.dart';
 
@@ -62,6 +66,8 @@ class _ExportScreenState extends State<ExportScreen>
     getCaptionData();
     getsize();
     getratio();
+    // updateSript("", "new");
+    getScriptByVideo();
     _initializeVideoPlayer().then((_) {
       setState(() {
         isPlaying = true;
@@ -72,6 +78,137 @@ class _ExportScreenState extends State<ExportScreen>
       });
     });
   }
+
+  /*
+  update_script
+ 
+	Field 
+		user_id:3
+               update_id : 1
+		action:add_script
+		title:Script Name
+		script_text:any script text
+
+update_video
+ 
+Field
+		user_id:3
+               update_id : 1
+		action:add_video
+		title:Script Name
+		script_id:1
+		file_name:file.png
+  */
+
+  LoginModel? _login = LoginModel();
+  GetVideoModel _video = GetVideoModel();
+  late String script_id;
+  late String title;
+
+  Future<void> getScriptByVideo() async {
+    var loginData = await getStoreApidata("loginData");
+    if (loginData != null) {
+      _login = LoginModel.fromJson(loginData);
+    }
+
+    if (_login?.data?.id != null) {
+      var response = await CommonApiCall.getApiData(
+        action: "action=get_video&user_id=${_login!.data!.id}",
+      );
+      // \/data\/user\/0\/com.example.video_editing_app\/cache\/camerawesome\/1721737766559702.mp4
+
+      if (response != null) {
+        final responseData = json.decode(response.body);
+        _video = GetVideoModel.fromJson(responseData);
+
+        for (var videoData in _video.data!) {
+          print("finding file!!!!!!!!!!");
+
+          if (widget.filePath == videoData.fileName!.replaceAll("\\", '')) {
+            setState(() {
+              script_id = videoData.scriptId!;
+              title = videoData.title!;
+              print("id of the script is $script_id");
+            });
+            updateScript();
+            break; // Exit the loop once the matching file path is found
+          }
+        }
+
+        if (responseData['status'] == 'success') {
+          print("Video retrieved successfully");
+        } else {
+          print("Failed to retrieve video: ${responseData['message']}");
+        }
+      } else {
+        print('Error: Response is null');
+      }
+    } else {
+      print('Error: User is not logged in or user id is null');
+    }
+  }
+
+  // Future<void> updateScript() async {
+  //   var loginData = await getStoreApidata("loginData");
+  //   if (loginData != null) {
+  //     _login = LoginModel.fromJson(loginData);
+  //   }
+
+  //   if (_login?.data?.id != null) {
+  //     var response = await CommonApiCall.getApiData(
+  //       action:
+  //           "action=add_script&user_id=${_login!.data!.id}&update_id=$script_id&title=$title&script_text=${_getCations.toString()}",
+  //     );
+  //     // \/data\/user\/0\/com.example.video_editing_app\/cache\/camerawesome\/1721737766559702.mp4
+
+  //     if (response != null) {
+  //       final responseData = json.decode(response.body);
+  //       _video = GetVideoModel.fromJson(responseData);
+
+  //       if (responseData['status'] == 'success') {
+  //         print("Video retrieved successfully");
+  //       } else {
+  //         print("Failed to retrieve video: ${responseData['message']}");
+  //       }
+  //     } else {
+  //       print('Error: Response is null');
+  //     }
+  //   } else {
+  //     print('Error: User is not logged in or user id is null');
+  //   }
+  // }
+
+ Future<void> updateScript() async {
+  var loginData = await getStoreApidata("loginData");
+  if (loginData != null) {
+    _login = LoginModel.fromJson(loginData);
+  }
+
+  if (_login?.data?.id != null) {
+    // Extract only the 'text' field from each caption model
+    List captionTexts = _getCations.map((caption) => caption.text).toList();
+    String jsonCaptions = json.encode(captionTexts);
+
+    var response = await CommonApiCall.getApiData(
+      action:
+          "action=add_script&user_id=${_login!.data!.id}&update_id=$script_id&title=$title&script_text=$jsonCaptions",
+    );
+
+    if (response != null) {
+      final responseData = json.decode(response.body);
+
+      if (responseData['status'] == 'success') {
+        print("Script added successfully");
+      } else {
+        print("Failed to add script: ${responseData['message']}");
+      }
+    } else {
+      print('Error: Response is null');
+    }
+  } else {
+    print('Error: User is not logged in or user id is null');
+  }
+}
 
   Future<void> getsize() async {
     print("video id ==> ${widget.videoID}");
@@ -864,8 +1001,8 @@ class _ExportScreenState extends State<ExportScreen>
 
     String formatText(Map<String, dynamic> caption) {
       String text = caption['text'];
-      String textColor = caption['text_color'].toString().substring(2);
-      String bgColor = caption['background_color'].toString().substring(2);
+      String textColor = caption['text_color'].toString().substring(4);
+      String bgColor = caption['background_color'].toString().substring(4);
 
       String formattedText =
           '<font color="#$textColor" background="#$bgColor">$text</font>';
@@ -1193,7 +1330,7 @@ class _ExportScreenState extends State<ExportScreen>
         command =
             '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "crop=$width:$height:0:420[video],$resizeFilter[video][watermark]overlay=(main_w-overlay_w-20):(10)" -c:v mpeg4 -q:v 1 -c:a aac -b:a 192k -strict -2 "$finalpath"';
       } else if (w == 4 && h == 3) {
-         double height = (width * 3) / 4;
+        double height = (width * 3) / 4;
         int h = height.round();
         command =
             '-y -i "$_outputPath" -i "$waterMarkPath" -filter_complex "crop=$width:$h:0:555[video],$resizeFilter[video][watermark]overlay=(main_w-overlay_w-20):(10)" -c:v mpeg4 -q:v 1 -c:a aac -b:a 192k -strict -2 "$finalpath"';

@@ -167,7 +167,7 @@ class _CameraPageState extends State<CameraPage> {
             9,
             16,
           );
-          // AddVideo("", script_id, "");
+          // AddVideo(widget.title, script_id, filePath);
 
           print("File is saved successfully to the database");
         } catch (e) {
@@ -175,6 +175,8 @@ class _CameraPageState extends State<CameraPage> {
         }
         int videoID = await _databaseService.getVidId(filePath);
         print("vidID ==>  $videoID");
+        AddVideo("", script_id, filePath);
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -191,6 +193,7 @@ class _CameraPageState extends State<CameraPage> {
     } else if (state is VideoCameraState) {
       captureRequest = await state.startRecording();
       _startRecordingTimer();
+      AddSript("", "");
     }
   }
 

@@ -6,7 +6,8 @@ class ProfileContainer extends StatelessWidget {
   late Icon icon;
   late String text;
   final Function() ontap;
-  ProfileContainer({super.key, required this.icon, required this.text, required this.ontap});
+  ProfileContainer(
+      {super.key, required this.icon, required this.text, required this.ontap});
 
   @override
   Widget build(BuildContext context) {

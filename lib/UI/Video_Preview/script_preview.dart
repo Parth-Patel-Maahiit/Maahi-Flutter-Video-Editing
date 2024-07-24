@@ -17,6 +17,7 @@ import 'package:video_editing_app/widget/button.dart';
 import 'package:video_editing_app/widget/common_ratio_widget.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../Model/login_model.dart';
 import '../../services/databaseMethods.dart';
 import '../../util/app_images.dart';
 import '../../widget/editing_button.dart';
@@ -79,6 +80,9 @@ class _VideoSavePageState extends State<VideoSavePage>
   List<GetCaptionDataModel> _getCations = [];
   List<FilePath> getfile = [];
 
+  LoginModel? _login = LoginModel();
+  late String script_id;
+
   @override
   void initState() {
     super.initState();
@@ -95,6 +99,41 @@ class _VideoSavePageState extends State<VideoSavePage>
       });
     });
   }
+
+  // Future<void> updateSript(String title, String script) async {
+  //   var loginData = await getStoreApidata("loginData");
+  //   if (loginData != null) {
+  //     _login = LoginModel.fromJson(loginData);
+  //   }
+
+  //   print(_login!.data);
+  //   print("update Id ==> ${_login!.data?.userIdentity} ");
+
+  //   if (_login != null && _login!.data?.id != null) {
+  //     var response = await CommonApiCall.getApiData(
+  //         action:
+  //             "action=add_script&user_id=${_login!.data?.id}&update_id=${_login!.data?.userIdentity}&title=$title&script_text=$script");
+
+  //     if (response != null) {
+  //       final responseData = json.decode(response.body);
+  //       print(_login?.data);
+  //       print("id of the script is === >>>${responseData["data"]}");
+  //       setState(() {
+  //         script_id = responseData["data"];
+  //       });
+
+  //       if (responseData['status'] == 'success') {
+  //         print("Script added successfully");
+  //       } else {
+  //         print("Failed to add script: ${responseData['message']}");
+  //       }
+  //     } else {
+  //       print('Error: Response is null');
+  //     }
+  //   } else {
+  //     print('Error: User is not logged in');
+  //   }
+  // }
 
   void setActiveCaptionIndex(int index) {
     setState(() {
@@ -334,17 +373,17 @@ class _VideoSavePageState extends State<VideoSavePage>
     }
   }
 
-  void _editScriptPart(int index, String newText) {
-    List<String> parts =
-        script.split(RegExp(r'\s+')).where((part) => part.isNotEmpty).toList();
-    if (index < 0 || index >= parts.length) {
-      return;
-    }
-    parts[index] = newText;
-    setState(() {
-      script = parts.join(' ');
-    });
-  }
+  // void _editScriptPart(int index, String newText) {
+  //   List<String> parts =
+  //       script.split(RegExp(r'\s+')).where((part) => part.isNotEmpty).toList();
+  //   if (index < 0 || index >= parts.length) {
+  //     return;
+  //   }
+  //   parts[index] = newText;
+  //   setState(() {
+  //     script = parts.join(' ');
+  //   });
+  // }
 
   late String audiopath;
 
