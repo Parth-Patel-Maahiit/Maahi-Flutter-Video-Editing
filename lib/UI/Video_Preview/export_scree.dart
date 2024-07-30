@@ -103,7 +103,7 @@ Field
   LoginModel? _login = LoginModel();
   GetVideoModel _video = GetVideoModel();
   late String script_id;
-  late String title;
+  String title = "";
 
   Future<void> getScriptByVideo() async {
     var loginData = await getStoreApidata("loginData");
@@ -178,37 +178,37 @@ Field
   //   }
   // }
 
- Future<void> updateScript() async {
-  var loginData = await getStoreApidata("loginData");
-  if (loginData != null) {
-    _login = LoginModel.fromJson(loginData);
-  }
+  Future<void> updateScript() async {
+    var loginData = await getStoreApidata("loginData");
+    if (loginData != null) {
+      _login = LoginModel.fromJson(loginData);
+    }
 
-  if (_login?.data?.id != null) {
-    // Extract only the 'text' field from each caption model
-    List captionTexts = _getCations.map((caption) => caption.text).toList();
-    String jsonCaptions = json.encode(captionTexts);
+    if (_login?.data?.id != null) {
+      // Extract only the 'text' field from each caption model
+      List captionTexts = _getCations.map((caption) => caption.text).toList();
+      String jsonCaptions = json.encode(captionTexts);
 
-    var response = await CommonApiCall.getApiData(
-      action:
-          "action=add_script&user_id=${_login!.data!.id}&update_id=$script_id&title=$title&script_text=$jsonCaptions",
-    );
+      var response = await CommonApiCall.getApiData(
+        action:
+            "action=add_script&user_id=${_login!.data!.id}&update_id=$script_id&title=$title&script_text=$jsonCaptions",
+      );
 
-    if (response != null) {
-      final responseData = json.decode(response.body);
+      if (response != null) {
+        final responseData = json.decode(response.body);
 
-      if (responseData['status'] == 'success') {
-        print("Script added successfully");
+        if (responseData['status'] == 'success') {
+          print("Script added successfully");
+        } else {
+          print("Failed to add script: ${responseData['message']}");
+        }
       } else {
-        print("Failed to add script: ${responseData['message']}");
+        print('Error: Response is null');
       }
     } else {
-      print('Error: Response is null');
+      print('Error: User is not logged in or user id is null');
     }
-  } else {
-    print('Error: User is not logged in or user id is null');
   }
-}
 
   Future<void> getsize() async {
     print("video id ==> ${widget.videoID}");
@@ -228,7 +228,7 @@ Field
   }
 
   void _shareVideo() {
-    Share.shareFiles([finalpath], text: 'Check out this video!');
+    Share.shareFiles([finalpath], text: 'Check out this video! $title');
   }
 
   void getCaptionData() async {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,9 @@ import 'package:video_editing_app/widget/button.dart';
 import 'package:video_editing_app/widget/common_ratio_widget.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../API/commonapicall.dart';
+import '../../CommonMettods/common_sharedPreferences.dart';
+import '../../Model/get_video_model.dart';
 import '../../Model/login_model.dart';
 import '../../services/databaseMethods.dart';
 import '../../util/app_images.dart';
@@ -81,7 +85,10 @@ class _VideoSavePageState extends State<VideoSavePage>
   List<FilePath> getfile = [];
 
   LoginModel? _login = LoginModel();
-  late String script_id;
+  GetVideoModel _video = GetVideoModel();
+  late String Api_video_id;
+  late String Script_id;
+  late String Script_title;
 
   @override
   void initState() {
@@ -97,43 +104,85 @@ class _VideoSavePageState extends State<VideoSavePage>
       setState(() {
         isPlaying = true;
       });
+      getScriptByVideo();
     });
   }
 
-  // Future<void> updateSript(String title, String script) async {
-  //   var loginData = await getStoreApidata("loginData");
-  //   if (loginData != null) {
-  //     _login = LoginModel.fromJson(loginData);
-  //   }
+  Future<void> getScriptByVideo() async {
+    var loginData = await getStoreApidata("loginData");
+    if (loginData != null) {
+      _login = LoginModel.fromJson(loginData);
+    }
 
-  //   print(_login!.data);
-  //   print("update Id ==> ${_login!.data?.userIdentity} ");
+    if (_login?.data?.id != null) {
+      var response = await CommonApiCall.getApiData(
+        action: "action=get_video&user_id=${_login!.data!.id}",
+      );
+      // \/data\/user\/0\/com.example.video_editing_app\/cache\/camerawesome\/1721737766559702.mp4
 
-  //   if (_login != null && _login!.data?.id != null) {
-  //     var response = await CommonApiCall.getApiData(
-  //         action:
-  //             "action=add_script&user_id=${_login!.data?.id}&update_id=${_login!.data?.userIdentity}&title=$title&script_text=$script");
+      if (response != null) {
+        final responseData = json.decode(response.body);
+        _video = GetVideoModel.fromJson(responseData);
 
-  //     if (response != null) {
-  //       final responseData = json.decode(response.body);
-  //       print(_login?.data);
-  //       print("id of the script is === >>>${responseData["data"]}");
-  //       setState(() {
-  //         script_id = responseData["data"];
-  //       });
+        for (var videoData in _video.data!) {
+          print("finding file!!!!!!!!!!");
 
-  //       if (responseData['status'] == 'success') {
-  //         print("Script added successfully");
-  //       } else {
-  //         print("Failed to add script: ${responseData['message']}");
-  //       }
-  //     } else {
-  //       print('Error: Response is null');
-  //     }
-  //   } else {
-  //     print('Error: User is not logged in');
-  //   }
-  // }
+          if (widget.filePath == videoData.fileName!.replaceAll("\\", '')) {
+            setState(() {
+              Api_video_id = videoData.id!;
+              Script_id = videoData.scriptId!;
+              Script_title = videoData.title!;
+              print("id of the script is $Api_video_id");
+            });
+            updateVideo();
+            break; // Exit the loop once the matching file path is found
+          }
+        }
+
+        if (responseData['status'] == 'success') {
+          print("Video retrieved successfully");
+        } else {
+          print("Failed to retrieve video: ${responseData['message']}");
+        }
+      } else {
+        print('Error: Response is null');
+      }
+    } else {
+      print('Error: User is not logged in or user id is null');
+    }
+  }
+
+  Future<void> updateVideo() async {
+    var loginData = await getStoreApidata("loginData");
+    if (loginData != null) {
+      _login = LoginModel.fromJson(loginData);
+    }
+
+    if (_login != null && _login!.data?.id != null) {
+      var response = await CommonApiCall.getApiData(
+          action:
+              "action=add_video&user_id=${_login!.data?.id}&update_id=$Api_video_id&title=$Script_title&script_id=$Script_id&file_name=${widget.filePath}");
+
+      if (response != null) {
+        final responseData = json.decode(response.body);
+        print(_login?.data);
+        print("id of the script is === >>>${responseData["data"]}");
+        setState(() {
+          // script_id = responseData["data"];
+        });
+
+        if (responseData['status'] == 'success') {
+          print("Script added successfully");
+        } else {
+          print("Failed to add script: ${responseData['message']}");
+        }
+      } else {
+        print('Error: Response is null');
+      }
+    } else {
+      print('Error: User is not logged in');
+    }
+  }
 
   void setActiveCaptionIndex(int index) {
     setState(() {
